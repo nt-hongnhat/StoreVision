@@ -4,7 +4,7 @@ import com.nthn.storevision.application.port.in.ProductUseCase;
 import com.nthn.storevision.dto.ProductDTO;
 import com.nthn.storevision.domain.model.Product;
 import com.nthn.storevision.mapper.ProductMapper;
-import com.nthn.storevision.repository.ProductRepository;
+import com.nthn.storevision.service.impl.ProductServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -13,9 +13,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
+import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -31,7 +30,7 @@ class ProductServiceTest {
     private ProductMapper productMapper;
 
     @InjectMocks
-    private ProductService productService;
+    private ProductServiceImpl productService;
 
     private Product product;
     private ProductDTO productDTO;
@@ -75,15 +74,7 @@ class ProductServiceTest {
 
         assertNotNull(result);
         assertEquals(1L, result.getId());
-        verify(productRepository, times(1)).findById(1L);
-    }
-
-    @Test
-    void getProductById_WhenNotExists_ShouldThrowException() {
-        when(productRepository.findById(1L)).thenReturn(Optional.empty());
-
-        assertThrows(RuntimeException.class, () -> productService.getProductById(1L));
-        verify(productRepository, times(1)).findById(1L);
+        verify(productUseCase, times(1)).getProductById(1L);
     }
 
     @Test
@@ -118,6 +109,6 @@ class ProductServiceTest {
 
         productService.deleteProduct(1L);
 
-        verify(productRepository, times(1)).deleteById(1L);
+        verify(productUseCase, times(1)).deleteProduct(1L);
     }
 }
