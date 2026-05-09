@@ -1,7 +1,7 @@
 package com.nthn.storevision.mapper;
 
 import com.nthn.storevision.dto.ProductDTO;
-import com.nthn.storevision.entity.Product;
+import com.nthn.storevision.domain.model.Product;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
