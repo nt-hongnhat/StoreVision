@@ -1,5 +1,6 @@
 package com.nthn.storevision.service;
 
+import com.nthn.storevision.application.port.in.ProductUseCase;
 import com.nthn.storevision.dto.ProductDTO;
 import com.nthn.storevision.domain.model.Product;
 import com.nthn.storevision.mapper.ProductMapper;
@@ -24,7 +25,7 @@ import static org.mockito.Mockito.*;
 class ProductServiceTest {
 
     @Mock
-    private ProductRepository productRepository;
+    private ProductUseCase productUseCase;
 
     @Mock
     private ProductMapper productMapper;
@@ -54,7 +55,7 @@ class ProductServiceTest {
 
     @Test
     void getAllProducts_ShouldReturnList() {
-        when(productRepository.findAll()).thenReturn(Arrays.asList(product));
+        when(productUseCase.getAllProducts()).thenReturn(Collections.singletonList(product));
         when(productMapper.toDTO(product)).thenReturn(productDTO);
 
         List<ProductDTO> result = productService.getAllProducts();
@@ -62,12 +63,12 @@ class ProductServiceTest {
         assertNotNull(result);
         assertEquals(1, result.size());
         assertEquals("Laptop", result.get(0).getName());
-        verify(productRepository, times(1)).findAll();
+        verify(productUseCase, times(1)).getAllProducts();
     }
 
     @Test
     void getProductById_WhenExists_ShouldReturnProduct() {
-        when(productRepository.findById(1L)).thenReturn(Optional.of(product));
+        when(productUseCase.getProductById(1L)).thenReturn(product);
         when(productMapper.toDTO(product)).thenReturn(productDTO);
 
         ProductDTO result = productService.getProductById(1L);
@@ -88,20 +89,32 @@ class ProductServiceTest {
     @Test
     void createProduct_ShouldReturnCreatedProduct() {
         when(productMapper.toEntity(any(ProductDTO.class))).thenReturn(product);
-        when(productRepository.save(any(Product.class))).thenReturn(product);
+        when(productUseCase.createProduct(any(Product.class))).thenReturn(product);
         when(productMapper.toDTO(any(Product.class))).thenReturn(productDTO);
 
         ProductDTO result = productService.createProduct(productDTO);
 
         assertNotNull(result);
         assertEquals("Laptop", result.getName());
-        verify(productRepository, times(1)).save(any(Product.class));
+        verify(productUseCase, times(1)).createProduct(any(Product.class));
     }
 
     @Test
-    void deleteProduct_WhenExists_ShouldDelete() {
-        when(productRepository.existsById(1L)).thenReturn(true);
-        doNothing().when(productRepository).deleteById(1L);
+    void updateProduct_ShouldReturnUpdatedProduct() {
+        when(productMapper.toEntity(any(ProductDTO.class))).thenReturn(product);
+        when(productUseCase.updateProduct(eq(1L), any(Product.class))).thenReturn(product);
+        when(productMapper.toDTO(any(Product.class))).thenReturn(productDTO);
+
+        ProductDTO result = productService.updateProduct(1L, productDTO);
+
+        assertNotNull(result);
+        assertEquals("Laptop", result.getName());
+        verify(productUseCase, times(1)).updateProduct(eq(1L), any(Product.class));
+    }
+
+    @Test
+    void deleteProduct_ShouldDelegateToUseCase() {
+        doNothing().when(productUseCase).deleteProduct(1L);
 
         productService.deleteProduct(1L);
 
