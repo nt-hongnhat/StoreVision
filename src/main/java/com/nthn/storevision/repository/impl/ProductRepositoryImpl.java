@@ -2,7 +2,7 @@ package com.nthn.storevision.repository.impl;
 
 import com.nthn.storevision.entity.Product;
 import com.nthn.storevision.repository.ProductRepository;
-import org.springframework.data.jpa.repository.JpaRepository;
+import com.nthn.storevision.repository.jpa.ProductJpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -11,38 +11,34 @@ import java.util.Optional;
 @Repository
 public class ProductRepositoryImpl implements ProductRepository {
 
-    private final ProductJpaRepository jpaRepository;
+  private final ProductJpaRepository jpaRepository;
 
-    public ProductRepositoryImpl(ProductJpaRepository jpaRepository) {
-        this.jpaRepository = jpaRepository;
-    }
+  public ProductRepositoryImpl(final ProductJpaRepository jpaRepository) {
+    this.jpaRepository = jpaRepository;
+  }
 
-    @Override
-    public List<Product> findAll() {
-        return jpaRepository.findAll();
-    }
+  @Override
+  public void deleteById(final Long id) {
+    jpaRepository.deleteById(id);
+  }
 
-    @Override
-    public Optional<Product> findById(Long id) {
-        return jpaRepository.findById(id);
-    }
+  @Override
+  public boolean existsById(final Long id) {
+    return jpaRepository.existsById(id);
+  }
 
-    @Override
-    public Product save(Product product) {
-        return jpaRepository.save(product);
-    }
+  @Override
+  public List<Product> findAll() {
+    return jpaRepository.findAll();
+  }
 
-    @Override
-    public void deleteById(Long id) {
-        jpaRepository.deleteById(id);
-    }
+  @Override
+  public Optional<Product> findById(final Long id) {
+    return jpaRepository.findById(id);
+  }
 
-    @Override
-    public boolean existsById(Long id) {
-        return jpaRepository.existsById(id);
-    }
-
-    @Repository
-    public interface ProductJpaRepository extends JpaRepository<Product, Long> {
-    }
+  @Override
+  public Product save(final Product product) {
+    return jpaRepository.save(product);
+  }
 }
