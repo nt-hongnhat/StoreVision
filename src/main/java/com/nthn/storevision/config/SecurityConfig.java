@@ -1,3 +1,14 @@
+/*
+ * Copyright (c) 2026 Hong Nhat. All rights reserved.
+ *
+ * Project: Store Vision
+ * Module: Store Vision Main
+ * File: SecurityConfig.java
+ * Author: Nguyen Thi Hong Nhat
+ * Contact: hongnhat1121@gmail.com
+ * Last Modified: 2026-05-10 13:20:30
+ */
+
 package com.nthn.storevision.config;
 
 import static org.springframework.security.config.Customizer.withDefaults;
@@ -43,10 +54,9 @@ public class SecurityConfig {
    *
    * @param http The {@link HttpSecurity} object to configure.
    * @return A {@link SecurityFilterChain} instance.
-   * @throws Exception If an error occurs during configuration.
    */
   @Bean
-  public SecurityFilterChain securityFilterChain(final HttpSecurity http) throws Exception {
+  public SecurityFilterChain securityFilterChain(final HttpSecurity http) {
 
     http.authorizeHttpRequests(
             auth ->
