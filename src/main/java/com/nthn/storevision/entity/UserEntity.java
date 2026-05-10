@@ -15,6 +15,10 @@ import org.springframework.lang.NonNull;
 
 import java.util.Objects;
 
+/**
+ * Represents a user entity in the database.
+ * This class maps to the "users" table and implements the {@link User} interface.
+ */
 @Getter
 @Setter
 @Entity
@@ -51,12 +55,25 @@ public class UserEntity implements User {
   @Column(name = "username", nullable = false, unique = true, length = 45)
   private String username;
 
+  /**
+   * Computes the hash code for this UserEntity.
+   *
+   * @return The hash code.
+   */
   @Override
   public final int hashCode() {
     return this instanceof final HibernateProxy hibernateProxy ?
         hibernateProxy.getHibernateLazyInitializer().getPersistentClass().hashCode() : getClass().hashCode();
   }
 
+  /**
+   * Compares this UserEntity to the specified object. The result is {@code true} if and only if
+   * the argument is not {@code null} and is a UserEntity object that has the same id field value.
+   *
+   * @param o The object to compare this UserEntity against.
+   * @return {@code true} if the given object represents a UserEntity equivalent to this UserEntity,
+   *         {@code false} otherwise.
+   */
   @Override
   public final boolean equals(final Object o) {
     if (this == o) {
@@ -74,6 +91,12 @@ public class UserEntity implements User {
     return null != id && Objects.equals(id, that.id);
   }
 
+  /**
+   * Sets the password for this user, ensuring it is hashed.
+   *
+   * @param password The raw password to set.
+   * @return This UserEntity instance for chaining.
+   */
   @Override
   public User setPassword(@NonNull final String password) {
     this.password = PasswordUtil.ensurePasswordIsHashed(password);
