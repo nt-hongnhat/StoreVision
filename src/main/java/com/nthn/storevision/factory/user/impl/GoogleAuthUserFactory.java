@@ -7,6 +7,10 @@ import java.util.Map;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 
+/**
+ * A factory for creating {@link User} objects from Google authentication profiles.
+ * This class implements the {@link UserFactory} interface.
+ */
 @Component
 public class GoogleAuthUserFactory implements UserFactory {
 
@@ -15,6 +19,13 @@ public class GoogleAuthUserFactory implements UserFactory {
   private static final String GIVEN_NAME = "given_name";
   private static final String SUB = "sub";
 
+  /**
+   * Creates a {@link User} object from the provided Google profile attributes.
+   * The profile map is expected to contain "email", "given_name", "family_name", and "sub" keys.
+   *
+   * @param profile A map containing user profile attributes from Google.
+   * @return A {@link User} object populated with data from the Google profile.
+   */
   @Override
   public User create(@NonNull final Map<String, Object> profile) {
     final String email = profile.get(EMAIL).toString();
