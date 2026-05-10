@@ -9,6 +9,10 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 
+/**
+ * Represents a product entity in the database.
+ * This class maps to the "products" table.
+ */
 @Entity
 @Table(name = "products")
 @Getter
@@ -16,7 +20,7 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Product {
+public class ProductEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
