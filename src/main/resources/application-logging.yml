@@ -1,0 +1,12 @@
+logging:
+  level:
+    root: INFO
+    com:
+      nthn: DEBUG
+    org:
+      springframework: DEBUG
+      thymeleaf: DEBUG
+      springdoc: DEBUG
+  file:
+    name: logs/app.log
+
