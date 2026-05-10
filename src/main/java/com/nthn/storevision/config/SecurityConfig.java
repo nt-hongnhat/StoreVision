@@ -16,6 +16,10 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+/**
+ * Configuration class for Spring Security. This class sets up the security filters, authentication
+ * providers, and access rules for the application.
+ */
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -23,11 +27,24 @@ public class SecurityConfig {
 
   private final AuthenticationSuccessHandler oAuth2SuccessHandler;
 
+  /**
+   * Provides a {@link BCryptPasswordEncoder} bean for encoding passwords.
+   *
+   * @return A {@link PasswordEncoder} instance using the BCrypt algorithm.
+   */
   @Bean
   public PasswordEncoder passwordEncoder() {
     return new BCryptPasswordEncoder();
   }
 
+  /**
+   * Configures the security filter chain for HTTP requests. Defines access rules, OAuth2 login,
+   * form login, and adds custom filters.
+   *
+   * @param http The {@link HttpSecurity} object to configure.
+   * @return A {@link SecurityFilterChain} instance.
+   * @throws Exception If an error occurs during configuration.
+   */
   @Bean
   public SecurityFilterChain securityFilterChain(final HttpSecurity http) throws Exception {
 
@@ -56,6 +73,12 @@ public class SecurityConfig {
     return http.build();
   }
 
+  /**
+   * Configures web security to ignore certain request matchers. This is typically used for static
+   * resources or API documentation endpoints that should not be secured.
+   *
+   * @return A {@link WebSecurityCustomizer} instance.
+   */
   @Bean
   public WebSecurityCustomizer webSecurityCustomizer() {
     return web -> web.ignoring().requestMatchers("/swagger-ui/**", "/v3/api-docs/**");
