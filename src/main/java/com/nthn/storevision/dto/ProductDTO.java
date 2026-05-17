@@ -6,7 +6,7 @@
  * File: ProductDTO.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-05-10 13:19:12
+ * Last Modified: 2026-05-17 13:55:53
  */
 
 package com.nthn.storevision.dto;
@@ -27,6 +27,7 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class ProductDTO {
+  private String category;
   private Long id;
 
   @NotBlank(message = "{product.name.required}")
