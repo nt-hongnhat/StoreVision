@@ -1,3 +1,14 @@
+/*
+ * Copyright (c) 2026 Hong Nhat. All rights reserved.
+ *
+ * Project: Store Vision
+ * Module: Store Vision Main
+ * File: ProductControllerV1.java
+ * Author: Nguyen Thi Hong Nhat
+ * Contact: hongnhat1121@gmail.com
+ * Last Modified: 2026-05-17 14:10:30
+ */
+
 package com.nthn.storevision.controller.v1;
 
 import com.nthn.storevision.dto.ProductDTO;
@@ -24,10 +35,35 @@ import org.springframework.web.bind.annotation.*;
 public class ProductControllerV1 {
 
   private final ProductCreationService productCreationService;
-  private final ProductRetrievalService productRetrievalService;
-  private final ProductUpdateService productUpdateService;
   private final ProductDeletionService productDeletionService;
   private final ProductMapper productMapper;
+  private final ProductRetrievalService productRetrievalService;
+  private final ProductUpdateService productUpdateService;
+
+  /**
+   * Creates a new product.
+   *
+   * @param productDTO The ProductDTO containing the details of the product to create.
+   * @return A ResponseEntity containing the created ProductDTO.
+   */
+  @PostMapping
+  public ResponseEntity<ProductDTO> createProduct(@Valid @RequestBody final ProductDTO productDTO) {
+    final ProductEntity productEntity = productMapper.toEntity(productDTO);
+    productCreationService.create(productEntity);
+    return new ResponseEntity<>(productMapper.toDTO(productEntity), HttpStatus.CREATED);
+  }
+
+  /**
+   * Deletes a product by its unique identifier.
+   *
+   * @param id The ID of the product to delete.
+   * @return A ResponseEntity with no content if deletion is successful.
+   */
+  @DeleteMapping("/{id}")
+  public ResponseEntity<Void> deleteProduct(@PathVariable final Long id) {
+    productDeletionService.permanentlyDelete(id);
+    return ResponseEntity.noContent().build();
+  }
 
   /**
    * Retrieves a list of all products.
@@ -51,19 +87,6 @@ public class ProductControllerV1 {
   }
 
   /**
-   * Creates a new product.
-   *
-   * @param productDTO The ProductDTO containing the details of the product to create.
-   * @return A ResponseEntity containing the created ProductDTO.
-   */
-  @PostMapping
-  public ResponseEntity<ProductDTO> createProduct(@Valid @RequestBody final ProductDTO productDTO) {
-    ProductEntity productEntity = productMapper.toEntity(productDTO);
-    productCreationService.create(productEntity);
-    return new ResponseEntity<>(productMapper.toDTO(productEntity), HttpStatus.CREATED);
-  }
-
-  /**
    * Updates an existing product.
    *
    * @param id The ID of the product to update.
@@ -72,23 +95,12 @@ public class ProductControllerV1 {
    */
   @PutMapping("/{id}")
   public ResponseEntity<ProductDTO> updateProduct(@PathVariable final Long id, @Valid @RequestBody final ProductDTO productDTO) {
-    ProductEntity existingProduct = productMapper.toEntity(productRetrievalService.findProductDTOById(id));
+    final ProductEntity existingProduct = productMapper.toEntity(productRetrievalService.findProductDTOById(id));
     existingProduct.setName(productDTO.getName());
     existingProduct.setPrice(productDTO.getPrice());
     existingProduct.setStockQuantity(productDTO.getStockQuantity());
+    existingProduct.setCategory(productDTO.getCategory()); // Add category update
     productUpdateService.update(existingProduct);
     return ResponseEntity.ok(productMapper.toDTO(existingProduct));
-  }
-
-  /**
-   * Deletes a product by its unique identifier.
-   *
-   * @param id The ID of the product to delete.
-   * @return A ResponseEntity with no content if deletion is successful.
-   */
-  @DeleteMapping("/{id}")
-  public ResponseEntity<Void> deleteProduct(@PathVariable final Long id) {
-    productDeletionService.permanentlyDelete(id);
-    return ResponseEntity.noContent().build();
   }
 }
