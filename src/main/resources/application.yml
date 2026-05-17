@@ -29,6 +29,7 @@ spring:
   messages:
     basename: /i18n/messages
     encoding: UTF-8
+    cache-duration: 3600
   main:
     allow-bean-definition-overriding: true
   profiles:
