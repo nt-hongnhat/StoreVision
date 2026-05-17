@@ -1,8 +1,12 @@
 package com.nthn.storevision.controller.v1;
 
-import com.nthn.storevision.controller.ProductController;
 import com.nthn.storevision.dto.ProductDTO;
-import com.nthn.storevision.service.ProductService;
+import com.nthn.storevision.entity.ProductEntity;
+import com.nthn.storevision.mapper.ProductMapper;
+import com.nthn.storevision.service.product.ProductCreationService;
+import com.nthn.storevision.service.product.ProductDeletionService;
+import com.nthn.storevision.service.product.ProductRetrievalService;
+import com.nthn.storevision.service.product.ProductUpdateService;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -11,45 +15,80 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 /**
- * REST controller for managing products, implementing version 1 of the ProductController interface.
+ * REST controller for managing products.
  * Provides endpoints for CRUD operations on products.
  */
 @RestController
 @RequestMapping("/api/v1/products")
 @RequiredArgsConstructor
-public class ProductControllerV1 implements ProductController {
+public class ProductControllerV1 {
 
-  private final ProductService productService;
+  private final ProductCreationService productCreationService;
+  private final ProductRetrievalService productRetrievalService;
+  private final ProductUpdateService productUpdateService;
+  private final ProductDeletionService productDeletionService;
+  private final ProductMapper productMapper;
 
-  @Override
-  @PostMapping
-  public ResponseEntity<ProductDTO> createProduct(@Valid @RequestBody final ProductDTO productDTO) {
-    return new ResponseEntity<>(productService.createProduct(productDTO), HttpStatus.CREATED);
-  }
-
-  @Override
-  @DeleteMapping("/{id}")
-  public ResponseEntity<Void> deleteProduct(@PathVariable final Long id) {
-    productService.deleteProduct(id);
-    return ResponseEntity.noContent().build();
-  }
-
-  @Override
+  /**
+   * Retrieves a list of all products.
+   *
+   * @return A ResponseEntity containing a list of ProductDTOs.
+   */
   @GetMapping
   public ResponseEntity<List<ProductDTO>> getAllProducts() {
-    return ResponseEntity.ok(productService.getAllProducts().stream().toList());
+    return ResponseEntity.ok(productRetrievalService.findAllProductsAsDTO());
   }
 
-  @Override
+  /**
+   * Retrieves a product by its unique identifier.
+   *
+   * @param id The ID of the product to retrieve.
+   * @return A ResponseEntity containing the ProductDTO if found, or a not found status.
+   */
   @GetMapping("/{id}")
   public ResponseEntity<ProductDTO> getProductById(@PathVariable final Long id) {
-    return ResponseEntity.ok(productService.getProductById(id));
+    return ResponseEntity.ok(productRetrievalService.findProductDTOById(id));
   }
 
-  @Override
+  /**
+   * Creates a new product.
+   *
+   * @param productDTO The ProductDTO containing the details of the product to create.
+   * @return A ResponseEntity containing the created ProductDTO.
+   */
+  @PostMapping
+  public ResponseEntity<ProductDTO> createProduct(@Valid @RequestBody final ProductDTO productDTO) {
+    ProductEntity productEntity = productMapper.toEntity(productDTO);
+    productCreationService.create(productEntity);
+    return new ResponseEntity<>(productMapper.toDTO(productEntity), HttpStatus.CREATED);
+  }
+
+  /**
+   * Updates an existing product.
+   *
+   * @param id The ID of the product to update.
+   * @param productDTO The ProductDTO containing the updated details.
+   * @return A ResponseEntity containing the updated ProductDTO.
+   */
   @PutMapping("/{id}")
-  public ResponseEntity<ProductDTO> updateProduct(
-      @PathVariable final Long id, @Valid @RequestBody final ProductDTO productDTO) {
-    return ResponseEntity.ok(productService.updateProduct(id, productDTO));
+  public ResponseEntity<ProductDTO> updateProduct(@PathVariable final Long id, @Valid @RequestBody final ProductDTO productDTO) {
+    ProductEntity existingProduct = productMapper.toEntity(productRetrievalService.findProductDTOById(id));
+    existingProduct.setName(productDTO.getName());
+    existingProduct.setPrice(productDTO.getPrice());
+    existingProduct.setStockQuantity(productDTO.getStockQuantity());
+    productUpdateService.update(existingProduct);
+    return ResponseEntity.ok(productMapper.toDTO(existingProduct));
+  }
+
+  /**
+   * Deletes a product by its unique identifier.
+   *
+   * @param id The ID of the product to delete.
+   * @return A ResponseEntity with no content if deletion is successful.
+   */
+  @DeleteMapping("/{id}")
+  public ResponseEntity<Void> deleteProduct(@PathVariable final Long id) {
+    productDeletionService.permanentlyDelete(id);
+    return ResponseEntity.noContent().build();
   }
 }

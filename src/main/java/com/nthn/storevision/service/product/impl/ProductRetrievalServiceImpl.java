@@ -1,0 +1,84 @@
+/*
+ * Copyright (c) 2026 Hong Nhat. All rights reserved.
+ *
+ * Project: Store Vision
+ * Module: Store Vision Main
+ * File: ProductRetrievalServiceImpl.java
+ * Author: Nguyen Thi Hong Nhat
+ * Contact: hongnhat1121@gmail.com
+ * Last Modified: 2026-05-10 22:15:18
+ */
+
+package com.nthn.storevision.service.product.impl;
+
+import com.nthn.storevision.dto.ProductDTO;
+import com.nthn.storevision.entity.ProductEntity;
+import com.nthn.storevision.mapper.ProductMapper;
+import com.nthn.storevision.repository.jpa.JpaProductRepository;
+import com.nthn.storevision.service.common.AbstractReadable;
+import com.nthn.storevision.service.product.ProductRetrievalService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.function.Function;
+
+/**
+ * Service for retrieving {@link ProductEntity} entities. Extends {@link AbstractReadable} to
+ * provide read operations for {@link ProductEntity} entities.
+ */
+@Service
+public class ProductRetrievalServiceImpl
+    extends AbstractReadable<ProductEntity, Long, JpaProductRepository>
+    implements ProductRetrievalService {
+
+  private final ProductMapper productMapper;
+
+  /**
+   * Constructs a {@code ProductRetrievalServiceImpl} with the specified repository.
+   *
+   * @param repository the repository used for accessing {@link ProductEntity} entities
+   */
+  public ProductRetrievalServiceImpl(
+      final JpaProductRepository repository, final ProductMapper productMapper) {
+    super(repository);
+    this.productMapper = productMapper;
+  }
+
+  /**
+   * Retrieves all products and maps them to {@link ProductDTO}.
+   *
+   * @return a list of all {@link ProductDTO}s.
+   */
+  @Override
+  @Transactional(readOnly = true)
+  public List<ProductDTO> findAllProductsAsDTO() {
+    return findAll(productMapper::toDTO);
+  }
+
+  /**
+   * Retrieves a product by its identifier and maps it to {@link ProductDTO}.
+   *
+   * @param id the identifier of the product to be retrieved.
+   * @return the {@link ProductDTO} with the specified identifier, or null if not found.
+   */
+  @Override
+  @Transactional(readOnly = true)
+  public ProductDTO findProductDTOById(Long id) {
+    return findById(id, productMapper::toDTO);
+  }
+
+  /**
+   * Returns the message code for when a product is not found.
+   *
+   * @return The message code for "product not found".
+   */
+  @Override
+  protected String getNotFoundMessageCode() {
+    // Assuming a constant for product not found message exists, similar to
+    // UserMessage.USER_NOT_FOUND
+    // If not, you might need to create one or use a generic message.
+    return "product.not.found"; // Placeholder, replace with actual message code if available
+  }
+}
