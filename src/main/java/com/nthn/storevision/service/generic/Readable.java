@@ -29,7 +29,7 @@ public interface Readable<T, I> {
    * @param <R> the type of the result
    * @param mapper the function to map the entity to the result
    */
-  <R> List<R> findAll(Function<T, R> mapper);
+  <R> List<R> findAll(Function<? super T, R> mapper);
 
   /**
    * Retrieves an entity by its identifier.
@@ -39,5 +39,5 @@ public interface Readable<T, I> {
    * @param <R> the type of the result
    * @param mapper the function to map the entity to the result
    */
-  <R> R findById(I id, Function<T, R> mapper);
+  <R> R findById(I id, Function<? super T, R> mapper);
 }
