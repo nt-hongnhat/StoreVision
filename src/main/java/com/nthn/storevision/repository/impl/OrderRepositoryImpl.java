@@ -1,0 +1,57 @@
+/*
+ * Copyright (c) 2026 Hong Nhat. All rights reserved.
+ *
+ * Project: Store Vision
+ * Module: Store Vision Main
+ * File: OrderRepositoryImpl.java
+ * Author: Nguyen Thi Hong Nhat
+ * Contact: hongnhat1121@gmail.com
+ * Last Modified: 2026-05-17 14:36:24
+ */
+
+package com.nthn.storevision.repository.impl;
+
+import com.nthn.storevision.entity.OrderEntity;
+import com.nthn.storevision.repository.OrderRepository;
+import com.nthn.storevision.repository.jpa.order.JpaOrderRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+import java.util.Optional;
+
+/**
+ * Implementation of the {@link OrderRepository} interface.
+ * This class acts as an adapter, delegating calls to the underlying {@link JpaOrderRepository}.
+ */
+@Repository
+@RequiredArgsConstructor
+public class OrderRepositoryImpl implements OrderRepository {
+
+  private final JpaOrderRepository jpaRepository;
+
+  @Override
+  public void deleteById(final Long id) {
+    jpaRepository.deleteById(id);
+  }
+
+  @Override
+  public boolean existsById(final Long id) {
+    return jpaRepository.existsById(id);
+  }
+
+  @Override
+  public List<OrderEntity> findAll() {
+    return jpaRepository.findAll();
+  }
+
+  @Override
+  public Optional<OrderEntity> findById(final Long id) {
+    return jpaRepository.findById(id);
+  }
+
+  @Override
+  public OrderEntity save(final OrderEntity order) {
+    return jpaRepository.save(order);
+  }
+}
