@@ -1,5 +1,6 @@
 package com.nthn.storevision.entity;
 
+import com.nthn.storevision.entity.mapped.BaseEntity;
 import com.nthn.storevision.model.User;
 import com.nthn.storevision.util.PasswordUtil;
 import jakarta.persistence.*;
@@ -17,7 +18,8 @@ import java.util.Objects;
 
 /**
  * Represents a user entity in the database.
- * This class maps to the "users" table and implements the {@link User} interface.
+ * This class maps to the "users" table, implements the {@link User} interface,
+ * and extends {@link BaseEntity} for auditing purposes.
  */
 @Getter
 @Setter
@@ -26,7 +28,7 @@ import java.util.Objects;
 @RequiredArgsConstructor
 @Accessors(chain = true)
 @Table(name = "users")
-public class UserEntity implements User {
+public class UserEntity extends BaseEntity<Integer> implements User {
 
   @Size(max = 100)
   @NotNull
@@ -54,6 +56,16 @@ public class UserEntity implements User {
   @NotNull
   @Column(name = "username", nullable = false, unique = true, length = 45)
   private String username;
+
+  /**
+   * Returns the unique identifier of the user.
+   *
+   * @return The user's ID.
+   */
+  @Override
+  public Integer getId() {
+    return id;
+  }
 
   /**
    * Computes the hash code for this UserEntity.
