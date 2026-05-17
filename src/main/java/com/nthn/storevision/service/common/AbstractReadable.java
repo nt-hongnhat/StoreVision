@@ -6,7 +6,7 @@
  * File: AbstractReadable.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-05-10 13:06:07
+ * Last Modified: 2026-05-17 14:18:27
  */
 
 package com.nthn.storevision.service.common;
@@ -42,8 +42,8 @@ public abstract class AbstractReadable<T, I, J extends JpaRepository<? extends T
    * @return a list of mapped entities
    */
   @Override
-  public <R> List<R> findAll(final Function<T, R> mapper) {
-    return getRepository().findAll().stream().map(mapper).toList();
+  public <R> List<R> findAll(final Function<? super T, R> mapper) {
+    return repository.findAll().stream().map(mapper).toList();
   }
 
   /**
@@ -54,12 +54,12 @@ public abstract class AbstractReadable<T, I, J extends JpaRepository<? extends T
    * @param mapper a function to map the entity of type T to type R
    * @param <R> the type of the mapped result
    * @return the mapped entity
-   * @throws com.nthn.bookthymeleaf.exception.EntityNotFoundException if the entity isn't found
+   * @throws com.nthn.storevision.exception.EntityNotFoundException if the entity isn't found
    */
   @Override
-  public <R> R findById(final I id, @NonNull final Function<T, R> mapper) {
+  public <R> R findById(final I id, @NonNull final Function<? super T, R> mapper) {
     return mapper.apply(
-        getRepository()
+        repository
             .findById(id)
             .orElseThrow(() -> new EntityNotFoundException(getNotFoundMessageCode(), id)));
   }
