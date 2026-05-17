@@ -1,0 +1,40 @@
+/*
+ * Copyright (c) 2026 Hong Nhat. All rights reserved.
+ *
+ * Project: Store Vision
+ * Module: Store Vision Main
+ * File: CustomerMapper.java
+ * Author: Nguyen Thi Hong Nhat
+ * Contact: hongnhat1121@gmail.com
+ * Last Modified: 2026-05-17 14:10:30
+ */
+
+package com.nthn.storevision.mapper;
+
+import com.nthn.storevision.dto.CustomerDTO;
+import com.nthn.storevision.entity.CustomerEntity;
+import org.mapstruct.Mapper;
+import org.mapstruct.MappingConstants;
+
+/**
+ * Mapper interface for converting between {@link CustomerEntity} and {@link CustomerDTO}.
+ * This interface uses MapStruct to generate the implementation.
+ */
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
+public interface CustomerMapper {
+    /**
+     * Converts a {@link CustomerEntity} to a {@link CustomerDTO}.
+     *
+     * @param customer The CustomerEntity to convert.
+     * @return The converted CustomerDTO.
+     */
+    CustomerDTO toDTO(CustomerEntity customer);
+
+    /**
+     * Converts a {@link CustomerDTO} to a {@link CustomerEntity}.
+     *
+     * @param customerDTO The CustomerDTO to convert.
+     * @return The converted CustomerEntity.
+     */
+    CustomerEntity toEntity(CustomerDTO customerDTO);
+}
