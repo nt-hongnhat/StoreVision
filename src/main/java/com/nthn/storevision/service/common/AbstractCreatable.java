@@ -6,7 +6,7 @@
  * File: AbstractCreatable.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-05-10 13:05:07
+ * Last Modified: 2026-05-17 14:15:02
  */
 
 package com.nthn.storevision.service.common;
@@ -35,7 +35,7 @@ public class AbstractCreatable<M extends Persistable<I>, I, E extends M>
   @SuppressWarnings("unchecked")
   @Override
   public I create(final M entity) {
-    final M saved = getRepository().save((E) entity);
+    final M saved = repository.save((E) entity);
     return saved.getId();
   }
 }
