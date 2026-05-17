@@ -6,7 +6,7 @@
  * File: Readable.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-05-10 13:06:47
+ * Last Modified: 2026-05-17 14:15:54
  */
 
 package com.nthn.storevision.service.generic;
