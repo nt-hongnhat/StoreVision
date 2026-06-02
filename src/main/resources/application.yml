@@ -38,3 +38,6 @@ spring:
       - logging
       - swagger
       - thymeleaf
+app:
+  oauth2:
+    success-redirect-url: /

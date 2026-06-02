@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.jspecify.annotations.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -46,6 +47,9 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
   private static final String EMAIL = "email";
   private static final String ROLE_USER = "ROLE_USER";
+
+  @Value("${app.oauth2.success-redirect-url}")
+  private String successRedirectUrl;
 
   private final UserFactory googleAuthUserFactory;
   private final JpaUserRepository jpaRepository;
@@ -87,8 +91,8 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
       configureUserAuthentication(authorities, persistUser);
     }
 
-    log.debug("Redirecting after successful authentication.");
-    response.sendRedirect("/api/v1/products"); // Changed to a meaningful redirect for StoreVision
+    log.debug("Redirecting after successful authentication to: {}", successRedirectUrl);
+    response.sendRedirect(successRedirectUrl);
   }
 
   /**
