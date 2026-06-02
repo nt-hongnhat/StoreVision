@@ -82,11 +82,11 @@ Controller (v1/)
 
 ### 7. Security Rules
 
-- Security configuration lives exclusively in `SecurityConfig.java` under `config/`.
+- Security configuration lives exclusively in `SecurityConfig.java` under `security/config/`.
+- The `security/` package is structured into focused sub-packages: `config/` (SecurityConfig), `context/` (UserContext), `filter/` (UserInfoFilter), `oauth/` (OAuth2SuccessHandler), `user/` (CustomUserDetailsService, UserPrincipal).
 - OAuth2 Google authentication is configured in `application-authentication.yml` — do not hardcode credentials.
-- Custom user details logic goes in `security/` package (e.g., `CustomUserDetailsService`, `UserPrincipal`, `UserInfoFilter`).
-- Never expose internal user/session data outside the `security/` boundary without going through `UserContext`.
-- Keep security-related components (JWT provider, custom filters, authentication configuration) isolated inside `security/` or `config/` — never scatter them into generic packages such as `component/`.
+- Never expose internal user/session data outside the `security/` boundary without going through `UserContext` in `security/context/`.
+- Keep security-related components (JWT provider, custom filters, authentication configuration) isolated inside the `security/` sub-package hierarchy — never scatter them into generic packages such as `component/` or the top-level `config/`.
 
 ### 8. Database & Migrations
 
@@ -204,7 +204,7 @@ spring:
 | Concern              | Location                                                          |
 |----------------------|-------------------------------------------------------------------|
 | Main entry point     | `src/main/java/com/nthn/storevision/StoreVisionApplication.java`  |
-| Security config      | `config/SecurityConfig.java`                                      |
+| Security config      | `security/config/SecurityConfig.java`                             |
 | Global error handler | `advice/`                                                         |
 | Base entity (audit)  | `entity/mapped/BaseEntity.java`                                   |
 | Generic interfaces   | `service/generic/`                                                |
