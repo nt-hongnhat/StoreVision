@@ -6,7 +6,7 @@
  * File: build.gradle
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-05-10 13:22:57
+ * Last Modified: 2026-06-02 20:37:08
  */
 
 plugins {
@@ -55,7 +55,7 @@ dependencies {
     implementation 'org.springframework.modulith:spring-modulith-starter-jpa'
 
     // Thymeleaf security extras
-    implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6:3.1.2.RELEASE'
+    implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6:3.2.1'
 
     // PostgreSQL
     implementation 'org.postgresql:postgresql:42.7.3'
