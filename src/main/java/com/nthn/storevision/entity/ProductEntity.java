@@ -12,6 +12,7 @@
 package com.nthn.storevision.entity;
 
 import com.nthn.storevision.entity.mapped.BaseEntity;
+import com.nthn.storevision.model.Product;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
 import lombok.AllArgsConstructor;
@@ -19,6 +20,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 
 /**
  * Represents a product entity in the database. This class maps to the "products" table and extends
@@ -31,7 +33,8 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ProductEntity extends BaseEntity<Long> {
+@Accessors(chain = true)
+public class ProductEntity extends BaseEntity<Long> implements Product {
 
   @Column // Assuming category can be null initially
   private String category;

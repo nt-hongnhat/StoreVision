@@ -1,16 +1,15 @@
 /*
- * Copyright (c) 2025 Hong Nhat. All rights reserved.
+ * Copyright (c) 2026 Hong Nhat. All rights reserved.
  *
- * Project: Book Thymeleaf
- * Module: Book Thymeleaf Main
+ * Project: Store Vision
+ * Module: Store Vision Main
  * File: BaseEntity.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2025-05-18 22:58:17
+ * Last Modified: 2026-06-02 21:45:51
  */
 
 package com.nthn.storevision.entity.mapped;
-
 
 import com.nthn.storevision.annotation.DeletedBy;
 import com.nthn.storevision.annotation.DeletedDate;
@@ -32,11 +31,11 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.annotations.ColumnDefault;
+import org.jspecify.annotations.NonNull;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
-import org.jspecify.annotations.NonNull;
 import org.springframework.modulith.NamedInterface;
 
 /**
@@ -54,56 +53,42 @@ import org.springframework.modulith.NamedInterface;
 @ToString
 @NoArgsConstructor
 public abstract class BaseEntity<I> implements CustomAuditable<I> {
-  /**
-   * The user who created this entity.
-   */
+  /** The user who created this entity. */
   @CreatedBy
   @ManyToOne(fetch = FetchType.LAZY, optional = false)
   @JoinColumn(name = "created_by", nullable = false)
   @ToString.Exclude
   private UserEntity createdBy;
 
-  /**
-   * The date and time when this entity was created.
-   */
+  /** The date and time when this entity was created. */
   @CreatedDate
   @ColumnDefault("CURRENT_TIMESTAMP")
   @Column(name = "created_at")
   private LocalDateTime createdDate;
 
-  /**
-   * The user who deleted this entity.
-   */
+  /** The user who deleted this entity. */
   @DeletedBy
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "deleted_by")
   @ToString.Exclude
   private UserEntity deletedBy;
 
-  /**
-   * The date and time when this entity was deleted.
-   */
+  /** The date and time when this entity was deleted. */
   @DeletedDate
   @Column(name = "deleted_at")
   private LocalDateTime deletedDate;
 
-  /**
-   * A transient field indicating whether this entity is marked as deleted.
-   */
-  @Transient private boolean isDeleted = false;
+  /** A transient field indicating whether this entity is marked as deleted. */
+  @Transient private boolean isDeleted;
 
-  /**
-   * The user who last modified this entity.
-   */
+  /** The user who last modified this entity. */
   @LastModifiedBy
   @ManyToOne(fetch = FetchType.LAZY, optional = false)
   @JoinColumn(name = "last_modified_by", nullable = false)
   @ToString.Exclude
   private UserEntity lastModifiedBy;
 
-  /**
-   * The date and time when this entity was last modified.
-   */
+  /** The date and time when this entity was last modified. */
   @LastModifiedDate
   @Column(name = "last_modified_at")
   private LocalDateTime lastModifiedDate;
@@ -174,7 +159,8 @@ public abstract class BaseEntity<I> implements CustomAuditable<I> {
   /**
    * Returns the date and time when this entity was last modified.
    *
-   * @return An {@link Optional} containing the {@link LocalDateTime} when this entity was last modified.
+   * @return An {@link Optional} containing the {@link LocalDateTime} when this entity was last
+   *     modified.
    */
   @NonNull
   @Override

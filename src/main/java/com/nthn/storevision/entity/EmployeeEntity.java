@@ -6,18 +6,20 @@
  * File: EmployeeEntity.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-02 21:38:39
+ * Last Modified: 2026-06-02 21:43:45
  */
 
 package com.nthn.storevision.entity;
 
 import com.nthn.storevision.entity.mapped.BaseEntity;
+import com.nthn.storevision.model.Employee;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 
 /**
  * Represents an employee entity in the database. This class maps to the "employees" table and
@@ -30,7 +32,8 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class EmployeeEntity extends BaseEntity<Long> {
+@Accessors(chain = true)
+public class EmployeeEntity extends BaseEntity<Long> implements Employee {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
