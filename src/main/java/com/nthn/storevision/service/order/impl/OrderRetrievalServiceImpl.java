@@ -7,6 +7,7 @@ import com.nthn.storevision.repository.OrderRepository;
 import com.nthn.storevision.service.common.AbstractReadable;
 import com.nthn.storevision.service.order.OrderRetrievalService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,6 +17,7 @@ import java.util.List;
  * Service for retrieving {@link OrderEntity} entities. Extends {@link AbstractReadable} to provide read
  * operations for {@link OrderEntity} entities.
  */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class OrderRetrievalServiceImpl
@@ -43,6 +45,7 @@ public class OrderRetrievalServiceImpl
   @Override
   @Transactional(readOnly = true)
   public List<OrderDTO> findAllOrdersAsDTO() {
+    log.debug("Fetching all orders as DTO");
     return findAll(orderMapper::toDTO);
   }
 
@@ -55,6 +58,7 @@ public class OrderRetrievalServiceImpl
   @Override
   @Transactional(readOnly = true)
   public OrderDTO findOrderDTOById(Long id) {
+    log.debug("Fetching order DTO by id: {}", id);
     return findById(id, orderMapper::toDTO);
   }
 

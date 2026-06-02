@@ -7,6 +7,7 @@ import com.nthn.storevision.repository.EmployeeRepository; // Changed from JpaEm
 import com.nthn.storevision.service.common.AbstractReadable;
 import com.nthn.storevision.service.employee.EmployeeRetrievalService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,6 +19,7 @@ import java.util.function.Function;
  * Service for retrieving {@link EmployeeEntity} entities. Extends {@link AbstractReadable} to provide read
  * operations for {@link EmployeeEntity} entities.
  */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class EmployeeRetrievalServiceImpl
@@ -45,6 +47,7 @@ public class EmployeeRetrievalServiceImpl
   @Override
   @Transactional(readOnly = true)
   public List<EmployeeDTO> findAllEmployeesAsDTO() {
+    log.debug("Fetching all employees as DTO");
     return findAll(employeeMapper::toDTO);
   }
 
@@ -57,6 +60,7 @@ public class EmployeeRetrievalServiceImpl
   @Override
   @Transactional(readOnly = true)
   public EmployeeDTO findEmployeeDTOById(Long id) {
+    log.debug("Fetching employee DTO by id: {}", id);
     return findById(id, employeeMapper::toDTO);
   }
 
@@ -73,6 +77,7 @@ public class EmployeeRetrievalServiceImpl
   @Override
   @Transactional(readOnly = true)
   public <T> Optional<T> findByUsername(String username, Function<? super EmployeeEntity, T> mapper) {
+    log.debug("Fetching employee by username: {}", username);
     return getRepository().findByUsername(username).map(mapper);
   }
 

@@ -20,6 +20,7 @@ import com.nthn.storevision.service.employee.EmployeeRetrievalService;
 import com.nthn.storevision.service.employee.EmployeeUpdateService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -30,6 +31,7 @@ import java.util.List;
  * REST controller for managing employees.
  * Provides endpoints for CRUD operations on employees.
  */
+@Slf4j
 @RestController
 @RequestMapping("/api/v1/employees")
 @RequiredArgsConstructor
@@ -48,6 +50,7 @@ public class EmployeeControllerV1 {
    */
   @GetMapping
   public ResponseEntity<List<EmployeeDTO>> getAllEmployees() {
+    log.debug("GET /employees");
     return ResponseEntity.ok(employeeRetrievalService.findAllEmployeesAsDTO());
   }
 
@@ -59,6 +62,7 @@ public class EmployeeControllerV1 {
    */
   @GetMapping("/{id}")
   public ResponseEntity<EmployeeDTO> getEmployeeById(@PathVariable final Long id) {
+    log.debug("GET /employees/{}", id);
     return ResponseEntity.ok(employeeRetrievalService.findEmployeeDTOById(id));
   }
 
@@ -70,6 +74,7 @@ public class EmployeeControllerV1 {
    */
   @PostMapping
   public ResponseEntity<EmployeeDTO> createEmployee(@Valid @RequestBody final EmployeeDTO employeeDTO) {
+    log.debug("POST /employees");
     EmployeeEntity employeeEntity = employeeMapper.toEntity(employeeDTO);
     // In a real application, you would hash the password before saving
     employeeCreationService.create(employeeEntity);
@@ -85,6 +90,7 @@ public class EmployeeControllerV1 {
    */
   @PutMapping("/{id}")
   public ResponseEntity<EmployeeDTO> updateEmployee(@PathVariable final Long id, @Valid @RequestBody final EmployeeDTO employeeDTO) {
+    log.debug("PUT /employees/{}", id);
     EmployeeEntity existingEmployee = employeeMapper.toEntity(employeeRetrievalService.findEmployeeDTOById(id));
     existingEmployee.setUsername(employeeDTO.getUsername());
     // In a real application, handle password updates carefully (e.g., check old password, hash new one)
@@ -102,6 +108,7 @@ public class EmployeeControllerV1 {
    */
   @DeleteMapping("/{id}")
   public ResponseEntity<Void> deleteEmployee(@PathVariable final Long id) {
+    log.debug("DELETE /employees/{}", id);
     employeeDeletionService.permanentlyDelete(id);
     return ResponseEntity.noContent().build();
   }

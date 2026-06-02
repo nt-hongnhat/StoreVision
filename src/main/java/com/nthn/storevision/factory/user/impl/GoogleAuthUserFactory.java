@@ -4,6 +4,7 @@ import com.nthn.storevision.entity.UserEntity;
 import com.nthn.storevision.factory.user.UserFactory;
 import com.nthn.storevision.model.User;
 import java.util.Map;
+import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Component;
 
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Component;
  * A factory for creating {@link User} objects from Google authentication profiles.
  * This class implements the {@link UserFactory} interface.
  */
+@Slf4j
 @Component
 public class GoogleAuthUserFactory implements UserFactory {
 
@@ -28,6 +30,7 @@ public class GoogleAuthUserFactory implements UserFactory {
    */
   @Override
   public User create(@NonNull final Map<String, Object> profile) {
+    log.debug("Creating user from Google auth profile for email: {}", profile.get(EMAIL));
     final String email = profile.get(EMAIL).toString();
     final UserEntity user = new UserEntity();
     user.setUsername(email)

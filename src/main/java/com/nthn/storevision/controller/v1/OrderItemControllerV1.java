@@ -20,6 +20,7 @@ import com.nthn.storevision.service.orderitem.OrderItemRetrievalService;
 import com.nthn.storevision.service.orderitem.OrderItemUpdateService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -30,6 +31,7 @@ import java.util.List;
  * REST controller for managing order items.
  * Provides endpoints for CRUD operations on order items.
  */
+@Slf4j
 @RestController
 @RequestMapping("/api/v1/order-items")
 @RequiredArgsConstructor
@@ -48,6 +50,7 @@ public class OrderItemControllerV1 {
    */
   @GetMapping
   public ResponseEntity<List<OrderItemDTO>> getAllOrderItems() {
+    log.debug("GET /order-items");
     return ResponseEntity.ok(orderItemRetrievalService.findAllOrderItemsAsDTO());
   }
 
@@ -59,6 +62,7 @@ public class OrderItemControllerV1 {
    */
   @GetMapping("/{id}")
   public ResponseEntity<OrderItemDTO> getOrderItemById(@PathVariable final Long id) {
+    log.debug("GET /order-items/{}", id);
     return ResponseEntity.ok(orderItemRetrievalService.findOrderItemDTOById(id));
   }
 
@@ -70,6 +74,7 @@ public class OrderItemControllerV1 {
    */
   @PostMapping
   public ResponseEntity<OrderItemDTO> createOrderItem(@Valid @RequestBody final OrderItemDTO orderItemDTO) {
+    log.debug("POST /order-items");
     OrderItemEntity orderItemEntity = orderItemMapper.toEntity(orderItemDTO);
     orderItemCreationService.create(orderItemEntity);
     return new ResponseEntity<>(orderItemMapper.toDTO(orderItemEntity), HttpStatus.CREATED);
@@ -84,6 +89,7 @@ public class OrderItemControllerV1 {
    */
   @PutMapping("/{id}")
   public ResponseEntity<OrderItemDTO> updateOrderItem(@PathVariable final Long id, @Valid @RequestBody final OrderItemDTO orderItemDTO) {
+    log.debug("PUT /order-items/{}", id);
     OrderItemEntity existingOrderItem = orderItemMapper.toEntity(orderItemRetrievalService.findOrderItemDTOById(id));
     existingOrderItem.setQuantity(orderItemDTO.getQuantity());
     existingOrderItem.setUnitPrice(orderItemDTO.getUnitPrice());
@@ -101,6 +107,7 @@ public class OrderItemControllerV1 {
    */
   @DeleteMapping("/{id}")
   public ResponseEntity<Void> deleteOrderItem(@PathVariable final Long id) {
+    log.debug("DELETE /order-items/{}", id);
     orderItemDeletionService.permanentlyDelete(id);
     return ResponseEntity.noContent().build();
   }

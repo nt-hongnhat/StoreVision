@@ -7,6 +7,7 @@ import com.nthn.storevision.repository.OrderItemRepository; // Changed from JpaO
 import com.nthn.storevision.service.common.AbstractReadable;
 import com.nthn.storevision.service.orderitem.OrderItemRetrievalService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,6 +17,7 @@ import java.util.List;
  * Service for retrieving {@link OrderItemEntity} entities. Extends {@link AbstractReadable} to provide read
  * operations for {@link OrderItemEntity} entities.
  */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class OrderItemRetrievalServiceImpl
@@ -43,6 +45,7 @@ public class OrderItemRetrievalServiceImpl
   @Override
   @Transactional(readOnly = true)
   public List<OrderItemDTO> findAllOrderItemsAsDTO() {
+    log.debug("Fetching all order items as DTO");
     return findAll(orderItemMapper::toDTO);
   }
 
@@ -55,6 +58,7 @@ public class OrderItemRetrievalServiceImpl
   @Override
   @Transactional(readOnly = true)
   public OrderItemDTO findOrderItemDTOById(Long id) {
+    log.debug("Fetching order item DTO by id: {}", id);
     return findById(id, orderItemMapper::toDTO);
   }
 

@@ -18,6 +18,7 @@ import com.nthn.storevision.repository.jpa.JpaProductRepository;
 import com.nthn.storevision.service.common.AbstractReadable;
 import com.nthn.storevision.service.product.ProductRetrievalService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,6 +29,7 @@ import java.util.function.Function;
  * Service for retrieving {@link ProductEntity} entities. Extends {@link AbstractReadable} to
  * provide read operations for {@link ProductEntity} entities.
  */
+@Slf4j
 @Service
 public class ProductRetrievalServiceImpl
     extends AbstractReadable<ProductEntity, Long, JpaProductRepository>
@@ -54,6 +56,7 @@ public class ProductRetrievalServiceImpl
   @Override
   @Transactional(readOnly = true)
   public List<ProductDTO> findAllProductsAsDTO() {
+    log.debug("Fetching all products as DTO");
     return findAll(productMapper::toDTO);
   }
 
@@ -66,6 +69,7 @@ public class ProductRetrievalServiceImpl
   @Override
   @Transactional(readOnly = true)
   public ProductDTO findProductDTOById(Long id) {
+    log.debug("Fetching product DTO by id: {}", id);
     return findById(id, productMapper::toDTO);
   }
 

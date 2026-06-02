@@ -20,6 +20,7 @@ import com.nthn.storevision.service.customer.CustomerRetrievalService;
 import com.nthn.storevision.service.customer.CustomerUpdateService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -30,6 +31,7 @@ import java.util.List;
  * REST controller for managing customers.
  * Provides endpoints for CRUD operations on customers.
  */
+@Slf4j
 @RestController
 @RequestMapping("/api/v1/customers")
 @RequiredArgsConstructor
@@ -48,6 +50,7 @@ public class CustomerControllerV1 {
    */
   @GetMapping
   public ResponseEntity<List<CustomerDTO>> getAllCustomers() {
+    log.debug("GET /customers");
     return ResponseEntity.ok(customerRetrievalService.findAllCustomersAsDTO());
   }
 
@@ -59,6 +62,7 @@ public class CustomerControllerV1 {
    */
   @GetMapping("/{id}")
   public ResponseEntity<CustomerDTO> getCustomerById(@PathVariable final Long id) {
+    log.debug("GET /customers/{}", id);
     return ResponseEntity.ok(customerRetrievalService.findCustomerDTOById(id));
   }
 
@@ -70,6 +74,7 @@ public class CustomerControllerV1 {
    */
   @PostMapping
   public ResponseEntity<CustomerDTO> createCustomer(@Valid @RequestBody final CustomerDTO customerDTO) {
+    log.debug("POST /customers");
     CustomerEntity customerEntity = customerMapper.toEntity(customerDTO);
     customerCreationService.create(customerEntity);
     return new ResponseEntity<>(customerMapper.toDTO(customerEntity), HttpStatus.CREATED);
@@ -84,6 +89,7 @@ public class CustomerControllerV1 {
    */
   @PutMapping("/{id}")
   public ResponseEntity<CustomerDTO> updateCustomer(@PathVariable final Long id, @Valid @RequestBody final CustomerDTO customerDTO) {
+    log.debug("PUT /customers/{}", id);
     CustomerEntity existingCustomer = customerMapper.toEntity(customerRetrievalService.findCustomerDTOById(id));
     existingCustomer.setName(customerDTO.getName());
     existingCustomer.setEmail(customerDTO.getEmail());
@@ -101,6 +107,7 @@ public class CustomerControllerV1 {
    */
   @DeleteMapping("/{id}")
   public ResponseEntity<Void> deleteCustomer(@PathVariable final Long id) {
+    log.debug("DELETE /customers/{}", id);
     customerDeletionService.permanentlyDelete(id);
     return ResponseEntity.noContent().build();
   }

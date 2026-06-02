@@ -15,6 +15,7 @@ import com.nthn.storevision.dto.response.ApiResponse;
 import com.nthn.storevision.dto.response.Error;
 import com.nthn.storevision.factory.ApiResponseFactory;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springdoc.core.properties.SpringDocConfigProperties;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;
@@ -31,6 +32,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
  * implements {@link ResponseBodyAdvice} to modify the response body before it is sent to the
  * client.
  */
+@Slf4j
 @RestControllerAdvice
 @RequiredArgsConstructor
 public class ApiResponseHandler implements ResponseBodyAdvice<Object> {
@@ -55,6 +57,7 @@ public class ApiResponseHandler implements ResponseBodyAdvice<Object> {
       @NonNull final Class<? extends HttpMessageConverter<?>> selectedConverterType,
       @NonNull final ServerHttpRequest request,
       @NonNull final ServerHttpResponse response) {
+    log.debug("Wrapping response body for path: {}", request.getURI().getPath());
 
     final Object result;
     if (body instanceof ApiResponse

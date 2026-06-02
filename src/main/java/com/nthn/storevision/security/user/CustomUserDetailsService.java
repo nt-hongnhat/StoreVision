@@ -6,7 +6,7 @@
  * File: CustomUserDetailsService.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-05-10 12:44:53
+ * Last Modified: 2026-06-02 17:01:42
  */
 
 package com.nthn.storevision.security.user;
@@ -14,6 +14,7 @@ package com.nthn.storevision.security.user;
 import com.nthn.storevision.entity.UserEntity;
 import com.nthn.storevision.repository.jpa.JpaUserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -25,6 +26,7 @@ import java.util.Collections;
  * Custom implementation of Spring Security's {@link UserDetailsService}.
  * This service is responsible for loading user-specific data during authentication.
  */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class CustomUserDetailsService implements UserDetailsService {
@@ -41,9 +43,10 @@ public class CustomUserDetailsService implements UserDetailsService {
    */
   @Override
   public UserDetails loadUserByUsername(final String username) throws UsernameNotFoundException {
+    log.debug("Loading user by username: {}", username);
     final UserEntity user = jpaRepository.findByUsername(username)
             .or(() -> jpaRepository.findByEmail(username))
-            .orElseThrow(() -> new UsernameNotFoundException("User not found with username or email: " + username));
+            .orElseThrow(() -> new UsernameNotFoundException("User not found with username or email: %s".formatted(username)));
     return new UserPrincipal(Collections.emptyList(), user);
   }
 }

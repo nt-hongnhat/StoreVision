@@ -7,6 +7,7 @@ import com.nthn.storevision.repository.CustomerRepository;
 import com.nthn.storevision.service.common.AbstractReadable;
 import com.nthn.storevision.service.customer.CustomerRetrievalService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,6 +19,7 @@ import java.util.function.Function;
  * Service for retrieving {@link CustomerEntity} entities. Extends {@link AbstractReadable} to provide read
  * operations for {@link CustomerEntity} entities.
  */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class CustomerRetrievalServiceImpl
@@ -45,6 +47,7 @@ public class CustomerRetrievalServiceImpl
   @Override
   @Transactional(readOnly = true)
   public List<CustomerDTO> findAllCustomersAsDTO() {
+    log.debug("Fetching all customers as DTO");
     return findAll(customerMapper::toDTO);
   }
 
@@ -57,6 +60,7 @@ public class CustomerRetrievalServiceImpl
   @Override
   @Transactional(readOnly = true)
   public CustomerDTO findCustomerDTOById(Long id) {
+    log.debug("Fetching customer DTO by id: {}", id);
     return findById(id, customerMapper::toDTO);
   }
 
@@ -73,6 +77,7 @@ public class CustomerRetrievalServiceImpl
   @Override
   @Transactional(readOnly = true)
   public <T> Optional<T> findByEmail(String email, Function<? super CustomerEntity, T> mapper) {
+    log.debug("Fetching customer by email: {}", email);
     return getRepository().findByEmail(email).map(mapper);
   }
 

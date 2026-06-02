@@ -18,6 +18,7 @@ import com.nthn.storevision.service.common.AbstractReadable;
 import com.nthn.storevision.service.user.UserRetrievalService;
 import java.util.Optional;
 import java.util.function.Function;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
  * Service for retrieving {@link User} entities. Extends {@link AbstractReadable} to provide read
  * operations for {@link User} entities.
  */
+@Slf4j
 @Service
 public class UserRetrievalServiceImpl
     extends AbstractReadable<User, Integer, JpaUserRepository>
@@ -52,7 +54,7 @@ public class UserRetrievalServiceImpl
   @Transactional(readOnly = true)
   @Override
   public <T> Optional<T> findByEmail(final String email, final Function<? super User, T> mapper) {
-
+    log.debug("Fetching user by email: {}", email);
     return getRepository().findByEmail(email).map(mapper);
   }
 

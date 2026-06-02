@@ -15,6 +15,7 @@ import com.nthn.storevision.dto.response.Error;
 import com.nthn.storevision.exception.ApplicationException;
 import com.nthn.storevision.exception.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.MessageSource;
 import org.jspecify.annotations.NonNull;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -25,6 +26,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
  * Global exception handler for handling application-specific exceptions. This class extends {@link
  * ResponseEntityExceptionHandler} to provide custom error responses.
  */
+@Slf4j
 @RestControllerAdvice
 @RequiredArgsConstructor
 class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
@@ -40,6 +42,7 @@ class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
    */
   @ExceptionHandler(ApplicationException.class)
   public Error handleCustomException(@NonNull final ApplicationException exception) {
+    log.warn("ApplicationException: [{}] {}", exception.getCode(), exception.getMessage(messageSource));
     return new Error(exception.getCode(), exception.getMessage(messageSource));
   }
 
@@ -52,6 +55,7 @@ class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
    */
   @ExceptionHandler(EntityNotFoundException.class)
   public Error handleEntityNotFoundException(@NonNull final EntityNotFoundException exception) {
+    log.warn("EntityNotFoundException: [{}] {}", exception.getCode(), exception.getMessage(messageSource));
     return new Error(exception.getCode(), exception.getMessage(messageSource));
   }
 }

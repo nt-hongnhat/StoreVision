@@ -20,6 +20,7 @@ import com.nthn.storevision.service.order.OrderRetrievalService;
 import com.nthn.storevision.service.order.OrderUpdateService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -30,6 +31,7 @@ import java.util.List;
  * REST controller for managing orders.
  * Provides endpoints for CRUD operations on orders.
  */
+@Slf4j
 @RestController
 @RequestMapping("/api/v1/orders")
 @RequiredArgsConstructor
@@ -48,6 +50,7 @@ public class OrderControllerV1 {
    */
   @GetMapping
   public ResponseEntity<List<OrderDTO>> getAllOrders() {
+    log.debug("GET /orders");
     return ResponseEntity.ok(orderRetrievalService.findAllOrdersAsDTO());
   }
 
@@ -59,6 +62,7 @@ public class OrderControllerV1 {
    */
   @GetMapping("/{id}")
   public ResponseEntity<OrderDTO> getOrderById(@PathVariable final Long id) {
+    log.debug("GET /orders/{}", id);
     return ResponseEntity.ok(orderRetrievalService.findOrderDTOById(id));
   }
 
@@ -70,6 +74,7 @@ public class OrderControllerV1 {
    */
   @PostMapping
   public ResponseEntity<OrderDTO> createOrder(@Valid @RequestBody final OrderDTO orderDTO) {
+    log.debug("POST /orders");
     OrderEntity orderEntity = orderMapper.toEntity(orderDTO);
     orderCreationService.create(orderEntity);
     return new ResponseEntity<>(orderMapper.toDTO(orderEntity), HttpStatus.CREATED);
@@ -84,6 +89,7 @@ public class OrderControllerV1 {
    */
   @PutMapping("/{id}")
   public ResponseEntity<OrderDTO> updateOrder(@PathVariable final Long id, @Valid @RequestBody final OrderDTO orderDTO) {
+    log.debug("PUT /orders/{}", id);
     OrderEntity existingOrder = orderMapper.toEntity(orderRetrievalService.findOrderDTOById(id));
     existingOrder.setOrderDate(orderDTO.getOrderDate());
     existingOrder.setTotalAmount(orderDTO.getTotalAmount());
@@ -102,6 +108,7 @@ public class OrderControllerV1 {
    */
   @DeleteMapping("/{id}")
   public ResponseEntity<Void> deleteOrder(@PathVariable final Long id) {
+    log.debug("DELETE /orders/{}", id);
     orderDeletionService.permanentlyDelete(id);
     return ResponseEntity.noContent().build();
   }

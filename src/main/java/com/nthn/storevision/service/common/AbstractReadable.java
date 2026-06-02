@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.function.Function;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.jspecify.annotations.NonNull;
 
@@ -27,6 +28,7 @@ import org.jspecify.annotations.NonNull;
  * @param <I> the type of the entity's identifier
  * @param <J> the type of the JPA repository for the entity
  */
+@Slf4j
 @RequiredArgsConstructor
 @Getter
 public abstract class AbstractReadable<T, I, J extends JpaRepository<? extends T, I>>
@@ -43,6 +45,7 @@ public abstract class AbstractReadable<T, I, J extends JpaRepository<? extends T
    */
   @Override
   public <R> List<R> findAll(final Function<? super T, R> mapper) {
+    log.debug("Fetching all entities");
     return repository.findAll().stream().map(mapper).toList();
   }
 
@@ -58,6 +61,7 @@ public abstract class AbstractReadable<T, I, J extends JpaRepository<? extends T
    */
   @Override
   public <R> R findById(final I id, @NonNull final Function<? super T, R> mapper) {
+    log.debug("Fetching entity by id: {}", id);
     return mapper.apply(
         repository
             .findById(id)

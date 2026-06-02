@@ -21,6 +21,7 @@ import com.nthn.storevision.service.product.ProductUpdateService;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -29,6 +30,7 @@ import org.springframework.web.bind.annotation.*;
  * REST controller for managing products.
  * Provides endpoints for CRUD operations on products.
  */
+@Slf4j
 @RestController
 @RequestMapping("/api/v1/products")
 @RequiredArgsConstructor
@@ -48,6 +50,7 @@ public class ProductControllerV1 {
    */
   @PostMapping
   public ResponseEntity<ProductDTO> createProduct(@Valid @RequestBody final ProductDTO productDTO) {
+    log.debug("POST /products");
     final ProductEntity productEntity = productMapper.toEntity(productDTO);
     productCreationService.create(productEntity);
     return new ResponseEntity<>(productMapper.toDTO(productEntity), HttpStatus.CREATED);
@@ -61,6 +64,7 @@ public class ProductControllerV1 {
    */
   @DeleteMapping("/{id}")
   public ResponseEntity<Void> deleteProduct(@PathVariable final Long id) {
+    log.debug("DELETE /products/{}", id);
     productDeletionService.permanentlyDelete(id);
     return ResponseEntity.noContent().build();
   }
@@ -72,6 +76,7 @@ public class ProductControllerV1 {
    */
   @GetMapping
   public ResponseEntity<List<ProductDTO>> getAllProducts() {
+    log.debug("GET /products");
     return ResponseEntity.ok(productRetrievalService.findAllProductsAsDTO());
   }
 
@@ -83,6 +88,7 @@ public class ProductControllerV1 {
    */
   @GetMapping("/{id}")
   public ResponseEntity<ProductDTO> getProductById(@PathVariable final Long id) {
+    log.debug("GET /products/{}", id);
     return ResponseEntity.ok(productRetrievalService.findProductDTOById(id));
   }
 
@@ -95,6 +101,7 @@ public class ProductControllerV1 {
    */
   @PutMapping("/{id}")
   public ResponseEntity<ProductDTO> updateProduct(@PathVariable final Long id, @Valid @RequestBody final ProductDTO productDTO) {
+    log.debug("PUT /products/{}", id);
     final ProductEntity existingProduct = productMapper.toEntity(productRetrievalService.findProductDTOById(id));
     existingProduct.setName(productDTO.getName());
     existingProduct.setPrice(productDTO.getPrice());

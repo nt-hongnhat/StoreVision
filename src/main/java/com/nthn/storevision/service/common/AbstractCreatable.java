@@ -14,6 +14,7 @@ package com.nthn.storevision.service.common;
 import com.nthn.storevision.service.generic.Creatable;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Persistable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -25,6 +26,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * @param <I> the type of the entity's identifier
  * @param <E> the type of the JPA entity, extending {@code M}
  */
+@Slf4j
 @RequiredArgsConstructor
 @Getter
 public class AbstractCreatable<M extends Persistable<I>, I, E extends M>
@@ -35,7 +37,9 @@ public class AbstractCreatable<M extends Persistable<I>, I, E extends M>
   @SuppressWarnings("unchecked")
   @Override
   public I create(final M entity) {
+    log.debug("Creating entity: {}", entity);
     final M saved = repository.save((E) entity);
+    log.info("Entity created with id: {}", saved.getId());
     return saved.getId();
   }
 }
