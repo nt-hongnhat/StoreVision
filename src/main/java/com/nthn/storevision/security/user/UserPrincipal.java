@@ -17,6 +17,7 @@ import java.util.Collection;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.modulith.NamedInterface;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -24,6 +25,7 @@ import org.springframework.security.core.userdetails.UserDetails;
  * Custom implementation of {@link UserDetails} to represent an authenticated user.
  * This class wraps a {@link User} object and provides Spring Security with user details.
  */
+@NamedInterface
 @Getter
 @Setter
 @AllArgsConstructor
