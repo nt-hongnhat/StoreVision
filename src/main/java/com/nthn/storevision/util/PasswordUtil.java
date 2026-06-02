@@ -1,16 +1,27 @@
+/*
+ * Copyright (c) 2026 Hong Nhat. All rights reserved.
+ *
+ * Project: Store Vision
+ * Module: Store Vision Main
+ * File: PasswordUtil.java
+ * Author: Nguyen Thi Hong Nhat
+ * Contact: hongnhat1121@gmail.com
+ * Last Modified: 2026-06-02 17:28:11
+ */
+
 package com.nthn.storevision.util;
 
-import lombok.experimental.UtilityClass;
-import org.jspecify.annotations.Nullable;
-import org.jspecify.annotations.NonNull;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-
 import java.util.regex.Pattern;
+import lombok.experimental.UtilityClass;
+import lombok.extern.slf4j.Slf4j;
+import org.jspecify.annotations.Nullable;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 /**
  * Utility class for password operations, including hashing and verification. Uses BCrypt for
  * password encoding.
  */
+@Slf4j
 @UtilityClass
 public class PasswordUtil {
 
@@ -25,8 +36,8 @@ public class PasswordUtil {
    * @param password The password to check and hash if necessary.
    * @return The hashed password.
    */
-  @NonNull
-  public String ensurePasswordIsHashed(final String password) {
+  public @Nullable String ensurePasswordIsHashed(final String password) {
+    log.debug("Ensuring password is hashed");
     return isHashedPassword(password) ? password : hashPassword(password);
   }
 
@@ -39,6 +50,7 @@ public class PasswordUtil {
    *     otherwise.
    */
   public boolean verifyPassword(final String plainPassword, final String hashedPassword) {
+    log.debug("Verifying password");
     return PASSWORD_ENCODER.matches(plainPassword, hashedPassword);
   }
 
