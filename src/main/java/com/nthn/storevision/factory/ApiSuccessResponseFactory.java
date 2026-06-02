@@ -6,37 +6,48 @@
  * File: ApiSuccessResponseFactory.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-05-10 13:08:49
+ * Last Modified: 2026-06-02 21:36:26
  */
 
 package com.nthn.storevision.factory;
 
-import com.nthn.bookthymeleaf.dto.api_response.ApiResponse;
-import com.nthn.bookthymeleaf.dto.api_response.ApiSuccessResponse;
-import com.nthn.bookthymeleaf.dto.api_response.Error;
+import com.nthn.storevision.dto.response.ApiResponse;
+import com.nthn.storevision.dto.response.ApiSuccessResponse;
+import java.util.Optional;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 /**
  * Factory for creating API success responses. Implements the {@link ApiResponseFactory} interface
- * to generate {@link ApiSuccessResponse} objects.
+ * to generate {@link com.nthn.storevision.dto.response.ApiSuccessResponse} objects.
  */
+@Slf4j
 @Component
 public class ApiSuccessResponseFactory implements ApiResponseFactory {
 
   /**
-   * Creates an {@link ApiSuccessResponse} with the specified route and body.
+   * Creates an {@link com.nthn.storevision.dto.response.ApiSuccessResponse} with the specified
+   * route and body.
    *
    * @param route the route associated with the API success response
    * @param body the body of the API success response, which mustn't be an instance of Error
-   * @return an {@link ApiSuccessResponse} object containing the route and response body
+   * @return an {@link com.nthn.storevision.dto.response.ApiSuccessResponse} object containing the
+   *     route and response body
    * @throws IllegalArgumentException if the body is an instance of {@link Error}
    */
   @Override
   public ApiResponse create(final String route, final Object body) {
-    if (body instanceof Error) {
+    log.debug("Building success response for route: {}", route);
+
+    if (body instanceof final Error error) {
+      log.warn(
+          "Invalid body type for success response — received Error type: {}",
+          Optional.of(error).map(o -> o.getClass().getSimpleName()).orElse("null"));
       throw new IllegalArgumentException("Body must not be an instance of Error");
     }
 
-    return new ApiSuccessResponse<>(route, body);
+    final ApiResponse response = new ApiSuccessResponse<>(route, body);
+    log.debug("Success response built successfully for route: {}", route);
+    return response;
   }
 }

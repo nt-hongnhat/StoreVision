@@ -6,7 +6,7 @@
  * File: ApiErrorResponseFactory.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-05-10 13:08:49
+ * Last Modified: 2026-06-02 21:34:51
  */
 
 package com.nthn.storevision.factory;
@@ -14,12 +14,15 @@ package com.nthn.storevision.factory;
 import com.nthn.storevision.dto.response.ApiErrorResponse;
 import com.nthn.storevision.dto.response.ApiResponse;
 import com.nthn.storevision.dto.response.Error;
+import java.util.Optional;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 /**
  * Factory for creating API error responses. Implements the {@link ApiResponseFactory} interface to
  * generate {@link ApiErrorResponse} objects.
  */
+@Slf4j
 @Component
 public class ApiErrorResponseFactory implements ApiResponseFactory {
 
@@ -33,10 +36,17 @@ public class ApiErrorResponseFactory implements ApiResponseFactory {
    */
   @Override
   public ApiResponse create(final String route, final Object body) {
+    log.debug("Building error response for route: {}", route);
+
     if (body instanceof final Error error) {
-      return new ApiErrorResponse(route, error);
+      final ApiResponse response = new ApiErrorResponse(route, error);
+      log.debug("Error response built successfully for route: {}", route);
+      return response;
     }
 
+    log.warn(
+        "Unexpected body type for error response — expected Error but received: {}",
+        Optional.ofNullable(body).map(o -> o.getClass().getSimpleName()).orElse("null"));
     throw new IllegalArgumentException("Body must be an instance of Error");
   }
 }
