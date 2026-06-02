@@ -63,7 +63,7 @@ public class UserInfoFilter extends OncePerRequestFilter {
         final Map<String, Object> attributes = token.getPrincipal().getAttributes();
         UserContext.setUserAttributes(attributes);
         log.debug("OAuth2 user recognized — {} attribute(s) loaded into request context", attributes.size());
-      } else if (authentication != null) {
+      } else if (null != authentication) {
         log.warn("Authenticated request uses a non-OAuth2 mechanism ({}), proceeding without user context",
             authentication.getClass().getSimpleName());
       } else {
