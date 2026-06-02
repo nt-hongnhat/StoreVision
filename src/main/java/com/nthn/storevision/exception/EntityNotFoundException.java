@@ -1,12 +1,12 @@
 /*
- * Copyright (c) 2025 Hong Nhat. All rights reserved.
+ * Copyright (c) 2026 Hong Nhat. All rights reserved.
  *
- * Project: Book Thymeleaf
- * Module: Book Thymeleaf Main
+ * Project: Store Vision
+ * Module: Store Vision Main
  * File: EntityNotFoundException.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 22:36, 12/04/2025
+ * Last Modified: 2026-06-02 20:29:33
  */
 
 package com.nthn.storevision.exception;
@@ -15,8 +15,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
- * Exception thrown when an entity isn't found.
- * This exception is annotated with {@link ResponseStatus} to return a 404 NOT FOUND status.
+ * Exception thrown when an entity isn't found. This exception is annotated with {@link
+ * ResponseStatus} to return a 404 NOT FOUND status.
  */
 @ResponseStatus(HttpStatus.NOT_FOUND)
 public class EntityNotFoundException extends ApplicationException {
