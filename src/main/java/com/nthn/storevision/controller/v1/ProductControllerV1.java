@@ -6,108 +6,81 @@
  * File: ProductControllerV1.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-05-17 14:10:30
+ * Last Modified: 2026-06-02
  */
 
 package com.nthn.storevision.controller.v1;
 
 import com.nthn.storevision.dto.ProductDTO;
-import com.nthn.storevision.entity.ProductEntity;
-import com.nthn.storevision.mapper.ProductMapper;
-import com.nthn.storevision.service.product.ProductCreationService;
-import com.nthn.storevision.service.product.ProductDeletionService;
-import com.nthn.storevision.service.product.ProductRetrievalService;
-import com.nthn.storevision.service.product.ProductUpdateService;
+import com.nthn.storevision.dto.response.ApiSuccessResponse;
+import com.nthn.storevision.factory.ApiSuccessResponseFactory;
+import com.nthn.storevision.service.product.ProductService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-/**
- * REST controller for managing products.
- * Provides endpoints for CRUD operations on products.
- */
+/** REST controller for managing products. */
 @Slf4j
 @RestController
 @RequestMapping("/api/v1/products")
 @RequiredArgsConstructor
 public class ProductControllerV1 {
 
-  private final ProductCreationService productCreationService;
-  private final ProductDeletionService productDeletionService;
-  private final ProductMapper productMapper;
-  private final ProductRetrievalService productRetrievalService;
-  private final ProductUpdateService productUpdateService;
+  private final ApiSuccessResponseFactory successFactory;
+  private final ProductService productService;
 
-  /**
-   * Creates a new product.
-   *
-   * @param productDTO The ProductDTO containing the details of the product to create.
-   * @return A ResponseEntity containing the created ProductDTO.
-   */
   @PostMapping
-  public ResponseEntity<ProductDTO> createProduct(@Valid @RequestBody final ProductDTO productDTO) {
-    log.debug("POST /products");
-    final ProductEntity productEntity = productMapper.toEntity(productDTO);
-    productCreationService.create(productEntity);
-    return new ResponseEntity<>(productMapper.toDTO(productEntity), HttpStatus.CREATED);
+  public ResponseEntity<ApiSuccessResponse<ProductDTO>> createProduct(
+      @Valid @RequestBody final ProductDTO dto, final HttpServletRequest request) {
+    log.debug("POST /api/v1/products");
+    return ResponseEntity.status(HttpStatus.CREATED)
+        .body(wrap(request, productService.create(dto)));
   }
 
-  /**
-   * Deletes a product by its unique identifier.
-   *
-   * @param id The ID of the product to delete.
-   * @return A ResponseEntity with no content if deletion is successful.
-   */
   @DeleteMapping("/{id}")
   public ResponseEntity<Void> deleteProduct(@PathVariable final Long id) {
-    log.debug("DELETE /products/{}", id);
-    productDeletionService.permanentlyDelete(id);
+    log.debug("DELETE /api/v1/products/{}", id);
+    productService.delete(id);
     return ResponseEntity.noContent().build();
   }
 
-  /**
-   * Retrieves a list of all products.
-   *
-   * @return A ResponseEntity containing a list of ProductDTOs.
-   */
   @GetMapping
-  public ResponseEntity<List<ProductDTO>> getAllProducts() {
-    log.debug("GET /products");
-    return ResponseEntity.ok(productRetrievalService.findAllProductsAsDTO());
+  public ResponseEntity<ApiSuccessResponse<List<ProductDTO>>> getAllProducts(
+      final HttpServletRequest request) {
+    log.debug("GET /api/v1/products");
+    return ResponseEntity.ok(wrap(request, productService.findAll()));
   }
 
-  /**
-   * Retrieves a product by its unique identifier.
-   *
-   * @param id The ID of the product to retrieve.
-   * @return A ResponseEntity containing the ProductDTO if found, or a not found status.
-   */
   @GetMapping("/{id}")
-  public ResponseEntity<ProductDTO> getProductById(@PathVariable final Long id) {
-    log.debug("GET /products/{}", id);
-    return ResponseEntity.ok(productRetrievalService.findProductDTOById(id));
+  public ResponseEntity<ApiSuccessResponse<ProductDTO>> getProductById(
+      @PathVariable final Long id, final HttpServletRequest request) {
+    log.debug("GET /api/v1/products/{}", id);
+    return ResponseEntity.ok(wrap(request, productService.findById(id)));
   }
 
-  /**
-   * Updates an existing product.
-   *
-   * @param id The ID of the product to update.
-   * @param productDTO The ProductDTO containing the updated details.
-   * @return A ResponseEntity containing the updated ProductDTO.
-   */
   @PutMapping("/{id}")
-  public ResponseEntity<ProductDTO> updateProduct(@PathVariable final Long id, @Valid @RequestBody final ProductDTO productDTO) {
-    log.debug("PUT /products/{}", id);
-    final ProductEntity existingProduct = productMapper.toEntity(productRetrievalService.findProductDTOById(id));
-    existingProduct.setName(productDTO.getName());
-    existingProduct.setPrice(productDTO.getPrice());
-    existingProduct.setStockQuantity(productDTO.getStockQuantity());
-    existingProduct.setCategory(productDTO.getCategory()); // Add category update
-    productUpdateService.update(existingProduct);
-    return ResponseEntity.ok(productMapper.toDTO(existingProduct));
+  public ResponseEntity<ApiSuccessResponse<ProductDTO>> updateProduct(
+      @PathVariable final Long id,
+      @Valid @RequestBody final ProductDTO dto,
+      final HttpServletRequest request) {
+    log.debug("PUT /api/v1/products/{}", id);
+    return ResponseEntity.ok(wrap(request, productService.update(id, dto)));
+  }
+
+  @SuppressWarnings("unchecked")
+  private <T> ApiSuccessResponse<T> wrap(final HttpServletRequest request, final T data) {
+    return (ApiSuccessResponse<T>) successFactory.create(request.getRequestURI(), data);
   }
 }
