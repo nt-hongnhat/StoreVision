@@ -11,7 +11,9 @@
 
 package com.nthn.storevision.dto;
 
+import com.nthn.storevision.constant.EmployeeRole;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -36,6 +38,6 @@ public class EmployeeDTO {
     @NotBlank(message = "{employee.password.required}")
     private String password; // Note: In a real app, password should not be returned in DTO for security.
 
-    @NotBlank(message = "{employee.role.required}")
-    private String role;
+    @NotNull(message = "{employee.role.required}")
+    private EmployeeRole role;
 }

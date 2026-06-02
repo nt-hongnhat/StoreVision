@@ -11,7 +11,7 @@
 
 package com.nthn.storevision.dto;
 
-import jakarta.validation.constraints.NotBlank;
+import com.nthn.storevision.constant.OrderStatus;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -40,8 +40,8 @@ public class OrderDTO {
     @NotNull(message = "{order.totalAmount.required}")
     private BigDecimal totalAmount;
 
-    @NotBlank(message = "{order.status.required}")
-    private String status;
+    @NotNull(message = "{order.status.required}")
+    private OrderStatus status;
 
     @NotNull(message = "{order.customerId.required}")
     private Long customerId;

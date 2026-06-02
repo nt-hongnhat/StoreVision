@@ -11,6 +11,7 @@
 
 package com.nthn.storevision.model;
 
+import com.nthn.storevision.constant.OrderStatus;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -48,19 +49,19 @@ public interface Order extends CustomAuditable<Long> {
   Order setOrderDate(LocalDateTime orderDate);
 
   /**
-   * Gets the current status of the order (e.g., PENDING, COMPLETED, CANCELLED).
+   * Gets the current lifecycle status of the order.
    *
-   * @return the status as a {@link String}.
+   * @return the {@link OrderStatus}.
    */
-  String getStatus();
+  OrderStatus getStatus();
 
   /**
-   * Sets the current status of the order.
+   * Sets the lifecycle status of the order.
    *
-   * @param status the status to set.
+   * @param status the {@link OrderStatus} to set.
    * @return the updated {@code Order} instance.
    */
-  Order setStatus(String status);
+  Order setStatus(OrderStatus status);
 
   /**
    * Gets the total monetary amount of the order.

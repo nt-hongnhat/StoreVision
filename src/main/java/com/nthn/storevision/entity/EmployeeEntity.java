@@ -11,6 +11,7 @@
 
 package com.nthn.storevision.entity;
 
+import com.nthn.storevision.constant.EmployeeRole;
 import com.nthn.storevision.entity.mapped.BaseEntity;
 import com.nthn.storevision.model.Employee;
 import jakarta.persistence.*;
@@ -42,8 +43,9 @@ public class EmployeeEntity extends BaseEntity<Long> implements Employee {
   @Column(nullable = false)
   private String password; // Hashed password
 
-  @Column(nullable = false)
-  private String role; // e.g., ADMIN, MANAGER, STAFF
+  @Enumerated(EnumType.STRING)
+  @Column(nullable = false, length = 20)
+  private EmployeeRole role;
 
   @Column(nullable = false, unique = true)
   private String username;

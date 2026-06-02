@@ -11,6 +11,8 @@
 
 package com.nthn.storevision.model;
 
+import com.nthn.storevision.constant.EmployeeRole;
+
 /** Represents an employee (staff member) in the StoreVision domain. */
 public interface Employee extends CustomAuditable<Long> {
 
@@ -31,19 +33,19 @@ public interface Employee extends CustomAuditable<Long> {
   Employee setPassword(String password);
 
   /**
-   * Gets the role of the employee (e.g., ADMIN, MANAGER, STAFF).
+   * Gets the permission role of the employee.
    *
-   * @return the role as a {@link String}.
+   * @return the {@link EmployeeRole}.
    */
-  String getRole();
+  EmployeeRole getRole();
 
   /**
-   * Sets the role of the employee.
+   * Sets the permission role of the employee.
    *
-   * @param role the role to set.
+   * @param role the {@link EmployeeRole} to set.
    * @return the updated {@code Employee} instance.
    */
-  Employee setRole(String role);
+  Employee setRole(EmployeeRole role);
 
   /**
    * Gets the username of the employee used for authentication.

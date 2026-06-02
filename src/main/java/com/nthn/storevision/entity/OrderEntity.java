@@ -11,12 +11,15 @@
 
 package com.nthn.storevision.entity;
 
+import com.nthn.storevision.constant.OrderStatus;
 import com.nthn.storevision.entity.mapped.BaseEntity;
 import com.nthn.storevision.model.Customer;
 import com.nthn.storevision.model.Order;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -49,11 +52,15 @@ public class OrderEntity extends BaseEntity<Long> implements Order {
   @Column(nullable = false)
   private LocalDateTime orderDate;
 
-  @Column(nullable = false)
-  private String status; // e.g., PENDING, COMPLETED, CANCELLED
+  @Enumerated(EnumType.STRING)
+  @Column(nullable = false, length = 20)
+  private OrderStatus status;
 
   @Column(nullable = false)
   private BigDecimal totalAmount;
+
+  @OneToMany(mappedBy = "order", fetch = FetchType.LAZY)
+  private List<OrderItemEntity> orderItems = new ArrayList<>();
 
   @Override
   public Order setCustomer(final Customer customer) {
