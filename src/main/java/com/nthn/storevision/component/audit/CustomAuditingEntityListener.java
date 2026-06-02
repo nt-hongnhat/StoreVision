@@ -1,12 +1,12 @@
 /*
- * Copyright (c) 2025 Hong Nhat. All rights reserved.
+ * Copyright (c) 2026 Hong Nhat. All rights reserved.
  *
- * Project: Book Thymeleaf
- * Module: Book Thymeleaf Main
+ * Project: Store Vision
+ * Module: Store Vision Main
  * File: CustomAuditingEntityListener.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2025-05-18 22:58:55
+ * Last Modified: 2026-06-02 17:24:59
  */
 
 package com.nthn.storevision.component.audit;
@@ -28,9 +28,9 @@ import java.util.Arrays;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jspecify.annotations.NonNull;
 import org.springframework.data.domain.AuditorAware;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-import org.jspecify.annotations.NonNull;
 import org.springframework.modulith.NamedInterface;
 import org.springframework.stereotype.Component;
 
@@ -58,7 +58,7 @@ public class CustomAuditingEntityListener {
    * <p>This constant facilitates consistency and reduces the likelihood of hardcoding errors when
    * referring to the "createdBy" field across the codebase.
    */
-  public static final String CREATED_BY = "createdBy";
+  private static final String CREATED_BY = "createdBy";
 
   /**
    * Represents the field name for the creation date in entities.
@@ -67,7 +67,7 @@ public class CustomAuditingEntityListener {
    * an entity. It denotes the property used to track when the entity was initially created in the
    * system.
    */
-  public static final String CREATED_DATE = "createdDate";
+  private static final String CREATED_DATE = "createdDate";
 
   /**
    * Represents the identifier of the user who last modified an entity.
@@ -78,7 +78,7 @@ public class CustomAuditingEntityListener {
    * <p>It is primarily used in conjunction with event listeners or auditing mechanisms to provide
    * traceability and accountability for changes made to entities.
    */
-  public static final String LAST_MODIFIED_BY = "lastModifiedBy";
+  private static final String LAST_MODIFIED_BY = "lastModifiedBy";
 
   /**
    * Represents the name of the auditing field used to store the timestamp of the last modification
@@ -88,7 +88,7 @@ public class CustomAuditingEntityListener {
    * <p>The field typically holds a date or timestamp value indicating when the entity was last
    * updated.
    */
-  public static final String LAST_MODIFIED_DATE = "lastModifiedDate";
+  private static final String LAST_MODIFIED_DATE = "lastModifiedDate";
 
   private final AuditorAware<User> userAuditorAware;
 
@@ -100,7 +100,7 @@ public class CustomAuditingEntityListener {
    * @param target the entity for which creation-specific auditing fields need to be set
    */
   @PrePersist
-  public void setCreatedOn(BaseEntity<?> target) {
+  public void setCreatedOn(final BaseEntity<?> target) {
     updateAuditFields(target, true);
   }
 
@@ -112,7 +112,7 @@ public class CustomAuditingEntityListener {
    *     by) should be set or updated
    */
   @PreUpdate
-  public void setUpdatedOn(BaseEntity<?> target) {
+  public void setUpdatedOn(final BaseEntity<?> target) {
     updateAuditFields(target, false);
   }
 
@@ -124,7 +124,8 @@ public class CustomAuditingEntityListener {
    * <ul>
    *   <li>If annotated with {@link DeletedBy}, it is set to the current auditor's value.
    *   <li>If annotated with {@link DeletedDate}, it is set to the current timestamp. Logs warnings
-   *       or throws exceptions in case of issues during the field update process.</u>
+   *       or throws exceptions in case of issues during the field update process.
+   * </ul>
    *
    * @param baseEntity the entity object whose field needs to be updated based on annotation
    * @param declaredField the field object to be inspected and updated if annotated
@@ -142,13 +143,16 @@ public class CustomAuditingEntityListener {
       } else if (declaredField.isAnnotationPresent(DeletedDate.class)) {
         setFieldValue(declaredField, baseEntity, Instant.now());
       }
-    } catch (Exception e) {
+    } catch (final RuntimeException exception) {
       log.error(
-          "Error handling annotated fields for {}: {}", baseEntity, declaredField.getName(), e);
+          "Error handling annotated fields for {}: {}",
+          baseEntity,
+          declaredField.getName(),
+          exception);
       throw new EntityAccessException(
           MessageFormat.format(
               "Failed to set annotated field {0} for entity", declaredField.getName()),
-          e);
+          exception);
     }
   }
 
@@ -164,7 +168,8 @@ public class CustomAuditingEntityListener {
    * @throws EntityAccessException if no setter method exists for the field, or if there is an error
    *     executing the setter
    */
-  private void setFieldValue(@NonNull Field field, @NonNull Object target, Object value) {
+  private void setFieldValue(
+      @NonNull final Field field, @NonNull final Object target, final Object value) {
     try {
       final String fieldName = field.getName();
       final String setterName =
@@ -172,12 +177,12 @@ public class CustomAuditingEntityListener {
               "set{0}{1}", fieldName.substring(0, 1).toUpperCase(), fieldName.substring(1));
       final Method setter = target.getClass().getMethod(setterName, field.getType());
       setter.invoke(target, value);
-    } catch (NoSuchMethodException e) {
+    } catch (final NoSuchMethodException e) {
       log.error(
           "No setter found for field {} in class {}", field.getName(), target.getClass().getName());
       throw new EntityAccessException(
           MessageFormat.format("No setter found for field {0}", field.getName()), e);
-    } catch (IllegalAccessException | InvocationTargetException e) {
+    } catch (final IllegalAccessException | InvocationTargetException e) {
       log.error("Failed to invoke setter for field {} on entity: {}", field.getName(), target, e);
       throw new EntityAccessException(
           MessageFormat.format("Failed to invoke setter for field {0}", field.getName()), e);
@@ -192,11 +197,12 @@ public class CustomAuditingEntityListener {
    * @param fieldName the name of the field to be set
    * @param value the value to set the field to
    */
-  private void setIfFieldExists(@NonNull BaseEntity<?> baseEntity, String fieldName, Object value) {
+  private void setIfFieldExists(
+      @NonNull final BaseEntity<?> baseEntity, final String fieldName, final Object value) {
     try {
       final Field field = baseEntity.getClass().getDeclaredField(fieldName);
       setFieldValue(field, baseEntity, value);
-    } catch (NoSuchFieldException ignored) {
+    } catch (final NoSuchFieldException ignored) {
       log.warn("Field {} not found for entity: {}", fieldName, baseEntity);
     }
   }
@@ -211,7 +217,7 @@ public class CustomAuditingEntityListener {
    * @param isCreate a flag indicating whether the operation is for entity creation. If {@code
    *     true}, creation-specific fields such as {@code createdDate} and {@code createdBy} are set
    */
-  private void updateAuditFields(@NonNull BaseEntity<?> baseEntity, boolean isCreate) {
+  private void updateAuditFields(@NonNull final BaseEntity<?> baseEntity, final boolean isCreate) {
     if (baseEntity.isDeleted() && baseEntity.getDeletedDate().isEmpty()) {
       Arrays.stream(baseEntity.getClass().getDeclaredFields())
           .forEach(field -> setFieldIfAnnotated(baseEntity, field));

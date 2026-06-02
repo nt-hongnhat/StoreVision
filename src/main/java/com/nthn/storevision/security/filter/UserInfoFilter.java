@@ -6,7 +6,7 @@
  * File: UserInfoFilter.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-02 17:03:38
+ * Last Modified: 2026-06-02 17:29:50
  */
 
 package com.nthn.storevision.security.filter;
@@ -27,18 +27,17 @@ import org.springframework.security.oauth2.client.authentication.OAuth2Authentic
 import org.springframework.web.filter.OncePerRequestFilter;
 
 /**
- * A filter that extracts user information from OAuth2 authentication tokens
- * and stores it in a {@link UserContext} for the duration of the request.
- * This allows easy access to user attributes throughout the application.
+ * A filter that extracts user information from OAuth2 authentication tokens and stores it in a
+ * {@link UserContext} for the duration of the request. This allows easy access to user attributes
+ * throughout the application.
  */
 @NoArgsConstructor
 @Slf4j
 public class UserInfoFilter extends OncePerRequestFilter {
 
   /**
-   * Performs the filtering logic.
-   * Extracts OAuth2 user attributes and sets them in the {@link UserContext}.
-   * Ensures that user attributes are reset after the request is processed.
+   * Performs the filtering logic. Extracts OAuth2 user attributes and sets them in the {@link
+   * UserContext}. Ensures that user attributes are reset after the request is processed.
    *
    * @param request The HTTP request.
    * @param response The HTTP response.

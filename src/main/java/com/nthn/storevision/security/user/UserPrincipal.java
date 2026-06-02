@@ -6,7 +6,7 @@
  * File: UserPrincipal.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-02 17:01:42
+ * Last Modified: 2026-06-02 17:25:49
  */
 
 package com.nthn.storevision.security.user;
@@ -22,8 +22,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 /**
- * Custom implementation of {@link UserDetails} to represent an authenticated user.
- * This class wraps a {@link User} object and provides Spring Security with user details.
+ * Custom implementation of {@link UserDetails} to represent an authenticated user. This class wraps
+ * a {@link User} object and provides Spring Security with user details.
  */
 @NamedInterface
 @Getter
@@ -34,8 +34,8 @@ public class UserPrincipal implements UserDetails {
   private final User user;
 
   /**
-   * Returns the password used to authenticate the user.
-   * Ensures the password is hashed before returning.
+   * Returns the password used to authenticate the user. Ensures the password is hashed before
+   * returning.
    *
    * @return The hashed password.
    */
@@ -75,9 +75,10 @@ public class UserPrincipal implements UserDetails {
   }
 
   /**
-   * Indicates whether the user's credentials (password) has expired.
+   * Indicates whether the user's credentials (password) have expired.
    *
-   * @return {@code true} if the user's credentials are valid (non-expired), {@code false} otherwise.
+   * @return {@code true} if the user's credentials are valid (non-expired), {@code false}
+   *     otherwise.
    */
   @Override
   public boolean isCredentialsNonExpired() {
