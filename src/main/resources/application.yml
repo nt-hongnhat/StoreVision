@@ -41,3 +41,5 @@ spring:
 app:
   oauth2:
     success-redirect-url: /
+  audit:
+    default-admin-email: ${AUDIT_DEFAULT_ADMIN_EMAIL:admin@storevision.local}

@@ -18,6 +18,7 @@ import java.util.Optional;
 import java.util.function.Function;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.jspecify.annotations.NonNull;
 import org.springframework.context.ApplicationContext;
 import org.springframework.data.domain.AuditorAware;
@@ -36,12 +37,8 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class UserAuditorAware implements AuditorAware<User> {
 
-  /**
-   * The default email address for the administrator account. This constant is used as a fallback
-   * when no authenticated user is found and to identify or retrieve the administrator user from the
-   * system.
-   */
-  private static final String DEFAULT_ADMIN_EMAIL = "admin123@gmail.com";
+  @Value("${app.audit.default-admin-email}")
+  private String defaultAdminEmail;
 
   /**
    * A constant representing the key or attribute name used to reference and retrieve the email
@@ -116,6 +113,6 @@ public class UserAuditorAware implements AuditorAware<User> {
    *     {@code Optional} if no user is associated with the admin email.
    */
   private Optional<User> getDefaultAdminUser() {
-    return userRetrievalService.findByEmail(DEFAULT_ADMIN_EMAIL, Function.identity());
+    return userRetrievalService.findByEmail(defaultAdminEmail, Function.identity());
   }
 }
