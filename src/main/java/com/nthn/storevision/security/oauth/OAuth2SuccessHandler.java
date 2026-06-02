@@ -1,9 +1,21 @@
-package com.nthn.storevision.security;
+/*
+ * Copyright (c) 2026 Hong Nhat. All rights reserved.
+ *
+ * Project: Store Vision
+ * Module: Store Vision Main
+ * File: OAuth2SuccessHandler.java
+ * Author: Nguyen Thi Hong Nhat
+ * Contact: hongnhat1121@gmail.com
+ * Last Modified: 2026-06-02 17:05:07
+ */
+
+package com.nthn.storevision.security.oauth;
 
 import com.nthn.storevision.entity.UserEntity;
 import com.nthn.storevision.factory.user.UserFactory;
 import com.nthn.storevision.model.User;
 import com.nthn.storevision.repository.jpa.JpaUserRepository;
+import com.nthn.storevision.security.user.UserPrincipal;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -32,8 +44,8 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
-  public static final String EMAIL = "email";
-  public static final String ROLE_USER = "ROLE_USER";
+  private static final String EMAIL = "email";
+  private static final String ROLE_USER = "ROLE_USER";
 
   private final UserFactory googleAuthUserFactory;
   private final JpaUserRepository jpaRepository;

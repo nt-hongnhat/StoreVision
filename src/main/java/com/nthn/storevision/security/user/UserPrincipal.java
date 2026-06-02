@@ -1,4 +1,15 @@
-package com.nthn.storevision.security;
+/*
+ * Copyright (c) 2026 Hong Nhat. All rights reserved.
+ *
+ * Project: Store Vision
+ * Module: Store Vision Main
+ * File: UserPrincipal.java
+ * Author: Nguyen Thi Hong Nhat
+ * Contact: hongnhat1121@gmail.com
+ * Last Modified: 2026-06-02 17:01:42
+ */
+
+package com.nthn.storevision.security.user;
 
 import com.nthn.storevision.model.User;
 import com.nthn.storevision.util.PasswordUtil;

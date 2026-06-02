@@ -1,5 +1,17 @@
-package com.nthn.storevision.security;
+/*
+ * Copyright (c) 2026 Hong Nhat. All rights reserved.
+ *
+ * Project: Store Vision
+ * Module: Store Vision Main
+ * File: UserInfoFilter.java
+ * Author: Nguyen Thi Hong Nhat
+ * Contact: hongnhat1121@gmail.com
+ * Last Modified: 2026-06-02 17:03:38
+ */
 
+package com.nthn.storevision.security.filter;
+
+import com.nthn.storevision.security.context.UserContext;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

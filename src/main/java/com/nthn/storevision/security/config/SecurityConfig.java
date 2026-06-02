@@ -6,14 +6,14 @@
  * File: SecurityConfig.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-05-10 13:20:30
+ * Last Modified: 2026-06-02 17:03:38
  */
 
-package com.nthn.storevision.config;
+package com.nthn.storevision.security.config;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
-import com.nthn.storevision.security.UserInfoFilter;
+import com.nthn.storevision.security.filter.UserInfoFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
