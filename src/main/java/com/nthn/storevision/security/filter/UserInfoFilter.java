@@ -53,21 +53,31 @@ public class UserInfoFilter extends OncePerRequestFilter {
       @NonNull final FilterChain filterChain)
       throws ServletException, IOException {
 
+    final String method = request.getMethod();
+    final String path = request.getRequestURI();
+    log.debug("Resolving user identity for incoming request: {} {}", method, path);
+
     try {
       final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-      if (authentication instanceof OAuth2AuthenticationToken token) {
+      if (authentication instanceof final OAuth2AuthenticationToken token) {
         final Map<String, Object> attributes = token.getPrincipal().getAttributes();
         UserContext.setUserAttributes(attributes);
-        log.debug("Set user attributes for authenticated OAuth2 user: {}", attributes);
+        log.debug("OAuth2 user recognized — {} attribute(s) loaded into request context", attributes.size());
+      } else if (authentication != null) {
+        log.warn("Authenticated request uses a non-OAuth2 mechanism ({}), proceeding without user context",
+            authentication.getClass().getSimpleName());
       } else {
-        log.debug("No OAuth2 authentication found for this request.");
+        log.debug("Unauthenticated request, proceeding without user context");
       }
 
       filterChain.doFilter(request, response);
+    } catch (final ServletException | IOException e) {
+      log.error("Filter chain execution failed for request: {} {}", method, path, e);
+      throw e;
     } finally {
       UserContext.resetUserAttributes();
-      log.debug("User attributes reset after request processing.");
+      log.debug("User context cleared after completing request: {} {}", method, path);
     }
   }
 }
