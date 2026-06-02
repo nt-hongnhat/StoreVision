@@ -86,6 +86,7 @@ Controller (v1/)
 - OAuth2 Google authentication is configured in `application-authentication.yml` — do not hardcode credentials.
 - Custom user details logic goes in `security/` package (e.g., `CustomUserDetailsService`, `UserPrincipal`, `UserInfoFilter`).
 - Never expose internal user/session data outside the `security/` boundary without going through `UserContext`.
+- Keep security-related components (JWT provider, custom filters, authentication configuration) isolated inside `security/` or `config/` — never scatter them into generic packages such as `component/`.
 
 ### 8. Database & Migrations
 
