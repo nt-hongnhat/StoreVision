@@ -6,7 +6,7 @@
  * File: OrderEntity.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-05-17 14:15:54
+ * Last Modified: 2026-06-02 21:38:39
  */
 
 package com.nthn.storevision.entity;
@@ -23,8 +23,8 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 /**
- * Represents an order entity in the database.
- * This class maps to the "orders" table and extends {@link BaseEntity} for auditing purposes.
+ * Represents an order entity in the database. This class maps to the "orders" table and extends
+ * {@link BaseEntity} for auditing purposes.
  */
 @Entity
 @Table(name = "orders")
@@ -35,30 +35,20 @@ import java.time.LocalDateTime;
 @Builder
 public class OrderEntity extends BaseEntity<Long> {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "customer_id", nullable = false)
+  private CustomerEntity customer;
 
-    @Column(nullable = false)
-    private LocalDateTime orderDate;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-    @Column(nullable = false)
-    private BigDecimal totalAmount;
+  @Column(nullable = false)
+  private LocalDateTime orderDate;
 
-    @Column(nullable = false)
-    private String status; // e.g., PENDING, COMPLETED, CANCELLED
+  @Column(nullable = false)
+  private String status; // e.g., PENDING, COMPLETED, CANCELLED
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "customer_id", nullable = false)
-    private CustomerEntity customer;
-
-    @Override
-    public Long getId() {
-        return id;
-    }
-
-    @Override
-    public boolean isNew() {
-        return id == null;
-    }
+  @Column(nullable = false)
+  private BigDecimal totalAmount;
 }

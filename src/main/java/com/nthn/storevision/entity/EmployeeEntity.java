@@ -6,7 +6,7 @@
  * File: EmployeeEntity.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-05-17 14:24:33
+ * Last Modified: 2026-06-02 21:38:39
  */
 
 package com.nthn.storevision.entity;
@@ -20,8 +20,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
- * Represents an employee entity in the database.
- * This class maps to the "employees" table and extends {@link BaseEntity} for auditing purposes.
+ * Represents an employee entity in the database. This class maps to the "employees" table and
+ * extends {@link BaseEntity} for auditing purposes.
  */
 @Entity
 @Table(name = "employees")
@@ -32,26 +32,16 @@ import lombok.Setter;
 @Builder
 public class EmployeeEntity extends BaseEntity<Long> {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-    @Column(nullable = false, unique = true)
-    private String username;
+  @Column(nullable = false)
+  private String password; // Hashed password
 
-    @Column(nullable = false)
-    private String password; // Hashed password
+  @Column(nullable = false)
+  private String role; // e.g., ADMIN, MANAGER, STAFF
 
-    @Column(nullable = false)
-    private String role; // e.g., ADMIN, MANAGER, STAFF
-
-    @Override
-    public Long getId() {
-        return id;
-    }
-
-    @Override
-    public boolean isNew() {
-        return id == null;
-    }
+  @Column(nullable = false, unique = true)
+  private String username;
 }

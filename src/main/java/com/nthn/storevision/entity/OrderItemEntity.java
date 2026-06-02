@@ -6,7 +6,7 @@
  * File: OrderItemEntity.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-05-17 14:18:47
+ * Last Modified: 2026-06-02 21:38:39
  */
 
 package com.nthn.storevision.entity;
@@ -22,8 +22,8 @@ import lombok.Setter;
 import java.math.BigDecimal;
 
 /**
- * Represents an order item entity in the database.
- * This class maps to the "order_items" table and extends {@link BaseEntity} for auditing purposes.
+ * Represents an order item entity in the database. This class maps to the "order_items" table and
+ * extends {@link BaseEntity} for auditing purposes.
  */
 @Entity
 @Table(name = "order_items")
@@ -34,31 +34,21 @@ import java.math.BigDecimal;
 @Builder
 public class OrderItemEntity extends BaseEntity<Long> {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "order_id", nullable = false)
-    private OrderEntity order;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "order_id", nullable = false)
+  private OrderEntity order;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "product_id", nullable = false)
-    private ProductEntity product;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "product_id", nullable = false)
+  private ProductEntity product;
 
-    @Column(nullable = false)
-    private Integer quantity;
+  @Column(nullable = false)
+  private Integer quantity;
 
-    @Column(nullable = false)
-    private BigDecimal unitPrice;
-
-    @Override
-    public Long getId() {
-        return id;
-    }
-
-    @Override
-    public boolean isNew() {
-        return id == null;
-    }
+  @Column(nullable = false)
+  private BigDecimal unitPrice;
 }
