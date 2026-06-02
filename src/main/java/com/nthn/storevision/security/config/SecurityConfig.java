@@ -6,13 +6,14 @@
  * File: SecurityConfig.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-02 17:03:38
+ * Last Modified: 2026-06-02 21:15:26
  */
 
 package com.nthn.storevision.security.config;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
+import com.nthn.storevision.constant.ApiPathConstants;
 import com.nthn.storevision.security.filter.UserInfoFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -61,15 +62,15 @@ public class SecurityConfig {
     http.authorizeHttpRequests(
             auth ->
                 auth.requestMatchers(
-                        "/public/**",
-                        "/login/**",
+                        ApiPathConstants.PUBLIC_ALL.getValue(),
+                        ApiPathConstants.LOGIN_ALL.getValue(),
                         "/oauth2/**",
                         "/css/**",
                         "/js/**",
-                        "/v3/api-docs/**",
-                        "/swagger-ui/**",
+                        ApiPathConstants.API_DOCS.getValue(),
+                        ApiPathConstants.SWAGGER_UI.getValue(),
                         "/swagger-ui.html",
-                        "/actuator/**")
+                        ApiPathConstants.ACTUATOR.getValue())
                     .permitAll()
                     .anyRequest()
                     .authenticated())
@@ -91,6 +92,11 @@ public class SecurityConfig {
    */
   @Bean
   public WebSecurityCustomizer webSecurityCustomizer() {
-    return web -> web.ignoring().requestMatchers("/swagger-ui/**", "/v3/api-docs/**");
+    return web ->
+        web.ignoring()
+            .requestMatchers(
+                ApiPathConstants.SWAGGER_UI.getValue(),
+                ApiPathConstants.API_DOCS.getValue(),
+                ApiPathConstants.ACTUATOR.getValue());
   }
 }
