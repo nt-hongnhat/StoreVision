@@ -14,7 +14,7 @@ package com.nthn.storevision.exception;
 import lombok.Getter;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.lang.NonNull;
+import org.jspecify.annotations.NonNull;
 
 /**
  * Custom exception class for handling application-specific exceptions. Extends {@link

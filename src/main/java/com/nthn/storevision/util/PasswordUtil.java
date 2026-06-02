@@ -2,7 +2,7 @@ package com.nthn.storevision.util;
 
 import lombok.experimental.UtilityClass;
 import org.jspecify.annotations.Nullable;
-import org.springframework.lang.NonNull;
+import org.jspecify.annotations.NonNull;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.regex.Pattern;

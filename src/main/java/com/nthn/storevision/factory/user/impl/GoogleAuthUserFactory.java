@@ -4,7 +4,7 @@ import com.nthn.storevision.entity.UserEntity;
 import com.nthn.storevision.factory.user.UserFactory;
 import com.nthn.storevision.model.User;
 import java.util.Map;
-import org.springframework.lang.NonNull;
+import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Component;
 
 /**
