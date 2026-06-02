@@ -1,26 +1,27 @@
 /*
- * Copyright (c) 2025 Hong Nhat. All rights reserved.
+ * Copyright (c) 2026 Hong Nhat. All rights reserved.
  *
- * Project: Book Thymeleaf
- * Module: Book Thymeleaf Main
+ * Project: Store Vision
+ * Module: Store Vision Main
  * File: UserAuditorAware.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2025-05-18 23:00:55
+ * Last Modified: 2026-06-02 17:26:12
  */
 
 package com.nthn.storevision.component.audit;
 
-import com.nthn.storevision.component.UserPrincipal;
 import com.nthn.storevision.model.User;
+import com.nthn.storevision.security.user.UserPrincipal;
 import com.nthn.storevision.service.user.UserRetrievalService;
 import java.util.Optional;
 import java.util.function.Function;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jspecify.annotations.NonNull;
 import org.springframework.context.ApplicationContext;
 import org.springframework.data.domain.AuditorAware;
-import org.jspecify.annotations.NonNull;
+import org.springframework.data.domain.Persistable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
@@ -40,7 +41,7 @@ public class UserAuditorAware implements AuditorAware<User> {
    * when no authenticated user is found and to identify or retrieve the administrator user from the
    * system.
    */
-  public static final String DEFAULT_ADMIN_EMAIL = "admin123@gmail.com";
+  private static final String DEFAULT_ADMIN_EMAIL = "admin123@gmail.com";
 
   /**
    * A constant representing the key or attribute name used to reference and retrieve the email
@@ -51,16 +52,15 @@ public class UserAuditorAware implements AuditorAware<User> {
    * acts as a standard identifier to ensure consistent handling of email attributes across
    * different parts of the application.
    */
-  public static final String EMAIL = "email";
+  private static final String EMAIL = "email";
 
   private final ApplicationContext applicationContext;
   private UserRetrievalService userRetrievalService;
 
   /**
-   * Returns the current auditor (authenticated user).
-   * It attempts to retrieve the user from the security context, first checking for a {@link UserPrincipal}
-   * and then for a {@link DefaultOAuth2User}. If no authenticated user is found, it falls back to
-   * the default admin user.
+   * Returns the current auditor (authenticated user). It attempts to retrieve the user from the
+   * security context, first checking for a {@link UserPrincipal} and then for a {@link
+   * DefaultOAuth2User}. If no authenticated user is found, it falls back to the default admin user.
    *
    * @return an {@link Optional} containing the current {@link User} if authenticated, or an empty
    *     {@link Optional} if not authenticated and no default admin user is found.
@@ -83,23 +83,25 @@ public class UserAuditorAware implements AuditorAware<User> {
 
       log.debug("Found authentication principal: {}", principal.getClass().getSimpleName());
 
-      if (authOptional.get() instanceof final UserPrincipal userPrincipal) {
-        final User user = userPrincipal.getUser();
+      switch (authOptional.get()) {
+        case final UserPrincipal userPrincipal -> {
+          final User user = userPrincipal.getUser();
 
-        log.debug(
-            "UserPrincipal found: userId={}, email={}",
-            null != user ? user.getId() : null,
-            null != user ? user.getEmail() : null);
+          log.debug(
+              "UserPrincipal found: userId={}, email={}",
+              Optional.ofNullable(user).map(Persistable::getId).orElse(null),
+              Optional.ofNullable(user).map(User::getEmail).orElse(null));
 
-        return Optional.ofNullable(user)
-            .filter(u -> null != u.getId())
-            .map(u -> userRetrievalService.findById(u.getId(), Function.identity()));
-      }
-
-      if (authOptional.get() instanceof final DefaultOAuth2User defaultOAuth2User) {
-        return userRetrievalService
-            .findByEmail(defaultOAuth2User.getAttribute(EMAIL), Function.identity())
-            .or(this::getDefaultAdminUser);
+          return Optional.ofNullable(user)
+              .filter(u -> null != u.getId())
+              .map(u -> userRetrievalService.findById(u.getId(), Function.identity()));
+        }
+        case final DefaultOAuth2User defaultOAuth2User -> {
+          return userRetrievalService
+              .findByEmail(defaultOAuth2User.getAttribute(EMAIL), Function.identity())
+              .or(this::getDefaultAdminUser);
+        }
+        default -> {}
       }
     }
 
