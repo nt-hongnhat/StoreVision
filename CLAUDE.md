@@ -48,7 +48,7 @@ Controller (v1/)
                     └── Entity (entity/ + entity/mapped/)
 ```
 
-- **Controllers**: Only handle HTTP concerns (request mapping, response wrapping, input validation via `@Valid`). Delegate all logic to services.
+- **Controllers**: Only handle HTTP concerns (request mapping, input validation via `@Valid`, status code declaration via `@ResponseStatus`). Delegate all logic to services. **Never wrap responses manually** — `ApiResponseHandler` (`advice/`) intercepts every non-`ResponseEntity` return value and wraps it in `ApiResponse` automatically.
 - **Services**: One service class per operation per domain (e.g., `OrderCreationService`, `OrderRetrievalService`). Implement generic interfaces from `service/generic/` (`Creatable`, `Readable`, `Updatable`, `Deletable`, `SoftDeletable`, `HardDeletable`).
 - **Repositories**: Define interface in `repository/`, implementation in `repository/impl/`, Spring Data JPA repository in `repository/jpa/`.
 - **Entities**: Extend `BaseEntity` for all auditable entities. Never expose entities directly through API — always convert via Mapper.
@@ -60,11 +60,45 @@ Controller (v1/)
 - Each concrete `impl/` class (e.g., `CustomerServiceImpl`) aggregates operation-specific services — it is the single entry point per domain for the controller.
 - Never call a `Repository` directly from a `Controller` or another `Service`'s domain.
 
+#### Interface-Implementation pattern (mandatory for all service beans)
+
+Every `@Service` bean must follow the Interface-Implementation split:
+
+```
+service/domain/
+    XxxCreationService.java      ← interface, extends Creatable<E, I>
+    XxxRetrievalService.java     ← interface, extends Readable<E, I>  (@NamedInterface if cross-module)
+    XxxUpdateService.java        ← interface, extends Updatable<E>
+    XxxDeletionService.java      ← interface, extends SoftDeletable<E, I> & HardDeletable<E, I>
+    XxxService.java              ← aggregator interface (domain contract)
+    impl/
+        XxxCreationServiceImpl.java
+        XxxRetrievalServiceImpl.java
+        XxxUpdateServiceImpl.java
+        XxxDeletionServiceImpl.java
+        XxxServiceImpl.java      ← aggregator impl, single entry point for the controller
+```
+
+No concrete `@Service` class may live directly in `service/domain/` — only interfaces belong there.
+
+#### Deletion strategy
+
+`XxxDeletionService` must implement **both** `SoftDeletable<E, I>` and `HardDeletable<E, I>`:
+
+| Method | When to call | How it works |
+|--------|-------------|--------------|
+| `markAsDeleted(id)` | Default delete flow (called from aggregator) | Sets `entity.isDeleted = true`, saves → `CustomAuditingEntityListener` fills `deletedBy` / `deletedDate` |
+| `restore(id)` | Undo a soft delete | Clears `deletedBy`, `deletedDate`, `isDeleted`; saves |
+| `permanentlyDelete(id)` | Admin / compliance (GDPR) only | `repository.deleteById(id)` — physical removal |
+| `delete(entity)` | Inline soft delete via object | Sets `entity.isDeleted = true`, saves |
+
 ### 4. DTO & Mapping Rules
 
 - Always use **DTOs** (`dto/`) to expose data through the API — never JPA entities directly.
 - Use **MapStruct** mappers (`mapper/`) for all entity ↔ DTO conversions. Do not write manual mapping code.
-- Wrap all API responses in `ApiSuccessResponse` or `ApiErrorResponse` from `dto/response/`. Use `ApiResponseFactory` / `ApiErrorResponseFactory` / `ApiSuccessResponseFactory` from `factory/` to construct them.
+- API responses are wrapped automatically by `ApiResponseHandler` (a `ResponseBodyAdvice` in `advice/`) — controllers must return raw DTOs or `void`, **not** `ResponseEntity<>` or `ApiSuccessResponse<>`.
+- `ApiResponseFactory` / `ApiErrorResponseFactory` are used internally by the advice layer — never inject them into controllers.
+- Use `@ResponseStatus(HttpStatus.CREATED)` / `@ResponseStatus(HttpStatus.NO_CONTENT)` on controller methods to declare non-200 status codes without constructing `ResponseEntity`.
 
 ### 5. Exception Handling
 
@@ -76,8 +110,22 @@ Controller (v1/)
 
 ### 6. Logging
 
-- Use **SLF4J** (`@Slf4j` from Lombok) exclusively for all logging.
+- Use **SLF4J** (`@Slf4j` from Lombok) exclusively for all logging. Never use `System.out.println` or `printStackTrace()`.
 - Log at the correct level: `DEBUG` for service/logic flow, `INFO` for significant state changes, `WARN` for recoverable issues, `ERROR` for exceptions.
+- Always use **parameterized logging** — never string concatenation:
+  ```java
+  // correct
+  log.debug("Fetching customer id: {}", id);
+  // wrong — allocates string even when log level is disabled
+  log.debug("Fetching customer id: " + id);
+  ```
+- Pass the **exception object as the final argument** when logging errors to preserve the full stack trace:
+  ```java
+  // correct — SLF4J renders the stack trace automatically
+  log.error("Failed to process entity: {}", entity, exception);
+  // wrong — stack trace is lost
+  log.error("Failed to process entity: " + exception.getMessage());
+  ```
 - Refer to `application-logging.yml`: project package `com.nthn` logs at `DEBUG`, root at `INFO`.
 
 ### 7. Security Rules
@@ -100,11 +148,81 @@ Controller (v1/)
 - The `CustomAuditingEntityListener` and `UserAuditorAware` in `component/audit/` handle automatic population — do not set these fields manually.
 - Use `@DeletedBy` / `@DeletedDate` annotations (from `annotation/`) for soft delete fields.
 
+#### Soft delete trigger mechanism
+
+`BaseEntity` has `@Transient boolean isDeleted`. The `CustomAuditingEntityListener` fires on `@PreUpdate` and, when `isDeleted == true && deletedDate.isEmpty()`, automatically sets `deletedBy` and `deletedDate` via reflection. **Never set these two fields directly** — always go through `entity.setDeleted(true)` + `repository.save(entity)`.
+
+To restore: call `entity.setDeletedBy(null)`, `entity.setDeletedDate(null)`, `entity.setDeleted(false)`, then `repository.save(entity)`. The listener will skip the soft-delete block (because `isDeleted == false`) and only update `lastModifiedBy` / `lastModifiedDate`.
+
 ### 10. API Documentation
 
-- All controllers and endpoints must include **SpringDoc/OpenAPI annotations** (`@Tag`, `@Operation`, `@ApiResponse`) so the Swagger UI at `/swagger-ui.html` stays accurate.
+- All controllers and endpoints must include **SpringDoc/OpenAPI annotations** so the Swagger UI at `/swagger-ui.html` stays accurate.
 - API base path: `/store-vision/api`
 - Swagger config: `application-swagger.yml` — do not duplicate configuration elsewhere.
+
+#### Controller Interface-Implementation pattern
+
+```
+controller/
+    XxxController.java          ← version-agnostic interface (contract only)
+    v1/
+        XxxControllerV1.java    ← @RestController, @RequestMapping(value = "/xxx", version = "1")
+```
+
+**Controller interface rules (`XxxController.java`):**
+
+| Element | Allowed | Notes |
+|---------|---------|-------|
+| Method signatures | ✅ | All public endpoint methods |
+| `@Valid` on DTO params | ✅ | Validation is part of the domain contract |
+| Javadoc + `@see XxxControllerV1` | ✅ | Document the contract, link to impl |
+| `@RequestMapping`, `@GetMapping`, `@PostMapping`, etc. | ❌ | HTTP routing belongs in the versioned impl |
+| `@RequestBody`, `@PathVariable` | ❌ | Spring MVC binding belongs in impl |
+| `@Tag`, `@Operation`, `@ApiResponse`, `@Parameter` | ❌ | OpenAPI docs belong in impl |
+| `@RestController`, `@Slf4j`, `@RequiredArgsConstructor` | ❌ | Spring bean annotations belong in impl |
+
+```java
+// controller/CustomerController.java — correct
+public interface CustomerController {
+  CustomerDTO createCustomer(@Valid CustomerDTO dto);   // @Valid ✅, raw DTO return ✅
+  void deleteCustomer(Long id);
+  List<CustomerDTO> getAllCustomers();
+  CustomerDTO getCustomerById(Long id);
+  CustomerDTO updateCustomer(Long id, @Valid CustomerDTO dto);
+}
+
+// controller/v1/CustomerControllerV1.java — implementation
+@ResponseStatus(HttpStatus.CREATED)  // sets 201 without ResponseEntity
+@PostMapping
+@Override
+public CustomerDTO createCustomer(@Valid @RequestBody final CustomerDTO dto) {
+  return customerService.create(dto);  // ApiResponseHandler wraps this automatically
+}
+```
+
+#### Required OpenAPI annotations on the implementation class
+
+| Annotation | Scope | Notes |
+|-----------|-------|-------|
+| `@Tag(name, description)` | Class | One tag per controller |
+| `@Operation(summary, description)` | Method | `summary` = one-liner; `description` = field constraints, business rules |
+| `@ApiResponse(responseCode, description)` | Method | Use directly (repeatable) — do **not** wrap in `@ApiResponses` |
+| `@Parameter(description)` | `@PathVariable` param | Place on the parameter itself, not in `@Operation` |
+
+#### String constants for annotation values
+
+All string literals used in OpenAPI annotations must be defined as compile-time constants — never inline strings:
+- **Cross-controller constants** (response codes, generic descriptions) → `constant/ApiDocConstants`
+- **Within-controller constants** (entity-specific ID descriptions) → `private static final String` in the class
+
+```java
+// correct
+@ApiResponse(responseCode = ApiDocConstants.HTTP_404, description = ApiDocConstants.DESC_NOT_FOUND)
+@Parameter(description = ID_DESC) @PathVariable final Long id   // ID_DESC = private static final
+
+// wrong — duplicate string literals flagged by linter
+@ApiResponse(responseCode = "404", description = "Not found")
+```
 
 ### 11. Modulith Boundaries
 
