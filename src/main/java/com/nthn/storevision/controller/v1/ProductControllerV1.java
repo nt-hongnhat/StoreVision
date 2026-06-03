@@ -1,27 +1,19 @@
-/*
- * Copyright (c) 2026 Hong Nhat. All rights reserved.
- *
- * Project: Store Vision
- * Module: Store Vision Main
- * File: ProductControllerV1.java
- * Author: Nguyen Thi Hong Nhat
- * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-02
- */
-
 package com.nthn.storevision.controller.v1;
 
+import com.nthn.storevision.constant.api.ResponseCode;
+import com.nthn.storevision.constant.api.ResponseDescription;
+import com.nthn.storevision.controller.ProductController;
 import com.nthn.storevision.dto.ProductDTO;
-import com.nthn.storevision.dto.response.ApiSuccessResponse;
-import com.nthn.storevision.factory.ApiSuccessResponseFactory;
 import com.nthn.storevision.service.product.ProductService;
-import jakarta.servlet.http.HttpServletRequest;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,58 +21,86 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-/** REST controller for managing products. */
+/**
+ * Version 1 implementation of {@link ProductController}.
+ */
+@Tag(name = "Product", description = "Product management endpoints")
 @Slf4j
 @RestController
-@RequestMapping("/api/v1/products")
+@RequestMapping(value = "/products", version = "1")
 @RequiredArgsConstructor
-public class ProductControllerV1 {
+public class ProductControllerV1 implements ProductController {
 
-  private final ApiSuccessResponseFactory successFactory;
+  private static final String ID_DESC = "Product ID";
+
   private final ProductService productService;
 
+  @Operation(
+      summary = "Create a new product",
+      description = "Creates a new product record and persists it to the database.")
+  @ApiResponse(responseCode = ResponseCode.CREATED, description = ResponseDescription.CREATED)
+  @ApiResponse(responseCode = ResponseCode.BAD_REQUEST, description = ResponseDescription.INVALID_INPUT)
   @PostMapping
-  public ResponseEntity<ApiSuccessResponse<ProductDTO>> createProduct(
-      @Valid @RequestBody final ProductDTO dto, final HttpServletRequest request) {
-    log.debug("POST /api/v1/products");
-    return ResponseEntity.status(HttpStatus.CREATED)
-        .body(wrap(request, productService.create(dto)));
+  @Override
+  public ProductDTO createProduct(@Valid @RequestBody final ProductDTO dto) {
+    log.debug("POST /products");
+    return productService.create(dto);
   }
 
+  @Operation(
+      summary = "Soft-delete a product by ID",
+      description = "Marks the product as deleted without physically removing the record."
+          + " The record can be restored later.")
+  @ApiResponse(responseCode = ResponseCode.NO_CONTENT, description = ResponseDescription.DELETED)
+  @ApiResponse(responseCode = ResponseCode.NOT_FOUND, description = ResponseDescription.NOT_FOUND)
+  @ResponseStatus(HttpStatus.NO_CONTENT)
   @DeleteMapping("/{id}")
-  public ResponseEntity<Void> deleteProduct(@PathVariable final Long id) {
-    log.debug("DELETE /api/v1/products/{}", id);
+  @Override
+  public void deleteProduct(
+      @Parameter(description = ID_DESC) @PathVariable final Long id) {
+    log.debug("DELETE /products/{}", id);
     productService.delete(id);
-    return ResponseEntity.noContent().build();
   }
 
+  @Operation(
+      summary = "Retrieve all products",
+      description = "Returns a list of all active (non-deleted) product records.")
+  @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)
   @GetMapping
-  public ResponseEntity<ApiSuccessResponse<List<ProductDTO>>> getAllProducts(
-      final HttpServletRequest request) {
-    log.debug("GET /api/v1/products");
-    return ResponseEntity.ok(wrap(request, productService.findAll()));
+  @Override
+  public List<ProductDTO> getAllProducts() {
+    log.debug("GET /products");
+    return productService.findAll();
   }
 
+  @Operation(
+      summary = "Retrieve a product by ID",
+      description = "Returns the product record with the specified ID.")
+  @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)
+  @ApiResponse(responseCode = ResponseCode.NOT_FOUND, description = ResponseDescription.NOT_FOUND)
   @GetMapping("/{id}")
-  public ResponseEntity<ApiSuccessResponse<ProductDTO>> getProductById(
-      @PathVariable final Long id, final HttpServletRequest request) {
-    log.debug("GET /api/v1/products/{}", id);
-    return ResponseEntity.ok(wrap(request, productService.findById(id)));
+  @Override
+  public ProductDTO getProductById(
+      @Parameter(description = ID_DESC) @PathVariable final Long id) {
+    log.debug("GET /products/{}", id);
+    return productService.findById(id);
   }
 
+  @Operation(
+      summary = "Update a product by ID",
+      description = "Updates the mutable fields (name, price, stockQuantity, category) of an existing product.")
+  @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)
+  @ApiResponse(responseCode = ResponseCode.BAD_REQUEST, description = ResponseDescription.INVALID_INPUT)
+  @ApiResponse(responseCode = ResponseCode.NOT_FOUND, description = ResponseDescription.NOT_FOUND)
   @PutMapping("/{id}")
-  public ResponseEntity<ApiSuccessResponse<ProductDTO>> updateProduct(
-      @PathVariable final Long id,
-      @Valid @RequestBody final ProductDTO dto,
-      final HttpServletRequest request) {
-    log.debug("PUT /api/v1/products/{}", id);
-    return ResponseEntity.ok(wrap(request, productService.update(id, dto)));
-  }
-
-  @SuppressWarnings("unchecked")
-  private <T> ApiSuccessResponse<T> wrap(final HttpServletRequest request, final T data) {
-    return (ApiSuccessResponse<T>) successFactory.create(request.getRequestURI(), data);
+  @Override
+  public ProductDTO updateProduct(
+      @Parameter(description = ID_DESC) @PathVariable final Long id,
+      @Valid @RequestBody final ProductDTO dto) {
+    log.debug("PUT /products/{}", id);
+    return productService.update(id, dto);
   }
 }
