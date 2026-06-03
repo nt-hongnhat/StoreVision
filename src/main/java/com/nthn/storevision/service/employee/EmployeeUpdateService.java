@@ -1,35 +1,23 @@
+/*
+ * Copyright (c) 2026 Hong Nhat. All rights reserved.
+ *
+ * Project: Store Vision
+ * Module: Store Vision Main
+ * File: EmployeeUpdateService.java
+ * Author: Nguyen Thi Hong Nhat
+ * Contact: hongnhat1121@gmail.com
+ * Last Modified: 2026-06-03 11:21:37
+ */
+
 package com.nthn.storevision.service.employee;
 
 import com.nthn.storevision.entity.EmployeeEntity;
-import com.nthn.storevision.repository.EmployeeRepository; // Changed from JpaEmployeeRepository
 import com.nthn.storevision.service.generic.Updatable;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
- * Service class for updating {@link EmployeeEntity} instances in the application.
+ * Service interface for updating {@link EmployeeEntity} entities.
  *
- * <p>This class implements the {@link Updatable} interface, providing functionality for persisting
- * updates to the {@link EmployeeEntity} objects in the underlying database. It uses a {@link
- * EmployeeRepository} for database access and is marked as a Spring {@link Service} to enable dependency
- * injection and manage its lifecycle. The {@code update} method is executed within a transactional
- * context, ensuring that changes are committed consistently.
+ * @see Updatable
  */
-@Service
-@RequiredArgsConstructor
-public class EmployeeUpdateService implements Updatable<EmployeeEntity> {
-
-  private final EmployeeRepository repository; // Changed from JpaEmployeeRepository
-
-  /**
-   * Updates the provided {@link EmployeeEntity} object in the database.
-   *
-   * @param employee The {@link EmployeeEntity} object to update.
-   */
-  @Transactional
-  @Override
-  public void update(final EmployeeEntity employee) {
-    repository.save(employee);
-  }
-}
+@FunctionalInterface
+public interface EmployeeUpdateService extends Updatable<EmployeeEntity> {}

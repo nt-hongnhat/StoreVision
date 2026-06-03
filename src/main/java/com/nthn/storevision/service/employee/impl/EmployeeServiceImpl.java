@@ -81,7 +81,7 @@ public class EmployeeServiceImpl implements EmployeeService {
   @Transactional
   public void delete(final Long id) {
     log.debug("Deleting employee id: {}", id);
-    deletionService.permanentlyDelete(id);
-    log.debug("Employee id: {} deleted", id);
+    deletionService.markAsDeleted(id);
+    log.debug("Employee id: {} marked as deleted", id);
   }
 }
