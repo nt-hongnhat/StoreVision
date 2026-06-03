@@ -17,6 +17,8 @@ springdoc:
     path: /v3/api-docs
     enabled: true
     resolve-schema-properties: true
+    groups:
+      enabled: true
   swagger-ui:
     path: /swagger-ui.html
     config-url: /v3/api-docs
@@ -36,3 +38,21 @@ springdoc:
   show-oauth2-endpoints: true
   use-management-port: false
   enable-default-api-docs: true
+  group-configs:
+    - group: v1
+      display-name: API V1
+      paths-to-match:
+        - /**
+      paths-to-exclude:
+        - /actuator/**
+        - /login
+        - /login/**
+    - group: actuator
+      display-name: Actuator
+      paths-to-match:
+        - /actuator/**
+    - group: security
+      display-name: Security
+      paths-to-match:
+        - /login
+        - /login/**

@@ -11,8 +11,6 @@
 
 package com.nthn.storevision.config;
 
-
-import com.nthn.storevision.constant.ApiPathConstants;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
@@ -22,7 +20,6 @@ import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.servers.Server;
 import lombok.extern.slf4j.Slf4j;
-import org.springdoc.core.models.GroupedOpenApi;
 import org.springframework.boot.security.oauth2.client.autoconfigure.OAuth2ClientProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -66,47 +63,6 @@ public class SwaggerConfig {
   }
 
   /**
-   * Configures the actuator API group for Swagger documentation.
-   *
-   * @return a {@link GroupedOpenApi} instance for the actuator group
-   */
-  @Bean
-  public GroupedOpenApi configureActuatorEndpoints() {
-
-    log.debug("Registering Swagger group for actuator endpoints under /actuator/**");
-    final GroupedOpenApi api =
-        GroupedOpenApi.builder()
-            .group("actuator")
-            .pathsToMatch(ApiPathConstants.ACTUATOR.getValue())
-            .build();
-    log.debug("Actuator endpoint group registered successfully");
-    return api;
-  }
-
-  /**
-   * Configures the main API group for Swagger documentation.
-   *
-   * @return a {@link GroupedOpenApi} instance for the main API group
-   */
-  @Bean
-  public GroupedOpenApi configureApiEndpoints() {
-
-    log.debug("Registering Swagger group for API v1 endpoints under /api/**");
-    final GroupedOpenApi api =
-        GroupedOpenApi.builder()
-            .group("v1")
-            .displayName("API V1")
-            .pathsToMatch("/**")
-            .pathsToExclude(
-                ApiPathConstants.ACTUATOR.getValue(),
-                ApiPathConstants.LOGIN.getValue(),
-                ApiPathConstants.LOGIN_ALL.getValue())
-            .build();
-    log.debug("API v1 endpoint group registered successfully");
-    return api;
-  }
-
-  /**
    * Configures the custom {@link OpenAPI} specification for the application.
    *
    * @return an {@link OpenAPI} instance with the application information and security settings
@@ -143,23 +99,5 @@ public class SwaggerConfig {
                     .description("Local Development — v1"));
     log.debug("OpenAPI specification built — authorization endpoint: {}", authorizationUrl);
     return openAPI;
-  }
-
-  /**
-   * Configures the security API group for Swagger documentation.
-   *
-   * @return a {@link GroupedOpenApi} instance for the security group
-   */
-  @Bean
-  public GroupedOpenApi configureSecurityEndpoints() {
-
-    log.debug("Registering Swagger group for security endpoints under /login and /login/**");
-    final GroupedOpenApi api =
-        GroupedOpenApi.builder()
-            .group("security")
-            .pathsToMatch(ApiPathConstants.LOGIN.getValue(), ApiPathConstants.LOGIN_ALL.getValue())
-            .build();
-    log.debug("Security endpoint group registered successfully");
-    return api;
   }
 }
