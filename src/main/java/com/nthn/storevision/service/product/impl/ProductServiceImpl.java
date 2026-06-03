@@ -83,7 +83,7 @@ public class ProductServiceImpl implements ProductService {
   @Transactional
   public void delete(final Long id) {
     log.debug("Deleting product id: {}", id);
-    deletionService.permanentlyDelete(id);
-    log.debug("Product id: {} deleted", id);
+    deletionService.markAsDeleted(id);
+    log.debug("Product id: {} marked as deleted", id);
   }
 }
