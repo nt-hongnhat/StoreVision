@@ -6,109 +6,81 @@
  * File: OrderItemControllerV1.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-05-17 14:24:04
+ * Last Modified: 2026-06-02
  */
 
 package com.nthn.storevision.controller.v1;
 
 import com.nthn.storevision.dto.OrderItemDTO;
-import com.nthn.storevision.entity.OrderItemEntity;
-import com.nthn.storevision.mapper.OrderItemMapper;
-import com.nthn.storevision.service.orderitem.OrderItemCreationService;
-import com.nthn.storevision.service.orderitem.OrderItemDeletionService;
-import com.nthn.storevision.service.orderitem.OrderItemRetrievalService;
-import com.nthn.storevision.service.orderitem.OrderItemUpdateService;
+import com.nthn.storevision.dto.response.ApiSuccessResponse;
+import com.nthn.storevision.factory.ApiSuccessResponseFactory;
+import com.nthn.storevision.service.orderitem.OrderItemService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-
-/**
- * REST controller for managing order items.
- * Provides endpoints for CRUD operations on order items.
- */
+/** REST controller for managing order items. */
 @Slf4j
 @RestController
 @RequestMapping("/api/v1/order-items")
 @RequiredArgsConstructor
 public class OrderItemControllerV1 {
 
-  private final OrderItemCreationService orderItemCreationService;
-  private final OrderItemRetrievalService orderItemRetrievalService;
-  private final OrderItemUpdateService orderItemUpdateService;
-  private final OrderItemDeletionService orderItemDeletionService;
-  private final OrderItemMapper orderItemMapper;
+  private final ApiSuccessResponseFactory successFactory;
+  private final OrderItemService orderItemService;
 
-  /**
-   * Retrieves a list of all order items.
-   *
-   * @return A ResponseEntity containing a list of OrderItemDTOs.
-   */
-  @GetMapping
-  public ResponseEntity<List<OrderItemDTO>> getAllOrderItems() {
-    log.debug("GET /order-items");
-    return ResponseEntity.ok(orderItemRetrievalService.findAllOrderItemsAsDTO());
-  }
-
-  /**
-   * Retrieves an order item by its unique identifier.
-   *
-   * @param id The ID of the order item to retrieve.
-   * @return A ResponseEntity containing the OrderItemDTO if found, or a not found status.
-   */
-  @GetMapping("/{id}")
-  public ResponseEntity<OrderItemDTO> getOrderItemById(@PathVariable final Long id) {
-    log.debug("GET /order-items/{}", id);
-    return ResponseEntity.ok(orderItemRetrievalService.findOrderItemDTOById(id));
-  }
-
-  /**
-   * Creates a new order item.
-   *
-   * @param orderItemDTO The OrderItemDTO containing the details of the order item to create.
-   * @return A ResponseEntity containing the created OrderItemDTO.
-   */
   @PostMapping
-  public ResponseEntity<OrderItemDTO> createOrderItem(@Valid @RequestBody final OrderItemDTO orderItemDTO) {
-    log.debug("POST /order-items");
-    OrderItemEntity orderItemEntity = orderItemMapper.toEntity(orderItemDTO);
-    orderItemCreationService.create(orderItemEntity);
-    return new ResponseEntity<>(orderItemMapper.toDTO(orderItemEntity), HttpStatus.CREATED);
+  public ResponseEntity<ApiSuccessResponse<OrderItemDTO>> createOrderItem(
+      @Valid @RequestBody final OrderItemDTO dto, final HttpServletRequest request) {
+    log.debug("POST /api/v1/order-items");
+    return ResponseEntity.status(HttpStatus.CREATED)
+        .body(wrap(request, orderItemService.create(dto)));
   }
 
-  /**
-   * Updates an existing order item.
-   *
-   * @param id The ID of the order item to update.
-   * @param orderItemDTO The OrderItemDTO containing the updated details.
-   * @return A ResponseEntity containing the updated OrderItemDTO.
-   */
-  @PutMapping("/{id}")
-  public ResponseEntity<OrderItemDTO> updateOrderItem(@PathVariable final Long id, @Valid @RequestBody final OrderItemDTO orderItemDTO) {
-    log.debug("PUT /order-items/{}", id);
-    OrderItemEntity existingOrderItem = orderItemMapper.toEntity(orderItemRetrievalService.findOrderItemDTOById(id));
-    existingOrderItem.setQuantity(orderItemDTO.getQuantity());
-    existingOrderItem.setUnitPrice(orderItemDTO.getUnitPrice());
-    // Relationships (order, product) are typically not updated directly via DTO in this manner.
-    // If needed, separate logic or DTOs would be required.
-    orderItemUpdateService.update(existingOrderItem);
-    return ResponseEntity.ok(orderItemMapper.toDTO(existingOrderItem));
-  }
-
-  /**
-   * Deletes an order item by its unique identifier.
-   *
-   * @param id The ID of the order item to delete.
-   * @return A ResponseEntity with no content if deletion is successful.
-   */
   @DeleteMapping("/{id}")
   public ResponseEntity<Void> deleteOrderItem(@PathVariable final Long id) {
-    log.debug("DELETE /order-items/{}", id);
-    orderItemDeletionService.permanentlyDelete(id);
+    log.debug("DELETE /api/v1/order-items/{}", id);
+    orderItemService.delete(id);
     return ResponseEntity.noContent().build();
+  }
+
+  @GetMapping
+  public ResponseEntity<ApiSuccessResponse<List<OrderItemDTO>>> getAllOrderItems(
+      final HttpServletRequest request) {
+    log.debug("GET /api/v1/order-items");
+    return ResponseEntity.ok(wrap(request, orderItemService.findAll()));
+  }
+
+  @GetMapping("/{id}")
+  public ResponseEntity<ApiSuccessResponse<OrderItemDTO>> getOrderItemById(
+      @PathVariable final Long id, final HttpServletRequest request) {
+    log.debug("GET /api/v1/order-items/{}", id);
+    return ResponseEntity.ok(wrap(request, orderItemService.findById(id)));
+  }
+
+  @PutMapping("/{id}")
+  public ResponseEntity<ApiSuccessResponse<OrderItemDTO>> updateOrderItem(
+      @PathVariable final Long id,
+      @Valid @RequestBody final OrderItemDTO dto,
+      final HttpServletRequest request) {
+    log.debug("PUT /api/v1/order-items/{}", id);
+    return ResponseEntity.ok(wrap(request, orderItemService.update(id, dto)));
+  }
+
+  @SuppressWarnings("unchecked")
+  private <T> ApiSuccessResponse<T> wrap(final HttpServletRequest request, final T data) {
+    return (ApiSuccessResponse<T>) successFactory.create(request.getRequestURI(), data);
   }
 }
