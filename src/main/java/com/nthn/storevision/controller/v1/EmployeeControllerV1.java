@@ -6,110 +6,81 @@
  * File: EmployeeControllerV1.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-05-17 14:30:06
+ * Last Modified: 2026-06-02
  */
 
 package com.nthn.storevision.controller.v1;
 
 import com.nthn.storevision.dto.EmployeeDTO;
-import com.nthn.storevision.entity.EmployeeEntity;
-import com.nthn.storevision.mapper.EmployeeMapper;
-import com.nthn.storevision.service.employee.EmployeeCreationService;
-import com.nthn.storevision.service.employee.EmployeeDeletionService;
-import com.nthn.storevision.service.employee.EmployeeRetrievalService;
-import com.nthn.storevision.service.employee.EmployeeUpdateService;
+import com.nthn.storevision.dto.response.ApiSuccessResponse;
+import com.nthn.storevision.factory.ApiSuccessResponseFactory;
+import com.nthn.storevision.service.employee.EmployeeService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-
-/**
- * REST controller for managing employees.
- * Provides endpoints for CRUD operations on employees.
- */
+/** REST controller for managing employees. */
 @Slf4j
 @RestController
 @RequestMapping("/api/v1/employees")
 @RequiredArgsConstructor
 public class EmployeeControllerV1 {
 
-  private final EmployeeCreationService employeeCreationService;
-  private final EmployeeRetrievalService employeeRetrievalService;
-  private final EmployeeUpdateService employeeUpdateService;
-  private final EmployeeDeletionService employeeDeletionService;
-  private final EmployeeMapper employeeMapper;
+  private final ApiSuccessResponseFactory successFactory;
+  private final EmployeeService employeeService;
 
-  /**
-   * Retrieves a list of all employees.
-   *
-   * @return A ResponseEntity containing a list of EmployeeDTOs.
-   */
-  @GetMapping
-  public ResponseEntity<List<EmployeeDTO>> getAllEmployees() {
-    log.debug("GET /employees");
-    return ResponseEntity.ok(employeeRetrievalService.findAllEmployeesAsDTO());
-  }
-
-  /**
-   * Retrieves an employee by its unique identifier.
-   *
-   * @param id The ID of the employee to retrieve.
-   * @return A ResponseEntity containing the EmployeeDTO if found, or a not found status.
-   */
-  @GetMapping("/{id}")
-  public ResponseEntity<EmployeeDTO> getEmployeeById(@PathVariable final Long id) {
-    log.debug("GET /employees/{}", id);
-    return ResponseEntity.ok(employeeRetrievalService.findEmployeeDTOById(id));
-  }
-
-  /**
-   * Creates a new employee.
-   *
-   * @param employeeDTO The EmployeeDTO containing the details of the employee to create.
-   * @return A ResponseEntity containing the created EmployeeDTO.
-   */
   @PostMapping
-  public ResponseEntity<EmployeeDTO> createEmployee(@Valid @RequestBody final EmployeeDTO employeeDTO) {
-    log.debug("POST /employees");
-    EmployeeEntity employeeEntity = employeeMapper.toEntity(employeeDTO);
-    // In a real application, you would hash the password before saving
-    employeeCreationService.create(employeeEntity);
-    return new ResponseEntity<>(employeeMapper.toDTO(employeeEntity), HttpStatus.CREATED);
+  public ResponseEntity<ApiSuccessResponse<EmployeeDTO>> createEmployee(
+      @Valid @RequestBody final EmployeeDTO dto, final HttpServletRequest request) {
+    log.debug("POST /api/v1/employees");
+    return ResponseEntity.status(HttpStatus.CREATED)
+        .body(wrap(request, employeeService.create(dto)));
   }
 
-  /**
-   * Updates an existing employee.
-   *
-   * @param id The ID of the employee to update.
-   * @param employeeDTO The EmployeeDTO containing the updated details.
-   * @return A ResponseEntity containing the updated EmployeeDTO.
-   */
-  @PutMapping("/{id}")
-  public ResponseEntity<EmployeeDTO> updateEmployee(@PathVariable final Long id, @Valid @RequestBody final EmployeeDTO employeeDTO) {
-    log.debug("PUT /employees/{}", id);
-    EmployeeEntity existingEmployee = employeeMapper.toEntity(employeeRetrievalService.findEmployeeDTOById(id));
-    existingEmployee.setUsername(employeeDTO.getUsername());
-    // In a real application, handle password updates carefully (e.g., check old password, hash new one)
-    existingEmployee.setPassword(employeeDTO.getPassword());
-    existingEmployee.setRole(employeeDTO.getRole());
-    employeeUpdateService.update(existingEmployee);
-    return ResponseEntity.ok(employeeMapper.toDTO(existingEmployee));
-  }
-
-  /**
-   * Deletes an employee by its unique identifier.
-   *
-   * @param id The ID of the employee to delete.
-   * @return A ResponseEntity with no content if deletion is successful.
-   */
   @DeleteMapping("/{id}")
   public ResponseEntity<Void> deleteEmployee(@PathVariable final Long id) {
-    log.debug("DELETE /employees/{}", id);
-    employeeDeletionService.permanentlyDelete(id);
+    log.debug("DELETE /api/v1/employees/{}", id);
+    employeeService.delete(id);
     return ResponseEntity.noContent().build();
+  }
+
+  @GetMapping
+  public ResponseEntity<ApiSuccessResponse<List<EmployeeDTO>>> getAllEmployees(
+      final HttpServletRequest request) {
+    log.debug("GET /api/v1/employees");
+    return ResponseEntity.ok(wrap(request, employeeService.findAll()));
+  }
+
+  @GetMapping("/{id}")
+  public ResponseEntity<ApiSuccessResponse<EmployeeDTO>> getEmployeeById(
+      @PathVariable final Long id, final HttpServletRequest request) {
+    log.debug("GET /api/v1/employees/{}", id);
+    return ResponseEntity.ok(wrap(request, employeeService.findById(id)));
+  }
+
+  @PutMapping("/{id}")
+  public ResponseEntity<ApiSuccessResponse<EmployeeDTO>> updateEmployee(
+      @PathVariable final Long id,
+      @Valid @RequestBody final EmployeeDTO dto,
+      final HttpServletRequest request) {
+    log.debug("PUT /api/v1/employees/{}", id);
+    return ResponseEntity.ok(wrap(request, employeeService.update(id, dto)));
+  }
+
+  @SuppressWarnings("unchecked")
+  private <T> ApiSuccessResponse<T> wrap(final HttpServletRequest request, final T data) {
+    return (ApiSuccessResponse<T>) successFactory.create(request.getRequestURI(), data);
   }
 }
