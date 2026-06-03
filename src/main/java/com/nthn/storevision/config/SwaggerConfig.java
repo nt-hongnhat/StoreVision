@@ -6,12 +6,11 @@
  * File: SwaggerConfig.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-02 21:15:26
+ * Last Modified: 2026-06-03 17:12:44
  */
 
 package com.nthn.storevision.config;
 
-import static com.nthn.storevision.constant.ApiPathConstants.ACTUATOR;
 
 import com.nthn.storevision.constant.ApiPathConstants;
 import io.swagger.v3.oas.models.Components;
@@ -40,7 +39,7 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 @Slf4j
 public class SwaggerConfig {
 
-  private static final String API_TITLE = "Book Thymeleaf API";
+  private static final String API_TITLE = "StoreVision API";
   private static final String BEARER_AUTH = "bearerAuth";
   /// The name of the OAuth2 provider used for authentication.
   private static final String GOOGLE = "google";
@@ -97,7 +96,11 @@ public class SwaggerConfig {
         GroupedOpenApi.builder()
             .group("v1")
             .displayName("API V1")
-            .pathsToMatch(ApiPathConstants.API.getValue())
+            .pathsToMatch("/**")
+            .pathsToExclude(
+                ApiPathConstants.ACTUATOR.getValue(),
+                ApiPathConstants.LOGIN.getValue(),
+                ApiPathConstants.LOGIN_ALL.getValue())
             .build();
     log.debug("API v1 endpoint group registered successfully");
     return api;
@@ -135,7 +138,9 @@ public class SwaggerConfig {
                                             .authorizationUrl(authorizationUrl)
                                             .tokenUrl(tokenUrl)))))
             .addServersItem(
-                new Server().url("http://localhost:8080/book-thymeleaf/").description(""));
+                new Server()
+                    .url("http://localhost:8080/store-vision/api/v1")
+                    .description("Local Development — v1"));
     log.debug("OpenAPI specification built — authorization endpoint: {}", authorizationUrl);
     return openAPI;
   }
