@@ -6,7 +6,7 @@
  * File: CorsConfig.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-02 21:16:15
+ * Last Modified: 2026-06-03 17:06:45
  */
 
 package com.nthn.storevision.config;
