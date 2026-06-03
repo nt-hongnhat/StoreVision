@@ -30,7 +30,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "Product", description = "Product management endpoints")
 @Slf4j
 @RestController
-@RequestMapping(value = "/products", version = "v1")
+@RequestMapping(value = "/v1/products", version = "v1")
 @RequiredArgsConstructor
 public class ProductControllerV1 implements ProductController {
 
