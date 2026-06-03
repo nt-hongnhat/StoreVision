@@ -1,27 +1,19 @@
-/*
- * Copyright (c) 2026 Hong Nhat. All rights reserved.
- *
- * Project: Store Vision
- * Module: Store Vision Main
- * File: OrderControllerV1.java
- * Author: Nguyen Thi Hong Nhat
- * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-02
- */
-
 package com.nthn.storevision.controller.v1;
 
+import com.nthn.storevision.constant.api.ResponseCode;
+import com.nthn.storevision.constant.api.ResponseDescription;
+import com.nthn.storevision.controller.OrderController;
 import com.nthn.storevision.dto.OrderDTO;
-import com.nthn.storevision.dto.response.ApiSuccessResponse;
-import com.nthn.storevision.factory.ApiSuccessResponseFactory;
 import com.nthn.storevision.service.order.OrderService;
-import jakarta.servlet.http.HttpServletRequest;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,58 +21,88 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-/** REST controller for managing orders. */
+/**
+ * Version 1 implementation of {@link OrderController}.
+ */
+@Tag(name = "Order", description = "Order management endpoints")
 @Slf4j
 @RestController
-@RequestMapping("/api/v1/orders")
+@RequestMapping(value = "/orders", version = "1")
 @RequiredArgsConstructor
-public class OrderControllerV1 {
+public class OrderControllerV1 implements OrderController {
 
-  private final ApiSuccessResponseFactory successFactory;
+  private static final String ID_DESC = "Order ID";
+
   private final OrderService orderService;
 
+  @Operation(
+      summary = "Create a new order",
+      description = "Creates a new order for a customer and persists it to the database.")
+  @ApiResponse(responseCode = ResponseCode.CREATED, description = ResponseDescription.CREATED)
+  @ApiResponse(responseCode = ResponseCode.BAD_REQUEST, description = ResponseDescription.INVALID_INPUT)
+  @ResponseStatus(HttpStatus.CREATED)
   @PostMapping
-  public ResponseEntity<ApiSuccessResponse<OrderDTO>> createOrder(
-      @Valid @RequestBody final OrderDTO dto, final HttpServletRequest request) {
-    log.debug("POST /api/v1/orders");
-    return ResponseEntity.status(HttpStatus.CREATED)
-        .body(wrap(request, orderService.create(dto)));
+  @Override
+  public OrderDTO createOrder(@Valid @RequestBody final OrderDTO dto) {
+    log.debug("POST /orders");
+    return orderService.create(dto);
   }
 
+  @Operation(
+      summary = "Soft-delete an order by ID",
+      description = "Marks the order as deleted without physically removing the record."
+          + " The record can be restored later.")
+  @ApiResponse(responseCode = ResponseCode.NO_CONTENT, description = ResponseDescription.DELETED)
+  @ApiResponse(responseCode = ResponseCode.NOT_FOUND, description = ResponseDescription.NOT_FOUND)
+  @ResponseStatus(HttpStatus.NO_CONTENT)
   @DeleteMapping("/{id}")
-  public ResponseEntity<Void> deleteOrder(@PathVariable final Long id) {
-    log.debug("DELETE /api/v1/orders/{}", id);
+  @Override
+  public void deleteOrder(
+      @Parameter(description = ID_DESC) @PathVariable final Long id) {
+    log.debug("DELETE /orders/{}", id);
     orderService.delete(id);
-    return ResponseEntity.noContent().build();
   }
 
+  @Operation(
+      summary = "Retrieve all orders",
+      description = "Returns a list of all active (non-deleted) order records.")
+  @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)
   @GetMapping
-  public ResponseEntity<ApiSuccessResponse<List<OrderDTO>>> getAllOrders(
-      final HttpServletRequest request) {
-    log.debug("GET /api/v1/orders");
-    return ResponseEntity.ok(wrap(request, orderService.findAll()));
+  @Override
+  public List<OrderDTO> getAllOrders() {
+    log.debug("GET /orders");
+    return orderService.findAll();
   }
 
+  @Operation(
+      summary = "Retrieve an order by ID",
+      description = "Returns the order record with the specified ID.")
+  @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)
+  @ApiResponse(responseCode = ResponseCode.NOT_FOUND, description = ResponseDescription.NOT_FOUND)
   @GetMapping("/{id}")
-  public ResponseEntity<ApiSuccessResponse<OrderDTO>> getOrderById(
-      @PathVariable final Long id, final HttpServletRequest request) {
-    log.debug("GET /api/v1/orders/{}", id);
-    return ResponseEntity.ok(wrap(request, orderService.findById(id)));
+  @Override
+  public OrderDTO getOrderById(
+      @Parameter(description = ID_DESC) @PathVariable final Long id) {
+    log.debug("GET /orders/{}", id);
+    return orderService.findById(id);
   }
 
+  @Operation(
+      summary = "Update an order by ID",
+      description = "Updates the mutable fields (orderDate, totalAmount, status) of an existing order."
+          + " Customer association cannot be changed via this endpoint.")
+  @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)
+  @ApiResponse(responseCode = ResponseCode.BAD_REQUEST, description = ResponseDescription.INVALID_INPUT)
+  @ApiResponse(responseCode = ResponseCode.NOT_FOUND, description = ResponseDescription.NOT_FOUND)
   @PutMapping("/{id}")
-  public ResponseEntity<ApiSuccessResponse<OrderDTO>> updateOrder(
-      @PathVariable final Long id,
-      @Valid @RequestBody final OrderDTO dto,
-      final HttpServletRequest request) {
-    log.debug("PUT /api/v1/orders/{}", id);
-    return ResponseEntity.ok(wrap(request, orderService.update(id, dto)));
-  }
-
-  @SuppressWarnings("unchecked")
-  private <T> ApiSuccessResponse<T> wrap(final HttpServletRequest request, final T data) {
-    return (ApiSuccessResponse<T>) successFactory.create(request.getRequestURI(), data);
+  @Override
+  public OrderDTO updateOrder(
+      @Parameter(description = ID_DESC) @PathVariable final Long id,
+      @Valid @RequestBody final OrderDTO dto) {
+    log.debug("PUT /orders/{}", id);
+    return orderService.update(id, dto);
   }
 }
