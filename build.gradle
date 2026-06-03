@@ -48,10 +48,8 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-logging'
-    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.2'
-
-    // Thymeleaf security extras
-    implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6:3.2.1'
+    // Thymeleaf security extras (version managed by Spring Boot BOM)
+    implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
 
     // PostgreSQL
     implementation 'org.postgresql:postgresql:42.7.3'
