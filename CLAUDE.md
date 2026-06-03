@@ -142,6 +142,22 @@ No concrete `@Service` class may live directly in `service/domain/` — only int
 - Connection pool settings (`max-pool-size`, `connection-timeout`) are externalized via environment variables (`${DATASOURCE_MAX_POOL_SIZE}`, `${DATASOURCE_URL}`).
 - Use **soft delete** (via `deleted_by` / `deleted_date` audit fields on `BaseEntity`) unless a hard delete is explicitly required by business logic.
 
+#### Liquibase changeset SQL convention
+
+- Changeset SQL files live under `src/main/resources/db/changeset/v{version}/` and rollback files under `src/main/resources/db/rollback/v{version}/`.
+- **All SQL inside changeset and rollback files must be wrapped in a PostgreSQL anonymous block:**
+  ```sql
+  DO
+  $$
+      BEGIN
+          -- DDL here (CREATE TABLE, CREATE INDEX, DROP TABLE, DROP INDEX…)
+      END
+  $$;
+  ```
+- Master changelog (`db/changelog/db.changelog-master.xml`) uses `<changeSet>` with `<sqlFile>` and `<rollback><sqlFile>` — never inline `<sql>` blocks, never `<include>`.
+- Each `<changeSet>` must carry a `labels="v{version}"` attribute matching its folder version.
+- File naming: `{NNN}-{action}-{table}-table.sql` / `{NNN}-{action}-{table}-table-rollback.sql`.
+
 ### 9. Auditing
 
 - All entities must extend `BaseEntity` which provides `createdBy`, `createdDate`, `lastModifiedBy`, `lastModifiedDate`, `deletedBy`, `deletedDate`.
