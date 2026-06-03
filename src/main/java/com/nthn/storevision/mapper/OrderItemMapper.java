@@ -24,7 +24,7 @@ import org.mapstruct.MappingConstants;
  * Mapper interface for converting between {@link OrderItemEntity} and {@link OrderItemDTO}. This
  * interface uses MapStruct to generate the implementation.
  */
-@Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING, config = BaseEntityMapperConfig.class)
 public interface OrderItemMapper {
 
   /**

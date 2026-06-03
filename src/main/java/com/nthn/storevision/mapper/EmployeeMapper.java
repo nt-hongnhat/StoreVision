@@ -20,7 +20,7 @@ import org.mapstruct.MappingConstants;
  * Mapper interface for converting between {@link EmployeeEntity} and {@link EmployeeDTO}. This
  * interface uses MapStruct to generate the implementation.
  */
-@Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING, config = BaseEntityMapperConfig.class)
 public interface EmployeeMapper {
   /**
    * Converts an {@link EmployeeEntity} to an {@link EmployeeDTO}.
