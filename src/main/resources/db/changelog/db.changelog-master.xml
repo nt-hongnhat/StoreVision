@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  ~ Copyright (c) 2026 Hong Nhat. All rights reserved.
+  ~
+  ~ Project: Store Vision
+  ~ Module: Store Vision Main
+  ~ File: db.changelog-master.xml
+  ~ Author: Nguyen Thi Hong Nhat
+  ~ Contact: hongnhat1121@gmail.com
+  ~ Last Modified: 2026-06-03 15:30:18
+  -->
+
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+            https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.29.xsd">
+
+  <changeSet id="001-create-users-table" author="hongnhat1121@gmail.com"
+             labels="v1.0.0">
+    <sqlFile path="classpath:db/changeset/v1.0.0/001-create-users-table.sql"
+             relativeToChangelogFile="false"
+             splitStatements="true"
+             stripComments="true"/>
+    <rollback>
+      <sqlFile
+          path="classpath:db/rollback/v1.0.0/001-create-users-table-rollback.sql"
+          relativeToChangelogFile="false"
+          splitStatements="true"
+          stripComments="true"/>
+    </rollback>
+  </changeSet>
+
+  <changeSet id="002-create-employees-table" author="hongnhat1121@gmail.com"
+             labels="v1.0.0">
+    <sqlFile path="classpath:db/changeset/v1.0.0/002-create-employees-table.sql"
+             relativeToChangelogFile="false"
+             splitStatements="true"
+             stripComments="true"/>
+    <rollback>
+      <sqlFile
+          path="classpath:db/rollback/v1.0.0/002-create-employees-table-rollback.sql"
+          relativeToChangelogFile="false"
+          splitStatements="true"
+          stripComments="true"/>
+    </rollback>
+  </changeSet>
+
+  <changeSet id="003-create-customers-table" author="hongnhat1121@gmail.com"
+             labels="v1.0.0">
+    <sqlFile path="classpath:db/changeset/v1.0.0/003-create-customers-table.sql"
+             relativeToChangelogFile="false"
+             splitStatements="true"
+             stripComments="true"/>
+    <rollback>
+      <sqlFile
+          path="classpath:db/rollback/v1.0.0/003-create-customers-table-rollback.sql"
+          relativeToChangelogFile="false"
+          splitStatements="true"
+          stripComments="true"/>
+    </rollback>
+  </changeSet>
+
+  <changeSet id="004-create-products-table" author="hongnhat1121@gmail.com">
+    <sqlFile path="classpath:db/changeset/v1.0.0/004-create-products-table.sql"
+             relativeToChangelogFile="false"
+             splitStatements="true"
+             stripComments="true"/>
+    <rollback>
+      <sqlFile
+          path="classpath:db/rollback/v1.0.0/004-create-products-table-rollback.sql"
+          relativeToChangelogFile="false"
+          splitStatements="true"
+          stripComments="true"/>
+    </rollback>
+  </changeSet>
+
+  <changeSet id="005-create-vouchers-table" author="hongnhat1121@gmail.com">
+    <sqlFile path="classpath:db/changeset/v1.0.0/005-create-vouchers-table.sql"
+             relativeToChangelogFile="false"
+             splitStatements="true"
+             stripComments="true"/>
+    <rollback>
+      <sqlFile
+          path="classpath:db/rollback/v1.0.0/005-create-vouchers-table-rollback.sql"
+          relativeToChangelogFile="false"
+          splitStatements="true"
+          stripComments="true"/>
+    </rollback>
+  </changeSet>
+
+  <changeSet id="006-create-orders-table" author="hongnhat1121@gmail.com">
+    <sqlFile path="classpath:db/changeset/v1.0.0/006-create-orders-table.sql"
+             relativeToChangelogFile="false"
+             splitStatements="true"
+             stripComments="true"/>
+    <rollback>
+      <sqlFile
+          path="classpath:db/rollback/v1.0.0/006-create-orders-table-rollback.sql"
+          relativeToChangelogFile="false"
+          splitStatements="true"
+          stripComments="true"/>
+    </rollback>
+  </changeSet>
+
+  <changeSet id="007-create-order-items-table" author="hongnhat1121@gmail.com">
+    <sqlFile
+        path="classpath:db/changeset/v1.0.0/007-create-order-items-table.sql"
+        relativeToChangelogFile="false"
+        splitStatements="true"
+        stripComments="true"/>
+    <rollback>
+      <sqlFile
+          path="classpath:db/rollback/v1.0.0/007-create-order-items-table-rollback.sql"
+          relativeToChangelogFile="false"
+          splitStatements="true"
+          stripComments="true"/>
+    </rollback>
+  </changeSet>
+
+  <changeSet id="008-create-stock-movements-table"
+             author="hongnhat1121@gmail.com">
+    <sqlFile
+        path="classpath:db/changeset/v1.0.0/008-create-stock-movements-table.sql"
+        relativeToChangelogFile="false"
+        splitStatements="true"
+        stripComments="true"/>
+    <rollback>
+      <sqlFile
+          path="classpath:db/rollback/v1.0.0/008-create-stock-movements-table-rollback.sql"
+          relativeToChangelogFile="false"
+          splitStatements="true"
+          stripComments="true"/>
+    </rollback>
+  </changeSet>
+
+  <changeSet id="009-create-loyalty-point-histories-table"
+             author="hongnhat1121@gmail.com">
+    <sqlFile
+        path="classpath:db/changeset/v1.0.0/009-create-loyalty-point-histories-table.sql"
+        relativeToChangelogFile="false"
+        splitStatements="true"
+        stripComments="true"/>
+    <rollback>
+      <sqlFile
+          path="classpath:db/rollback/v1.0.0/009-create-loyalty-point-histories-table-rollback.sql"
+          relativeToChangelogFile="false"
+          splitStatements="true"
+          stripComments="true"/>
+    </rollback>
+  </changeSet>
+
+</databaseChangeLog>
