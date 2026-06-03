@@ -13,13 +13,11 @@ package com.nthn.storevision.constant.user;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.modulith.NamedInterface;
 
 /**
  * Enum representing messages related to user-related operations. Each enum constant is associated
  * with a specific message string that can be used for logging or displaying user-facing messages.
  */
-@NamedInterface
 @Getter
 @RequiredArgsConstructor
 public enum UserMessage {

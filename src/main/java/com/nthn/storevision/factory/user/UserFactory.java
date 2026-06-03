@@ -14,11 +14,9 @@ package com.nthn.storevision.factory.user;
 import com.nthn.storevision.model.User;
 import java.util.Map;
 import org.jspecify.annotations.NonNull;
-import org.springframework.modulith.NamedInterface;
 
 /** Interface for creating {@link User} objects from a map of profile attributes. */
 @FunctionalInterface
-@NamedInterface
 public interface UserFactory {
   /**
    * Creates a {@link User} object from the provided profile attributes.

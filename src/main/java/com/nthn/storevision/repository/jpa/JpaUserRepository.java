@@ -3,14 +3,12 @@ package com.nthn.storevision.repository.jpa;
 import com.nthn.storevision.entity.UserEntity;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.modulith.NamedInterface;
 import org.springframework.stereotype.Repository;
 
 /**
  * JPA Repository for {@link UserEntity}.
  * Provides standard JPA operations and custom query methods for User entities.
  */
-@NamedInterface
 @Repository
 public interface JpaUserRepository extends JpaRepository<UserEntity, Integer> {
   /**

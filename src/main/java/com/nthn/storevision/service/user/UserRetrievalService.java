@@ -13,7 +13,6 @@ package com.nthn.storevision.service.user;
 
 import com.nthn.storevision.model.User;
 import com.nthn.storevision.service.generic.Readable;
-import org.springframework.modulith.NamedInterface;
 
 import java.util.Optional;
 import java.util.function.Function;
@@ -25,7 +24,6 @@ import java.util.function.Function;
  * User} entities using the {@link com.nthn.storevision.repository.jpa.JpaUserRepository}. Additionally, it provides a method for
  * finding a user by their email.
  */
-@NamedInterface
 public interface UserRetrievalService extends Readable<User, Integer> {
 
   /**

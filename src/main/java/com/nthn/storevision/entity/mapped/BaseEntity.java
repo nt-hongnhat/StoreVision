@@ -36,7 +36,6 @@ import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.modulith.NamedInterface;
 
 /**
  * Represents a base entity class that provides common properties and behaviors for all entities in
@@ -45,7 +44,6 @@ import org.springframework.modulith.NamedInterface;
  *
  * @param <I> the type of the entity's identifier
  */
-@NamedInterface
 @MappedSuperclass
 @EntityListeners(CustomAuditingEntityListener.class)
 @Getter

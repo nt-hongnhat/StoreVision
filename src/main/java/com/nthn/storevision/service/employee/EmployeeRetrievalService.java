@@ -14,7 +14,6 @@ package com.nthn.storevision.service.employee;
 import com.nthn.storevision.dto.EmployeeDTO;
 import com.nthn.storevision.entity.EmployeeEntity;
 import com.nthn.storevision.service.generic.Readable;
-import org.springframework.modulith.NamedInterface;
 
 import java.util.List;
 import java.util.Optional;
@@ -26,7 +25,6 @@ import java.util.function.Function;
  * <p>Extends the {@link Readable} interface to provide common read operations for {@link
  * EmployeeEntity} entities.
  */
-@NamedInterface
 public interface EmployeeRetrievalService extends Readable<EmployeeEntity, Long> {
 
   /**

@@ -14,7 +14,6 @@ package com.nthn.storevision.service.product;
 import com.nthn.storevision.dto.ProductDTO;
 import com.nthn.storevision.entity.ProductEntity;
 import com.nthn.storevision.service.generic.Readable;
-import org.springframework.modulith.NamedInterface;
 
 import java.util.List;
 import java.util.Optional;
@@ -26,7 +25,6 @@ import java.util.function.Function;
  * <p>Extends the {@link Readable} interface to provide common read operations for {@link
  * ProductEntity} entities.
  */
-@NamedInterface
 public interface ProductRetrievalService extends Readable<ProductEntity, Long> {
 
   /**

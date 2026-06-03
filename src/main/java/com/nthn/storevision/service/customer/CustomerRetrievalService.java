@@ -14,7 +14,6 @@ package com.nthn.storevision.service.customer;
 import com.nthn.storevision.dto.CustomerDTO;
 import com.nthn.storevision.entity.CustomerEntity;
 import com.nthn.storevision.service.generic.Readable;
-import org.springframework.modulith.NamedInterface;
 
 import java.util.List;
 import java.util.Optional;
@@ -26,7 +25,6 @@ import java.util.function.Function;
  * <p>Extends the {@link Readable} interface to provide common read operations for {@link
  * CustomerEntity} entities.
  */
-@NamedInterface
 public interface CustomerRetrievalService extends Readable<CustomerEntity, Long> {
 
   /**

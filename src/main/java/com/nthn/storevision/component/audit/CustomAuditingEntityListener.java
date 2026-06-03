@@ -31,7 +31,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.NonNull;
 import org.springframework.data.domain.AuditorAware;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-import org.springframework.modulith.NamedInterface;
 import org.springframework.stereotype.Component;
 
 /**
@@ -44,7 +43,6 @@ import org.springframework.stereotype.Component;
  * <p>It uses reflection to inspect the fields of the entity for the presence of {@link DeletedDate}
  * and {@link com.nthn.storevision.annotation.DeletedBy} annotations and populates them accordingly.
  */
-@NamedInterface
 @Slf4j
 @Component
 @RequiredArgsConstructor

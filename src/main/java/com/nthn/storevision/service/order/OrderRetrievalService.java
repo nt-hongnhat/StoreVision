@@ -14,7 +14,6 @@ package com.nthn.storevision.service.order;
 import com.nthn.storevision.dto.OrderDTO;
 import com.nthn.storevision.entity.OrderEntity;
 import com.nthn.storevision.service.generic.Readable;
-import org.springframework.modulith.NamedInterface;
 
 import java.util.List;
 
@@ -24,7 +23,6 @@ import java.util.List;
  * <p>Extends the {@link Readable} interface to provide common read operations for {@link
  * OrderEntity} entities.
  */
-@NamedInterface
 public interface OrderRetrievalService extends Readable<OrderEntity, Long> {
 
   /**

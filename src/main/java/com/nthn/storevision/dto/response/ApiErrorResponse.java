@@ -14,13 +14,11 @@ package com.nthn.storevision.dto.response;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
-import org.springframework.modulith.NamedInterface;
 
 /**
  * Represents an error response for the API. This class extends the {@link ApiResponse} class and
  * includes additional information about the error that occurred.
  */
-@NamedInterface
 @Getter
 @ToString
 @EqualsAndHashCode(callSuper = false)
