@@ -8,7 +8,7 @@
   ~ File: db.changelog-master.xml
   ~ Author: Nguyen Thi Hong Nhat
   ~ Contact: hongnhat1121@gmail.com
-  ~ Last Modified: 2026-06-03 15:30:18
+  ~ Last Modified: 2026-06-03 17:45:39
   -->
 
 <databaseChangeLog
@@ -147,6 +147,22 @@
           path="classpath:db/rollback/v1.0.0/009-create-loyalty-point-histories-table-rollback.sql"
           relativeToChangelogFile="false"
           splitStatements="true"
+          stripComments="true"/>
+    </rollback>
+  </changeSet>
+
+
+  <changeSet id="010-alter-users-table" author="hongnhat1121@gmail.com"
+             labels="v1.0.1" runOnChange="true" failOnError="false">
+    <sqlFile path="classpath:db/changeset/v1.0.1/001-alter-users-table.sql"
+             relativeToChangelogFile="false"
+             splitStatements="false"
+             stripComments="true"/>
+    <rollback>
+      <sqlFile
+          path="classpath:db/rollback/v1.0.1/001-alter-users-table-rollback.sql"
+          relativeToChangelogFile="false"
+          splitStatements="false"
           stripComments="true"/>
     </rollback>
   </changeSet>
