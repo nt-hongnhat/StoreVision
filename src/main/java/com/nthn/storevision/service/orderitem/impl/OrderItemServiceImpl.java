@@ -81,7 +81,7 @@ public class OrderItemServiceImpl implements OrderItemService {
   @Transactional
   public void delete(final Long id) {
     log.debug("Deleting order item id: {}", id);
-    deletionService.permanentlyDelete(id);
-    log.debug("Order item id: {} deleted", id);
+    deletionService.markAsDeleted(id);
+    log.debug("Order item id: {} marked as deleted", id);
   }
 }
