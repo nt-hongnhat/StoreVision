@@ -38,6 +38,14 @@ spring:
       - logging
       - swagger
       - thymeleaf
+  mvc:
+    apiversion:
+      use:
+        path-segment: 0
+      default: 1
+      required: true
+    log-request-details: true
+
 app:
   oauth2:
     success-redirect-url: /
