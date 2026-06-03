@@ -13,6 +13,7 @@ package com.nthn.storevision.mapper;
 
 import com.nthn.storevision.entity.UserEntity;
 import com.nthn.storevision.model.User;
+import org.mapstruct.InheritConfiguration;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;
 
@@ -21,22 +22,17 @@ import org.mapstruct.MappingConstants;
  * MapStruct to generate the implementation, facilitating the mapping between domain models and
  * database entities in the context of user-related data.
  */
-@Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING, config = BaseEntityMapperConfig.class)
 public interface UserMapper {
 
   /**
-   * Converts a {@link User} domain model to a {@link UserEntity} database entity.
+   * Converts a {@link User} domain model to a {@link UserEntity} database entity. Audit fields are
+   * excluded because they are managed automatically by {@code CustomAuditingEntityListener} — see
+   * {@link BaseEntityMapperConfig#toEntity(User)}.
    *
    * @param user The {@link User} instance to be converted.
    * @return The converted {@link UserEntity} instance.
    */
+  @InheritConfiguration
   UserEntity toEntity(User user);
-
-  /**
-   * Converts a {@link UserEntity} instance to a {@link User} domain model instance.
-   *
-   * @param userEntity The {@link UserEntity} object to be converted.
-   * @return The converted {@link User} domain model instance.
-   */
-  User toModel(UserEntity userEntity);
 }
