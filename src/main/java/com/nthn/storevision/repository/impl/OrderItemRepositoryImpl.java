@@ -13,7 +13,7 @@ package com.nthn.storevision.repository.impl;
 
 import com.nthn.storevision.entity.OrderItemEntity;
 import com.nthn.storevision.repository.OrderItemRepository;
-import com.nthn.storevision.repository.jpa.orderitem.JpaOrderItemRepository;
+import com.nthn.storevision.repository.jpa.JpaOrderItemRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 

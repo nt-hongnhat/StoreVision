@@ -13,7 +13,7 @@ package com.nthn.storevision.repository.impl;
 
 import com.nthn.storevision.entity.EmployeeEntity;
 import com.nthn.storevision.repository.EmployeeRepository;
-import com.nthn.storevision.repository.jpa.employee.JpaEmployeeRepository;
+import com.nthn.storevision.repository.jpa.JpaEmployeeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
