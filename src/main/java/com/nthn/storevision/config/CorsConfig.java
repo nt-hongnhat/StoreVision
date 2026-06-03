@@ -41,12 +41,10 @@ public class CorsConfig implements WebMvcConfigurer {
     final WebMvcProperties.Apiversion apiversion = webMvcProperties.getApiversion();
     final String defaultVersion = apiversion.getDefaultVersion();
     log.debug("Configuring API versioning with default version: {}", defaultVersion);
-    final Integer segment = apiversion.getUse().getPathSegment();
-    configurer
-        .setDefaultVersion(defaultVersion)
-        .setVersionRequired(Boolean.TRUE.equals(apiversion.getRequired()));
-    if (null != segment) {
-      configurer.usePathSegment(segment);
+    configurer.setDefaultVersion(defaultVersion);
+    final String requestHeader = apiversion.getUse().getHeader();
+    if (null != requestHeader) {
+      configurer.useRequestHeader(requestHeader);
     }
     log.debug("API versioning configuration completed");
   }
