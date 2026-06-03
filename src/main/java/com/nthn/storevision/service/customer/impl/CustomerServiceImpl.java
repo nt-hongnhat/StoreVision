@@ -82,7 +82,7 @@ public class CustomerServiceImpl implements CustomerService {
   @Transactional
   public void delete(final Long id) {
     log.debug("Deleting customer id: {}", id);
-    deletionService.permanentlyDelete(id);
-    log.debug("Customer id: {} deleted", id);
+    deletionService.markAsDeleted(id);
+    log.debug("Customer id: {} marked as deleted", id);
   }
 }
