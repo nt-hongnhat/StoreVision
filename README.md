@@ -122,6 +122,54 @@ graph TD
     end
 ```
 
+## Database Migrations
+
+Schema is managed by **Liquibase 4.29.0**. All SQL is plain PostgreSQL wrapped in an anonymous block:
+
+```sql
+DO
+$$
+    BEGIN
+        CREATE TABLE example (...);
+    END
+$$;
+```
+
+### Directory layout
+
+```
+src/main/resources/db/
+├── changelog/
+│   └── db.changelog-master.xml   ← <changeSet> entries with <sqlFile> + <rollback><sqlFile>
+├── changeset/
+│   └── v1.0.0/
+│       ├── 001-create-users-table.sql
+│       ├── 002-create-employees-table.sql
+│       └── ...
+└── rollback/
+    └── v1.0.0/
+        ├── 001-create-users-table-rollback.sql
+        └── ...
+```
+
+### Running rollback
+
+```bash
+# Roll back the last N changesets
+./gradlew liquibaseRollback -PliquibaseCommandValue=<N>
+
+# Roll back by label
+./gradlew liquibaseRollback -Plabels=v1.0.0
+```
+
+### Adding a new migration
+
+1. Create `db/changeset/v{version}/{NNN}-{description}.sql` — wrap SQL in `DO $$ BEGIN ... END $$;`
+2. Create `db/rollback/v{version}/{NNN}-{description}-rollback.sql` — same wrapper, `DROP` statements
+3. Add a `<changeSet>` entry in `db.changelog-master.xml` with `labels="v{version}"`
+
+---
+
 ## Architecture
 
 ### Layered Request Flow
