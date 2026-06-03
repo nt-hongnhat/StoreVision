@@ -43,7 +43,6 @@ spring:
       use:
         request-header: X-API-Version
       default: v1
-      required: false
     log-request-details: true
 
 app:
