@@ -20,7 +20,7 @@ import java.util.Optional;
  * Repository interface for managing {@link CustomerEntity} instances.
  * Defines standard CRUD operations and custom queries for customers.
  */
-public interface CustomerRepository {
+public interface CustomerRepository extends ReadRepository<CustomerEntity, Long> {
   /**
    * Deletes a customer by its ID.
    *

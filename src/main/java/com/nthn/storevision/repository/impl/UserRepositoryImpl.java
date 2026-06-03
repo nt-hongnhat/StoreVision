@@ -3,6 +3,7 @@ package com.nthn.storevision.repository.impl;
 import com.nthn.storevision.model.User;
 import com.nthn.storevision.repository.UserRepository;
 import com.nthn.storevision.repository.jpa.JpaUserRepository;
+import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -12,6 +13,16 @@ import org.springframework.stereotype.Repository;
 public class UserRepositoryImpl implements UserRepository {
 
   private final JpaUserRepository jpaUserRepository;
+
+  @Override
+  public List<User> findAll() {
+    return jpaUserRepository.findAll().stream().<User>map(u -> u).toList();
+  }
+
+  @Override
+  public Optional<User> findById(final Integer id) {
+    return jpaUserRepository.findById(id).map(entity -> (User) entity);
+  }
 
   @Override
   public Optional<User> findByEmail(final String email) {

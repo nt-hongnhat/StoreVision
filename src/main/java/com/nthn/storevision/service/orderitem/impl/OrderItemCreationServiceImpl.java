@@ -16,6 +16,6 @@ public class OrderItemCreationServiceImpl
     implements OrderItemCreationService {
 
   public OrderItemCreationServiceImpl(final OrderItemRepository repository) {
-    super(repository);
+    super(repository::save);
   }
 }

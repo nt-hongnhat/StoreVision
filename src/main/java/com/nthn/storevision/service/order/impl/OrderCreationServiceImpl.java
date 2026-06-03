@@ -26,6 +26,6 @@ public class OrderCreationServiceImpl extends AbstractCreatable<OrderEntity, Lon
     implements OrderCreationService {
 
   public OrderCreationServiceImpl(final OrderRepository repository) {
-    super(repository);
+    super(repository::save);
   }
 }

@@ -16,6 +16,6 @@ public class CustomerCreationServiceImpl
     implements CustomerCreationService {
 
   public CustomerCreationServiceImpl(final CustomerRepository repository) {
-    super(repository);
+    super(repository::save);
   }
 }

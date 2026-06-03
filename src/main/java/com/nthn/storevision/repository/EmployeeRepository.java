@@ -20,7 +20,7 @@ import java.util.Optional;
  * Repository interface for managing {@link EmployeeEntity} instances.
  * Defines standard CRUD operations and custom queries for employees.
  */
-public interface EmployeeRepository {
+public interface EmployeeRepository extends ReadRepository<EmployeeEntity, Long> {
   /**
    * Deletes an employee by its ID.
    *

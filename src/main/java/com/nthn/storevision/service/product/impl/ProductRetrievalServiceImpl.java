@@ -6,7 +6,7 @@
  * File: ProductRetrievalServiceImpl.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-05-10 22:15:18
+ * Last Modified: 2026-06-03 16:40:34
  */
 
 package com.nthn.storevision.service.product.impl;
@@ -14,16 +14,13 @@ package com.nthn.storevision.service.product.impl;
 import com.nthn.storevision.dto.ProductDTO;
 import com.nthn.storevision.entity.ProductEntity;
 import com.nthn.storevision.mapper.ProductMapper;
-import com.nthn.storevision.repository.jpa.JpaProductRepository;
+import com.nthn.storevision.repository.ProductRepository;
 import com.nthn.storevision.service.common.AbstractReadable;
 import com.nthn.storevision.service.product.ProductRetrievalService;
-import lombok.RequiredArgsConstructor;
+import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.function.Function;
 
 /**
  * Service for retrieving {@link ProductEntity} entities. Extends {@link AbstractReadable} to
@@ -32,7 +29,7 @@ import java.util.function.Function;
 @Slf4j
 @Service
 public class ProductRetrievalServiceImpl
-    extends AbstractReadable<ProductEntity, Long, JpaProductRepository>
+    extends AbstractReadable<ProductEntity, Long, ProductRepository>
     implements ProductRetrievalService {
 
   private final ProductMapper productMapper;
@@ -41,9 +38,10 @@ public class ProductRetrievalServiceImpl
    * Constructs a {@code ProductRetrievalServiceImpl} with the specified repository.
    *
    * @param repository the repository used for accessing {@link ProductEntity} entities
+   * @param productMapper the mapper used for converting between entity and DTO
    */
   public ProductRetrievalServiceImpl(
-      final JpaProductRepository repository, final ProductMapper productMapper) {
+      final ProductRepository repository, final ProductMapper productMapper) {
     super(repository);
     this.productMapper = productMapper;
   }
@@ -68,7 +66,7 @@ public class ProductRetrievalServiceImpl
    */
   @Override
   @Transactional(readOnly = true)
-  public ProductDTO findProductDTOById(Long id) {
+  public ProductDTO findProductDTOById(final Long id) {
     log.debug("Fetching product DTO by id: {}", id);
     return findById(id, productMapper::toDTO);
   }
@@ -83,6 +81,6 @@ public class ProductRetrievalServiceImpl
     // Assuming a constant for product not found message exists, similar to
     // UserMessage.USER_NOT_FOUND
     // If not, you might need to create one or use a generic message.
-    return "product.not.found"; // Placeholder, replace with actual message code if available
+    return "product.not.found"; // Placeholder, replace it with actual message code if available
   }
 }

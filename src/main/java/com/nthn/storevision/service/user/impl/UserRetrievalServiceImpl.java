@@ -13,7 +13,7 @@ package com.nthn.storevision.service.user.impl;
 
 import com.nthn.storevision.constant.user.UserMessage;
 import com.nthn.storevision.model.User;
-import com.nthn.storevision.repository.jpa.JpaUserRepository;
+import com.nthn.storevision.repository.UserRepository;
 import com.nthn.storevision.service.common.AbstractReadable;
 import com.nthn.storevision.service.user.UserRetrievalService;
 import java.util.Optional;
@@ -29,7 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 @Service
 public class UserRetrievalServiceImpl
-    extends AbstractReadable<User, Integer, JpaUserRepository>
+    extends AbstractReadable<User, Integer, UserRepository>
     implements UserRetrievalService {
 
   /**
@@ -37,7 +37,7 @@ public class UserRetrievalServiceImpl
    *
    * @param repository the repository used for accessing {@link User} entities
    */
-  public UserRetrievalServiceImpl(final JpaUserRepository repository) {
+  public UserRetrievalServiceImpl(final UserRepository repository) {
     super(repository);
   }
 

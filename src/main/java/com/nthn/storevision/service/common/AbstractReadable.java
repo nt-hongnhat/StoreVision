@@ -12,26 +12,29 @@
 package com.nthn.storevision.service.common;
 
 import com.nthn.storevision.exception.EntityNotFoundException;
+import com.nthn.storevision.repository.ReadRepository;
 import com.nthn.storevision.service.generic.Readable;
 import java.util.List;
 import java.util.function.Function;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.jspecify.annotations.NonNull;
 
 /**
  * Abstract class providing common capability for reading entities.
  *
+ * <p>The repository bound uses {@link ReadRepository} rather than {@code JpaRepository} so that the
+ * service layer stays decoupled from Spring Data JPA.
+ *
  * @param <T> the type of the entity
  * @param <I> the type of the entity's identifier
- * @param <J> the type of the JPA repository for the entity
+ * @param <J> the domain repository type, must extend {@link ReadRepository}
  */
 @Slf4j
 @RequiredArgsConstructor
 @Getter
-public abstract class AbstractReadable<T, I, J extends JpaRepository<? extends T, I>>
+public abstract class AbstractReadable<T, I, J extends ReadRepository<? extends T, I>>
     implements Readable<T, I> {
 
   private final J repository;

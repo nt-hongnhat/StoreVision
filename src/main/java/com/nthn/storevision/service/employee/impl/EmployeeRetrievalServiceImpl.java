@@ -1,3 +1,14 @@
+/*
+ * Copyright (c) 2026 Hong Nhat. All rights reserved.
+ *
+ * Project: Store Vision
+ * Module: Store Vision Main
+ * File: EmployeeRetrievalServiceImpl.java
+ * Author: Nguyen Thi Hong Nhat
+ * Contact: hongnhat1121@gmail.com
+ * Last Modified: 2026-06-03 16:36:31
+ */
+
 package com.nthn.storevision.service.employee.impl;
 
 import com.nthn.storevision.dto.EmployeeDTO;
@@ -21,7 +32,6 @@ import java.util.function.Function;
  */
 @Slf4j
 @Service
-@RequiredArgsConstructor
 public class EmployeeRetrievalServiceImpl
     extends AbstractReadable<EmployeeEntity, Long, EmployeeRepository> // Changed from JpaEmployeeRepository
     implements EmployeeRetrievalService {

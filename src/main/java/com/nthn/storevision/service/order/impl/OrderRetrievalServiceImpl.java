@@ -1,3 +1,14 @@
+/*
+ * Copyright (c) 2026 Hong Nhat. All rights reserved.
+ *
+ * Project: Store Vision
+ * Module: Store Vision Main
+ * File: OrderRetrievalServiceImpl.java
+ * Author: Nguyen Thi Hong Nhat
+ * Contact: hongnhat1121@gmail.com
+ * Last Modified: 2026-06-03 16:36:31
+ */
+
 package com.nthn.storevision.service.order.impl;
 
 import com.nthn.storevision.dto.OrderDTO;
@@ -19,7 +30,6 @@ import java.util.List;
  */
 @Slf4j
 @Service
-@RequiredArgsConstructor
 public class OrderRetrievalServiceImpl
     extends AbstractReadable<OrderEntity, Long, OrderRepository>
     implements OrderRetrievalService {

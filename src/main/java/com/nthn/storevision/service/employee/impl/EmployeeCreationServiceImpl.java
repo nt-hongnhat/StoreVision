@@ -16,6 +16,6 @@ public class EmployeeCreationServiceImpl
     implements EmployeeCreationService {
 
   public EmployeeCreationServiceImpl(final EmployeeRepository repository) {
-    super(repository);
+    super(repository::save);
   }
 }

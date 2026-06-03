@@ -9,7 +9,7 @@ import java.util.Optional;
  * Repository interface for managing {@link ProductEntity} instances.
  * Defines standard CRUD operations for products.
  */
-public interface ProductRepository {
+public interface ProductRepository extends ReadRepository<ProductEntity, Long> {
   /**
    * Deletes a product by its ID.
    *

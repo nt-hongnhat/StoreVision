@@ -20,7 +20,7 @@ import java.util.Optional;
  * Repository interface for managing {@link OrderItemEntity} instances.
  * Defines standard CRUD operations for order items.
  */
-public interface OrderItemRepository {
+public interface OrderItemRepository extends ReadRepository<OrderItemEntity, Long> {
   /**
    * Deletes an order item by its ID.
    *

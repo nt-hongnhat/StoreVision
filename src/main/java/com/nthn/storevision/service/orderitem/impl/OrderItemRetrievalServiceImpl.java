@@ -1,3 +1,14 @@
+/*
+ * Copyright (c) 2026 Hong Nhat. All rights reserved.
+ *
+ * Project: Store Vision
+ * Module: Store Vision Main
+ * File: OrderItemRetrievalServiceImpl.java
+ * Author: Nguyen Thi Hong Nhat
+ * Contact: hongnhat1121@gmail.com
+ * Last Modified: 2026-06-03 16:36:31
+ */
+
 package com.nthn.storevision.service.orderitem.impl;
 
 import com.nthn.storevision.dto.OrderItemDTO;
@@ -19,7 +30,6 @@ import java.util.List;
  */
 @Slf4j
 @Service
-@RequiredArgsConstructor
 public class OrderItemRetrievalServiceImpl
     extends AbstractReadable<OrderItemEntity, Long, OrderItemRepository> // Changed from JpaOrderItemRepository
     implements OrderItemRetrievalService {
