@@ -30,7 +30,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "Order Item", description = "Order item management endpoints")
 @Slf4j
 @RestController
-@RequestMapping(value = "/order-items", version = "1")
+@RequestMapping(value = "/order-items", version = "v1")
 @RequiredArgsConstructor
 public class OrderItemControllerV1 implements OrderItemController {
 

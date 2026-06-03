@@ -29,7 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "Customer", description = "Customer management endpoints")
 @Slf4j
 @RestController
-@RequestMapping(value = "/customers", version = "1")
+@RequestMapping(value = "/customers", version = "v1")
 @RequiredArgsConstructor
 public class CustomerControllerV1 implements CustomerController {
 
