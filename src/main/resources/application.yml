@@ -42,8 +42,8 @@ spring:
     apiversion:
       use:
         path-segment: 0
-      default: 1
-      required: true
+      default: v1
+      required: false
     log-request-details: true
 
 app:

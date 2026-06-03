@@ -11,12 +11,13 @@
 
 package com.nthn.storevision.config;
 
-import static com.nthn.storevision.constant.ApiPathConstants.API;
-
 import com.nthn.storevision.constant.ApiPathConstants;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.NonNull;
+import org.springframework.boot.webmvc.autoconfigure.WebMvcProperties;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.ApiVersionConfigurer;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -30,7 +31,25 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
  */
 @Slf4j
 @Configuration
+@RequiredArgsConstructor
 public class CorsConfig implements WebMvcConfigurer {
+
+  private final WebMvcProperties webMvcProperties;
+
+  @Override
+  public void configureApiVersioning(final @NonNull ApiVersionConfigurer configurer) {
+    final WebMvcProperties.Apiversion apiversion = webMvcProperties.getApiversion();
+    final String defaultVersion = apiversion.getDefaultVersion();
+    log.debug("Configuring API versioning with default version: {}", defaultVersion);
+    final Integer segment = apiversion.getUse().getPathSegment();
+    configurer
+        .setDefaultVersion(defaultVersion)
+        .setVersionRequired(Boolean.TRUE.equals(apiversion.getRequired()));
+    if (null != segment) {
+      configurer.usePathSegment(segment);
+    }
+    log.debug("API versioning configuration completed");
+  }
 
   @Override
   public void addCorsMappings(final @NonNull CorsRegistry registry) {
