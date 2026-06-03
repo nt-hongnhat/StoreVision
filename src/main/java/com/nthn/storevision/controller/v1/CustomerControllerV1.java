@@ -6,109 +6,81 @@
  * File: CustomerControllerV1.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-05-17 14:15:54
+ * Last Modified: 2026-06-02 22:24:45
  */
 
 package com.nthn.storevision.controller.v1;
 
 import com.nthn.storevision.dto.CustomerDTO;
-import com.nthn.storevision.entity.CustomerEntity;
-import com.nthn.storevision.mapper.CustomerMapper;
-import com.nthn.storevision.service.customer.CustomerCreationService;
-import com.nthn.storevision.service.customer.CustomerDeletionService;
-import com.nthn.storevision.service.customer.CustomerRetrievalService;
-import com.nthn.storevision.service.customer.CustomerUpdateService;
+import com.nthn.storevision.dto.response.ApiSuccessResponse;
+import com.nthn.storevision.factory.ApiSuccessResponseFactory;
+import com.nthn.storevision.service.customer.CustomerService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-
-/**
- * REST controller for managing customers.
- * Provides endpoints for CRUD operations on customers.
- */
+/** REST controller for managing customers. */
 @Slf4j
 @RestController
 @RequestMapping("/api/v1/customers")
 @RequiredArgsConstructor
 public class CustomerControllerV1 {
 
-  private final CustomerCreationService customerCreationService;
-  private final CustomerRetrievalService customerRetrievalService;
-  private final CustomerUpdateService customerUpdateService;
-  private final CustomerDeletionService customerDeletionService;
-  private final CustomerMapper customerMapper;
+  private final CustomerService customerService;
+  private final ApiSuccessResponseFactory successFactory;
 
-  /**
-   * Retrieves a list of all customers.
-   *
-   * @return A ResponseEntity containing a list of CustomerDTOs.
-   */
-  @GetMapping
-  public ResponseEntity<List<CustomerDTO>> getAllCustomers() {
-    log.debug("GET /customers");
-    return ResponseEntity.ok(customerRetrievalService.findAllCustomersAsDTO());
-  }
-
-  /**
-   * Retrieves a customer by its unique identifier.
-   *
-   * @param id The ID of the customer to retrieve.
-   * @return A ResponseEntity containing the CustomerDTO if found, or a not found status.
-   */
-  @GetMapping("/{id}")
-  public ResponseEntity<CustomerDTO> getCustomerById(@PathVariable final Long id) {
-    log.debug("GET /customers/{}", id);
-    return ResponseEntity.ok(customerRetrievalService.findCustomerDTOById(id));
-  }
-
-  /**
-   * Creates a new customer.
-   *
-   * @param customerDTO The CustomerDTO containing the details of the customer to create.
-   * @return A ResponseEntity containing the created CustomerDTO.
-   */
   @PostMapping
-  public ResponseEntity<CustomerDTO> createCustomer(@Valid @RequestBody final CustomerDTO customerDTO) {
-    log.debug("POST /customers");
-    CustomerEntity customerEntity = customerMapper.toEntity(customerDTO);
-    customerCreationService.create(customerEntity);
-    return new ResponseEntity<>(customerMapper.toDTO(customerEntity), HttpStatus.CREATED);
+  public ResponseEntity<ApiSuccessResponse<CustomerDTO>> createCustomer(
+      @Valid @RequestBody final CustomerDTO dto, final HttpServletRequest request) {
+    log.debug("POST /api/v1/customers");
+    return ResponseEntity.status(HttpStatus.CREATED)
+        .body(wrap(request, customerService.create(dto)));
   }
 
-  /**
-   * Updates an existing customer.
-   *
-   * @param id The ID of the customer to update.
-   * @param customerDTO The CustomerDTO containing the updated details.
-   * @return A ResponseEntity containing the updated CustomerDTO.
-   */
-  @PutMapping("/{id}")
-  public ResponseEntity<CustomerDTO> updateCustomer(@PathVariable final Long id, @Valid @RequestBody final CustomerDTO customerDTO) {
-    log.debug("PUT /customers/{}", id);
-    CustomerEntity existingCustomer = customerMapper.toEntity(customerRetrievalService.findCustomerDTOById(id));
-    existingCustomer.setName(customerDTO.getName());
-    existingCustomer.setEmail(customerDTO.getEmail());
-    existingCustomer.setPhone(customerDTO.getPhone());
-    existingCustomer.setAddress(customerDTO.getAddress());
-    customerUpdateService.update(existingCustomer);
-    return ResponseEntity.ok(customerMapper.toDTO(existingCustomer));
-  }
-
-  /**
-   * Deletes a customer by its unique identifier.
-   *
-   * @param id The ID of the customer to delete.
-   * @return A ResponseEntity with no content if deletion is successful.
-   */
   @DeleteMapping("/{id}")
   public ResponseEntity<Void> deleteCustomer(@PathVariable final Long id) {
-    log.debug("DELETE /customers/{}", id);
-    customerDeletionService.permanentlyDelete(id);
+    log.debug("DELETE /api/v1/customers/{}", id);
+    customerService.delete(id);
     return ResponseEntity.noContent().build();
+  }
+
+  @GetMapping
+  public ResponseEntity<ApiSuccessResponse<List<CustomerDTO>>> getAllCustomers(
+      final HttpServletRequest request) {
+    log.debug("GET /api/v1/customers");
+    return ResponseEntity.ok(wrap(request, customerService.findAll()));
+  }
+
+  @GetMapping("/{id}")
+  public ResponseEntity<ApiSuccessResponse<CustomerDTO>> getCustomerById(
+      @PathVariable final Long id, final HttpServletRequest request) {
+    log.debug("GET /api/v1/customers/{}", id);
+    return ResponseEntity.ok(wrap(request, customerService.findById(id)));
+  }
+
+  @PutMapping("/{id}")
+  public ResponseEntity<ApiSuccessResponse<CustomerDTO>> updateCustomer(
+      @PathVariable final Long id,
+      @Valid @RequestBody final CustomerDTO dto,
+      final HttpServletRequest request) {
+    log.debug("PUT /api/v1/customers/{}", id);
+    return ResponseEntity.ok(wrap(request, customerService.update(id, dto)));
+  }
+
+  @SuppressWarnings("unchecked")
+  private <T> ApiSuccessResponse<T> wrap(final HttpServletRequest request, final T data) {
+    return (ApiSuccessResponse<T>) successFactory.create(request.getRequestURI(), data);
   }
 }
