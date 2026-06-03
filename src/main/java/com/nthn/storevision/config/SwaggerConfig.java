@@ -95,8 +95,8 @@ public class SwaggerConfig {
                                             .tokenUrl(tokenUrl)))))
             .addServersItem(
                 new Server()
-                    .url("http://localhost:8080/store-vision/api/v1")
-                    .description("Local Development — v1"));
+                    .url("http://localhost:8080/store-vision/api")
+                    .description("Local Development"));
     log.debug("OpenAPI specification built — authorization endpoint: {}", authorizationUrl);
     return openAPI;
   }

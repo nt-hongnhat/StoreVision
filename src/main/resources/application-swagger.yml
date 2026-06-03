@@ -21,7 +21,7 @@ springdoc:
       enabled: true
   swagger-ui:
     path: /swagger-ui.html
-    config-url: /v3/api-docs
+    config-url: /v3/api-docs/swagger-config
     enabled: true
     filter: true
     display-request-duration: true
