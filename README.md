@@ -7,7 +7,7 @@ A retail store management backend built with **Java 25** and **Spring Boot 4.0.6
 - Product, Customer, Employee, Order & Order Item management (full CRUD)
 - Google OAuth2 authentication via Spring Security
 - Role-based access control with a custom security filter chain
-- Soft-delete support with full audit trails (created/modified/deleted by + timestamp)
+- Soft-delete and hard-delete support with full audit trails (created/modified/deleted by + timestamp)
 - Database schema versioning via Liquibase
 - Modular architecture enforced by Spring Modulith
 - API documentation via Swagger UI (SpringDoc OpenAPI 3)
@@ -98,15 +98,17 @@ OpenAPI spec: `http://localhost:8080/store-vision/api/v3/api-docs`
 ```mermaid
 graph TD
     subgraph src["src/main/java/com/nthn/storevision"]
-        ADV[advice/\nGlobal exception handlers]
+        ADV["advice/\nApiResponseHandler · exception handlers"]
         CFG["config/\nSwagger, Jackson, CORS, Locale"]
-        CTL[controller/v1/\nREST endpoints]
+        CTL["controller/\nInterfaces (API contract)"]
+        CTLV1["controller/v1/\n@RestController implementations"]
+        CTL -->|implemented by| CTLV1
         SVC[service/\nBusiness logic]
         REPO[repository/\nData access]
         ENT[entity/\nJPA models]
         DTO[dto/\nAPI contracts]
         MAP[mapper/\nMapStruct converters]
-        FAC["factory/\nResponse builders + UserFactory (@NamedInterface)"]
+        FAC["factory/\nApiResponseFactory · UserFactory"]
         EXC[exception/\nCustom error types]
         AUD[component/audit/\nAudit listeners]
 
@@ -132,6 +134,7 @@ sequenceDiagram
     participant Service as Service (per-operation)
     participant Repository as Repository
     participant DB as PostgreSQL
+    participant Advice as ApiResponseHandler
 
     Client->>Filter: HTTP Request
     Filter->>Filter: OAuth2 / token validation
@@ -145,8 +148,9 @@ sequenceDiagram
     Repository-->>Service: Entity
     Service->>Service: Entity → DTO (MapStruct)
     Service-->>Controller: DTO
-    Controller->>Controller: wrap via ApiResponseFactory
-    Controller-->>Client: 200 OK + JSON
+    Controller-->>Advice: raw DTO (ResponseBodyAdvice intercepts)
+    Advice->>Advice: wrap in ApiResponse
+    Advice-->>Client: 200 OK + JSON
 ```
 
 ### Domain Module Structure
@@ -162,12 +166,12 @@ graph LR
         U["user"]
     end
 
-    subgraph Pattern["Per-domain Service Pattern"]
-        IMPL["XxxServiceImpl"]
-        CS["XxxCreationService"]
-        RS["XxxRetrievalService"]
-        US["XxxUpdateService"]
-        DS["XxxDeletionService"]
+    subgraph Pattern["Per-domain Service Pattern (Interface → impl/)"]
+        IMPL["XxxServiceImpl\n(aggregator)"]
+        CS["XxxCreationService\n+ XxxCreationServiceImpl"]
+        RS["XxxRetrievalService\n+ XxxRetrievalServiceImpl"]
+        US["XxxUpdateService\n+ XxxUpdateServiceImpl"]
+        DS["XxxDeletionService\n+ XxxDeletionServiceImpl"]
         IMPL --> CS & RS & US & DS
     end
 
@@ -175,8 +179,10 @@ graph LR
         CR["Creatable"]
         RD["Readable"]
         UP["Updatable"]
-        SD["SoftDeletable"]
-        HD["HardDeletable"]
+        SD["SoftDeletable\nmarkAsDeleted · restore"]
+        HD["HardDeletable\npermanentlyDelete"]
+        DL["Deletable\ndelete"]
+        SD & HD -->|extends| DL
     end
 
     CS -->|implements| CR
@@ -185,7 +191,36 @@ graph LR
     DS -->|implements| SD & HD
 ```
 
-### Audit & Soft Delete
+### Controller Pattern
+
+```mermaid
+graph LR
+    subgraph Contracts["controller/ — version-agnostic interfaces"]
+        CC["CustomerController"]
+        EC["EmployeeController"]
+        OC["OrderController"]
+        OIC["OrderItemController"]
+        PC["ProductController"]
+    end
+
+    subgraph V1["controller/v1/ — @RestController implementations"]
+        CCV1["CustomerControllerV1\n@RequestMapping(value='/customers', version='1')"]
+        ECV1["EmployeeControllerV1"]
+        OCV1["OrderControllerV1"]
+        OICV1["OrderItemControllerV1"]
+        PCV1["ProductControllerV1"]
+    end
+
+    CC -->|implemented by| CCV1
+    EC -->|implemented by| ECV1
+    OC -->|implemented by| OCV1
+    OIC -->|implemented by| OICV1
+    PC -->|implemented by| PCV1
+```
+
+Controllers return **raw DTOs** (never `ResponseEntity<>`). `ApiResponseHandler` (`ResponseBodyAdvice`) intercepts every return value and wraps it in `ApiResponse` automatically. HTTP status codes are declared via `@ResponseStatus`.
+
+### Audit & Softly Delete
 
 ```mermaid
 classDiagram
@@ -224,7 +259,9 @@ classDiagram
     BaseEntity ..> CustomAuditingEntityListener : @EntityListeners
 ```
 
-Each domain (Product, Customer, Employee, Order, OrderItem) has dedicated service classes per operation, all implementing generic interfaces from `service/generic/`. Spring Modulith enforces module boundaries at compiler and test time.
+Each domain (Product, Customer, Employee, Order, OrderItem) has dedicated **interface + implementation** pairs per operation, all implementing generic interfaces from `service/generic/`. Interfaces live in `service/domain/`, implementations in `service/domain/impl/`. Spring Modulith enforces module boundaries at compiler and test time.
+
+**Deletion strategy**: `XxxDeletionService` implements both `SoftDeletable` and `HardDeletable`. The default delete flow calls `markAsDeleted(id)` — the `CustomAuditingEntityListener` then autopopulates `deletedBy` / `deletedDate` via `@PreUpdate`. `permanentlyDelete(id)` is reserved for admin / GDPR use cases.
 
 ## License
 
