@@ -12,7 +12,7 @@
 package com.nthn.storevision.service.common;
 
 import com.nthn.storevision.exception.EntityNotFoundException;
-import com.nthn.storevision.repository.ReadRepository;
+import com.nthn.storevision.repository.generic.ReadRepository;
 import com.nthn.storevision.service.generic.Readable;
 import java.util.List;
 import java.util.function.Function;
