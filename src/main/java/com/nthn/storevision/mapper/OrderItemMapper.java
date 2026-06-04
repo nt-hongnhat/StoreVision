@@ -25,8 +25,10 @@ import org.mapstruct.MappingTarget;
  * Mapper interface for converting between {@link OrderItemEntity} and {@link OrderItemDTO}. This
  * interface uses MapStruct to generate the implementation.
  */
-@Mapper(componentModel = MappingConstants.ComponentModel.SPRING, config = BaseEntityMapperConfig.class)
-public interface OrderItemMapper {
+@Mapper(
+    componentModel = MappingConstants.ComponentModel.SPRING,
+    config = BaseEntityMapperConfig.class)
+public interface OrderItemMapper extends EntityMapper<OrderItemDTO, Long, OrderItemEntity> {
 
   /**
    * Maps a given order ID to an {@link OrderEntity}. If the provided order ID is {@code null}, this
@@ -97,7 +99,7 @@ public interface OrderItemMapper {
    * The {@code id}, {@code order}, and {@code product} fields are ignored — order and product
    * associations must be changed via dedicated workflows, not a regular update.
    *
-   * @param dto    the source DTO carrying updated field values
+   * @param dto the source DTO carrying updated field values
    * @param entity the target entity to be updated in place
    */
   @Mapping(target = "id", ignore = true)

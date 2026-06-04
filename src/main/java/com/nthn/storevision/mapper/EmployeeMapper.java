@@ -22,31 +22,7 @@ import org.mapstruct.MappingTarget;
  * Mapper interface for converting between {@link EmployeeEntity} and {@link EmployeeDTO}. This
  * interface uses MapStruct to generate the implementation.
  */
-@Mapper(componentModel = MappingConstants.ComponentModel.SPRING, config = BaseEntityMapperConfig.class)
-public interface EmployeeMapper {
-  /**
-   * Converts an {@link EmployeeEntity} to an {@link EmployeeDTO}.
-   *
-   * @param employee The EmployeeEntity to convert.
-   * @return The converted EmployeeDTO.
-   */
-  EmployeeDTO toDTO(EmployeeEntity employee);
-
-  /**
-   * Converts an {@link EmployeeDTO} to an {@link EmployeeEntity}.
-   *
-   * @param employeeDTO The EmployeeDTO to convert.
-   * @return The converted EmployeeEntity.
-   */
-  EmployeeEntity toEntity(EmployeeDTO employeeDTO);
-
-  /**
-   * Updates an existing {@link EmployeeEntity} with values from the given {@link EmployeeDTO}.
-   * The {@code id} field is intentionally ignored to preserve the entity's identity.
-   *
-   * @param dto    the source DTO carrying updated field values
-   * @param entity the target entity to be updated in place
-   */
-  @Mapping(target = "id", ignore = true)
-  void updateEntity(EmployeeDTO dto, @MappingTarget EmployeeEntity entity);
-}
+@Mapper(
+    componentModel = MappingConstants.ComponentModel.SPRING,
+    config = BaseEntityMapperConfig.class)
+public interface EmployeeMapper extends EntityMapper<EmployeeDTO, Long, EmployeeEntity> {}

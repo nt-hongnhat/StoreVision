@@ -25,30 +25,4 @@ import org.mapstruct.MappingTarget;
 @Mapper(
     componentModel = MappingConstants.ComponentModel.SPRING,
     config = BaseEntityMapperConfig.class)
-public interface ProductMapper {
-  /**
-   * Converts a {@link ProductEntity} to a {@link ProductDTO}.
-   *
-   * @param product The ProductEntity to convert.
-   * @return The converted ProductDTO.
-   */
-  ProductDTO toDTO(ProductEntity product);
-
-  /**
-   * Converts a {@link ProductDTO} to a {@link ProductEntity}.
-   *
-   * @param productDTO The ProductDTO to convert.
-   * @return The converted ProductEntity.
-   */
-  ProductEntity toEntity(ProductDTO productDTO);
-
-  /**
-   * Updates an existing {@link ProductEntity} with values from the given {@link ProductDTO}. The
-   * {@code id} field is intentionally ignored to preserve the entity's identity.
-   *
-   * @param dto the source DTO carrying updated field values
-   * @param entity the target entity to be updated in place
-   */
-  @Mapping(target = "id", ignore = true)
-  void updateEntity(ProductDTO dto, @MappingTarget ProductEntity entity);
-}
+public interface ProductMapper extends EntityMapper<ProductDTO, Long, ProductEntity> {}

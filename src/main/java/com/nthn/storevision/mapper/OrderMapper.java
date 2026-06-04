@@ -25,7 +25,7 @@ import org.mapstruct.MappingTarget;
  * uses MapStruct to generate the implementation.
  */
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING, config = BaseEntityMapperConfig.class)
-public interface OrderMapper {
+public interface OrderMapper extends EntityMapper<OrderDTO,Long, OrderEntity> {
   /**
    * Maps a given customer ID to a {@link CustomerEntity}. If the provided customer ID is
    * {@code null}, this method will return {@code null}. Otherwise, it creates a

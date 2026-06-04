@@ -14,39 +14,13 @@ package com.nthn.storevision.mapper;
 import com.nthn.storevision.dto.CustomerDTO;
 import com.nthn.storevision.entity.CustomerEntity;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
-import org.mapstruct.MappingTarget;
 
 /**
  * Mapper interface for converting between {@link CustomerEntity} and {@link CustomerDTO}. This
  * interface uses MapStruct to generate the implementation.
  */
-@Mapper(componentModel = MappingConstants.ComponentModel.SPRING, config = BaseEntityMapperConfig.class)
-public interface CustomerMapper {
-  /**
-   * Converts a {@link CustomerEntity} to a {@link CustomerDTO}.
-   *
-   * @param customer The CustomerEntity to convert.
-   * @return The converted CustomerDTO.
-   */
-  CustomerDTO toDTO(CustomerEntity customer);
-
-  /**
-   * Converts a {@link CustomerDTO} to a {@link CustomerEntity}.
-   *
-   * @param customerDTO The CustomerDTO to convert.
-   * @return The converted CustomerEntity.
-   */
-  CustomerEntity toEntity(CustomerDTO customerDTO);
-
-  /**
-   * Updates an existing {@link CustomerEntity} with values from the given {@link CustomerDTO}.
-   * The {@code id} field is intentionally ignored to preserve the entity's identity.
-   *
-   * @param dto    the source DTO carrying updated field values
-   * @param entity the target entity to be updated in place
-   */
-  @Mapping(target = "id", ignore = true)
-  void updateEntity(CustomerDTO dto, @MappingTarget CustomerEntity entity);
-}
+@Mapper(
+    componentModel = MappingConstants.ComponentModel.SPRING,
+    config = BaseEntityMapperConfig.class)
+public interface CustomerMapper extends EntityMapper<CustomerDTO, Long, CustomerEntity> {}
