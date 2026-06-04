@@ -21,16 +21,11 @@ springdoc:
       enabled: true
   swagger-ui:
     path: /swagger-ui.html
-    config-url: /v3/api-docs/swagger-config
     enabled: true
     filter: true
-    display-request-duration: true
-    disable-swagger-default-url: true
-    use-root-path: true
     operations-sorter: alpha
     tags-sorter: alpha
   model-and-view-allowed: true
-  packages-to-scan: com.nthn.storevision.controller
   show-actuator: true
   writer-with-default-pretty-printer: true
   show-login-endpoint: true
