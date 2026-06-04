@@ -6,7 +6,7 @@
  * File: ApiResponseHandler.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-03 14:10:22
+ * Last Modified: 2026-06-04 17:21:41
  */
 
 package com.nthn.storevision.advice;
@@ -49,6 +49,7 @@ public class ApiResponseHandler implements ResponseBodyAdvice<Object> {
     return !returnType.getParameterType().equals(ResponseEntity.class);
   }
 
+  @SuppressWarnings("MethodParameterNamingConvention")
   @Override
   public Object beforeBodyWrite(
       final Object body,
