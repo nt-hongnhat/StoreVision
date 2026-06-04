@@ -6,7 +6,7 @@
  * File: UserUpdateServiceImpl.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-04 17:15:08
+ * Last Modified: 2026-06-04 17:24:31
  */
 
 package com.nthn.storevision.service.user.impl;
@@ -31,13 +31,14 @@ public class UserUpdateServiceImpl
     implements UserUpdateService {
 
   protected UserUpdateServiceImpl(
-      final EntityMapperConfig<UserDTO, Integer, UserEntity> mapper, final UserRepository repository) {
+      final EntityMapperConfig<UserDTO, Integer, UserEntity> mapper,
+      final UserRepository repository) {
     super(mapper, repository);
   }
 
   @Override
   protected UserEntity getById(final Integer id) {
-    return (UserEntity) getRepository()
+    return getRepository()
         .findById(id)
         .orElseThrow(() -> new EntityNotFoundException(UserMessage.USER_NOT_FOUND.getCode(), id));
   }
