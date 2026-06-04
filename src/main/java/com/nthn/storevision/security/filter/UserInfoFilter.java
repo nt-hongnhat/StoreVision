@@ -6,7 +6,7 @@
  * File: UserInfoFilter.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-02 17:29:50
+ * Last Modified: 2026-06-04 17:31:15
  */
 
 package com.nthn.storevision.security.filter;
@@ -60,11 +60,23 @@ public class UserInfoFilter extends OncePerRequestFilter {
       final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
       if (authentication instanceof final OAuth2AuthenticationToken token) {
-        final Map<String, Object> attributes = token.getPrincipal().getAttributes();
-        UserContext.setUserAttributes(attributes);
-        log.debug("OAuth2 user recognized — {} attribute(s) loaded into request context", attributes.size());
+        if (null != token.getPrincipal()) {
+          final Map<String, Object> attributes = token.getPrincipal().getAttributes();
+          if (null != attributes) {
+            UserContext.setUserAttributes(attributes);
+            log.debug(
+                "OAuth2 user recognized — {} attribute(s) loaded into request context",
+                attributes.size());
+          } else {
+            log.warn("OAuth2User attributes are null for user: {}", authentication.getName());
+          }
+        } else {
+          log.warn("OAuth2User principal is null for user: {}", authentication.getName());
+        }
+
       } else if (null != authentication) {
-        log.warn("Authenticated request uses a non-OAuth2 mechanism ({}), proceeding without user context",
+        log.warn(
+            "Authenticated request uses a non-OAuth2 mechanism ({}), proceeding without user context",
             authentication.getClass().getSimpleName());
       } else {
         log.debug("Unauthenticated request, proceeding without user context");

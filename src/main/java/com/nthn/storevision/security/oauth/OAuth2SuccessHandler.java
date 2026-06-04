@@ -24,8 +24,8 @@ import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.jspecify.annotations.NonNull;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -36,9 +36,9 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.stereotype.Component;
 
 /**
- * Custom authentication success handler for OAuth2 logins.
- * This handler is responsible for processing successful OAuth2 authentications,
- * creating or updating user information in the database, and setting up the security context.
+ * Custom authentication success handler for OAuth2 logins. This handler is responsible for
+ * processing successful OAuth2 authentications, creating or updating user information in the
+ * database, and setting up the security context.
  */
 @Component
 @RequiredArgsConstructor
@@ -47,18 +47,16 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
   private static final String EMAIL = "email";
   private static final String ROLE_USER = "ROLE_USER";
+  private final UserFactory googleAuthUserFactory;
+  private final JpaUserRepository jpaRepository;
 
   @Value("${app.oauth2.success-redirect-url}")
   private String successRedirectUrl;
 
-  private final UserFactory googleAuthUserFactory;
-  private final JpaUserRepository jpaRepository;
-
   /**
-   * Called when an authentication attempt is successful.
-   * This method handles the post-authentication logic for OAuth2 users,
-   * including user provisioning (creating or updating user in DB) and
-   * setting the security context.
+   * Called when an authentication attempt is successful. This method handles the
+   * post-authentication logic for OAuth2 users, including user provisioning (creating or updating
+   * user in DB) and setting the security context.
    *
    * @param request The HTTP request.
    * @param response The HTTP response.
@@ -77,17 +75,25 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
     final Collection<? extends GrantedAuthority> authorities =
         List.of(new SimpleGrantedAuthority(ROLE_USER));
 
-    if (authentication instanceof OAuth2AuthenticationToken token) {
-      final Map<String, Object> attributes = token.getPrincipal().getAttributes();
-      final String email = String.valueOf(attributes.get(EMAIL));
-      persistUser =
-          jpaRepository
-              .findByEmail(email)
-              .map(this::updateUserInfo)
-              .orElseGet(() -> createUserFromAttributes(attributes));
+    if (authentication instanceof final OAuth2AuthenticationToken token) {
+      if (null != token.getPrincipal()) {
+        final Map<String, Object> attributes = token.getPrincipal().getAttributes();
+        if (null != attributes) {
+          final String email = String.valueOf(attributes.get(EMAIL));
+          persistUser =
+              jpaRepository
+                  .findByEmail(email)
+                  .map(this::updateUserInfo)
+                  .orElseGet(() -> createUserFromAttributes(attributes));
+        } else {
+          log.warn("OAuth2User attributes are null for user: {}", authentication.getName());
+        }
+      } else {
+        log.warn("OAuth2User principal is null for user: {}", authentication.getName());
+      }
     }
 
-    if (persistUser != null) {
+    if (null != persistUser) {
       configureUserAuthentication(authorities, persistUser);
     }
 
