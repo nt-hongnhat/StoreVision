@@ -12,8 +12,6 @@
 package com.nthn.storevision.service.customer.impl;
 
 import com.nthn.storevision.dto.CustomerDTO;
-import com.nthn.storevision.entity.CustomerEntity;
-import com.nthn.storevision.mapper.CustomerMapper;
 import com.nthn.storevision.service.customer.CustomerCreationService;
 import com.nthn.storevision.service.customer.CustomerDeletionService;
 import com.nthn.storevision.service.customer.CustomerRetrievalService;
@@ -35,7 +33,6 @@ public class CustomerServiceImpl implements CustomerService {
 
   private final CustomerCreationService creationService;
   private final CustomerDeletionService deletionService;
-  private final CustomerMapper mapper;
   private final CustomerRetrievalService retrievalService;
   private final CustomerUpdateService updateService;
 
@@ -43,10 +40,9 @@ public class CustomerServiceImpl implements CustomerService {
   @Transactional
   public CustomerDTO create(final CustomerDTO dto) {
     log.debug("Creating customer with email: {}", dto.getEmail());
-    final CustomerEntity entity = mapper.toEntity(dto);
-    creationService.create(entity);
-    log.debug("Customer created with id: {}", entity.getId());
-    return mapper.toDTO(entity);
+    final CustomerDTO created = creationService.create(dto);
+    log.debug("Customer created with id: {}", created.getId());
+    return created;
   }
 
   @Override

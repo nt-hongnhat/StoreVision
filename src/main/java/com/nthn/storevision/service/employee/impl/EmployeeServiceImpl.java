@@ -12,8 +12,6 @@
 package com.nthn.storevision.service.employee.impl;
 
 import com.nthn.storevision.dto.EmployeeDTO;
-import com.nthn.storevision.entity.EmployeeEntity;
-import com.nthn.storevision.mapper.EmployeeMapper;
 import com.nthn.storevision.service.employee.EmployeeCreationService;
 import com.nthn.storevision.service.employee.EmployeeDeletionService;
 import com.nthn.storevision.service.employee.EmployeeRetrievalService;
@@ -22,6 +20,7 @@ import com.nthn.storevision.service.employee.EmployeeUpdateService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,18 +34,16 @@ public class EmployeeServiceImpl implements EmployeeService {
 
   private final EmployeeCreationService creationService;
   private final EmployeeDeletionService deletionService;
-  private final EmployeeMapper mapper;
   private final EmployeeRetrievalService retrievalService;
   private final EmployeeUpdateService updateService;
 
   @Override
   @Transactional
-  public EmployeeDTO create(final EmployeeDTO dto) {
+  public EmployeeDTO create(final @NonNull EmployeeDTO dto) {
     log.debug("Creating employee with username: {}", dto.getUsername());
-    final EmployeeEntity entity = mapper.toEntity(dto);
-    creationService.create(entity);
-    log.debug("Employee created with id: {}", entity.getId());
-    return mapper.toDTO(entity);
+    final EmployeeDTO created = creationService.create(dto);
+    log.debug("Employee created with id: {}", created.getId());
+    return created;
   }
 
   @Override

@@ -12,8 +12,6 @@
 package com.nthn.storevision.service.orderitem.impl;
 
 import com.nthn.storevision.dto.OrderItemDTO;
-import com.nthn.storevision.entity.OrderItemEntity;
-import com.nthn.storevision.mapper.OrderItemMapper;
 import com.nthn.storevision.service.orderitem.OrderItemCreationService;
 import com.nthn.storevision.service.orderitem.OrderItemDeletionService;
 import com.nthn.storevision.service.orderitem.OrderItemRetrievalService;
@@ -22,6 +20,7 @@ import com.nthn.storevision.service.orderitem.OrderItemUpdateService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,18 +35,16 @@ public class OrderItemServiceImpl implements OrderItemService {
 
   private final OrderItemCreationService creationService;
   private final OrderItemDeletionService deletionService;
-  private final OrderItemMapper mapper;
   private final OrderItemRetrievalService retrievalService;
   private final OrderItemUpdateService updateService;
 
   @Override
   @Transactional
-  public OrderItemDTO create(final OrderItemDTO dto) {
+  public OrderItemDTO create(final @NonNull OrderItemDTO dto) {
     log.debug("Creating order item for order id: {}", dto.getOrderId());
-    final OrderItemEntity entity = mapper.toEntity(dto);
-    creationService.create(entity);
-    log.debug("Order item created with id: {}", entity.getId());
-    return mapper.toDTO(entity);
+    final OrderItemDTO created = creationService.create(dto);
+    log.debug("Order item created with id: {}", created.getId());
+    return created;
   }
 
   @Override
