@@ -12,6 +12,7 @@
 package com.nthn.storevision.service.user.impl;
 
 import com.nthn.storevision.entity.UserEntity;
+import com.nthn.storevision.mapper.UserMapper;
 import com.nthn.storevision.model.User;
 import com.nthn.storevision.repository.jpa.JpaUserRepository;
 import com.nthn.storevision.service.common.AbstractCreatable;
@@ -23,12 +24,15 @@ import org.springframework.stereotype.Service;
  * persist {@link UserEntity} instances. {@link JpaUserRepository} is injected directly because
  * {@link com.nthn.storevision.repository.UserRepository} is a read-only domain interface; the JPA
  * repo is the only write-capable abstraction available for users.
+ *
+ * <p>Since {@link UserEntity} implements {@link User}, the saved entity is returned directly as the
+ * {@link User} model without an additional conversion step.
  */
 @Service
-public class UserCreationServiceImpl extends AbstractCreatable<User, Integer, UserEntity>
+public class UserCreationServiceImpl extends AbstractCreatable<User, UserEntity>
     implements UserCreationService {
 
-  public UserCreationServiceImpl(final JpaUserRepository repository) {
-    super(repository::save);
+  public UserCreationServiceImpl(final JpaUserRepository repository, final UserMapper mapper) {
+    super(repository::save, user -> user, mapper::toEntity);
   }
 }

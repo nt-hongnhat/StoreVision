@@ -11,7 +11,9 @@
 
 package com.nthn.storevision.service.order.impl;
 
+import com.nthn.storevision.dto.OrderDTO;
 import com.nthn.storevision.entity.OrderEntity;
+import com.nthn.storevision.mapper.OrderMapper;
 import com.nthn.storevision.repository.OrderRepository;
 import com.nthn.storevision.service.common.AbstractCreatable;
 import com.nthn.storevision.service.order.OrderCreationService;
@@ -22,10 +24,11 @@ import org.springframework.stereotype.Service;
  * persist {@link OrderEntity} instances via {@link OrderRepository}.
  */
 @Service
-public class OrderCreationServiceImpl extends AbstractCreatable<OrderEntity, Long, OrderEntity>
+public class OrderCreationServiceImpl
+    extends AbstractCreatable<OrderDTO, OrderEntity>
     implements OrderCreationService {
 
-  public OrderCreationServiceImpl(final OrderRepository repository) {
-    super(repository::save);
+  public OrderCreationServiceImpl(final OrderRepository repository, final OrderMapper mapper) {
+    super(repository::save, mapper::toDTO, mapper::toEntity);
   }
 }

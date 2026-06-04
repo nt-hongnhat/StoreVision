@@ -1,6 +1,8 @@
 package com.nthn.storevision.service.customer.impl;
 
+import com.nthn.storevision.dto.CustomerDTO;
 import com.nthn.storevision.entity.CustomerEntity;
+import com.nthn.storevision.mapper.CustomerMapper;
 import com.nthn.storevision.repository.CustomerRepository;
 import com.nthn.storevision.service.common.AbstractCreatable;
 import com.nthn.storevision.service.customer.CustomerCreationService;
@@ -11,11 +13,11 @@ import org.springframework.stereotype.Service;
  * to persist {@link CustomerEntity} instances via {@link CustomerRepository}.
  */
 @Service
-public class CustomerCreationServiceImpl
-    extends AbstractCreatable<CustomerEntity, Long, CustomerEntity>
+public class CustomerCreationServiceImpl extends AbstractCreatable<CustomerDTO, CustomerEntity>
     implements CustomerCreationService {
 
-  public CustomerCreationServiceImpl(final CustomerRepository repository) {
-    super(repository::save);
+  public CustomerCreationServiceImpl(
+      final CustomerRepository repository, final CustomerMapper mapper) {
+    super(repository::save, mapper::toDTO, mapper::toEntity);
   }
 }
