@@ -25,6 +25,7 @@ import java.text.MessageFormat;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.Locale;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -155,6 +156,40 @@ public class CustomAuditingEntityListener {
   }
 
   /**
+   * Updates the auditing fields for the specified entity. If the entity is marked as deleted and
+   * the {@code deletedDate} is not set, it processes fields annotated with {@code DeletedBy} or
+   * {@code DeletedDate} using reflection. Additionally, it sets fields for audit information such
+   * as creation or modification timestamps and user details.
+   *
+   * @param baseEntity the entity for which auditing fields need to be updated
+   * @param isCreate a flag indicating whether the operation is for entity creation. If {@code
+   *     true}, creation-specific fields such as {@code createdDate} and {@code createdBy} are set
+   */
+  private void updateAuditFields(@NonNull final BaseEntity<?> baseEntity, final boolean isCreate) {
+    if (baseEntity.isDeleted() && baseEntity.getDeletedDate().isEmpty()) {
+      Class<?> current = baseEntity.getClass();
+      while (null != current && Object.class != current) {
+        Arrays.stream(current.getDeclaredFields())
+            .forEach(field -> setFieldIfAnnotated(baseEntity, field));
+        current = current.getSuperclass();
+      }
+    }
+
+    final Optional<User> currentAuditor = userAuditorAware.getCurrentAuditor();
+    if (currentAuditor.isEmpty()) {
+      log.warn("Current auditor is null for entity: {}", baseEntity);
+    }
+
+    final LocalDateTime now = LocalDateTime.now();
+    setIfFieldExists(baseEntity, LAST_MODIFIED_DATE, now);
+    setIfFieldExists(baseEntity, LAST_MODIFIED_BY, currentAuditor.orElse(null));
+    if (isCreate) {
+      setIfFieldExists(baseEntity, CREATED_DATE, now);
+      setIfFieldExists(baseEntity, CREATED_BY, currentAuditor.orElse(null));
+    }
+  }
+
+  /**
    * Sets the value of the specified field on the provided target object using reflection. This
    * method attempts to invoke the appropriate setter method for the given field. If no suitable
    * setter is found or if an error occurs during invocation, an {@link EntityAccessException} is
@@ -166,13 +201,13 @@ public class CustomAuditingEntityListener {
    * @throws EntityAccessException if no setter method exists for the field, or if there is an error
    *     executing the setter
    */
-  private void setFieldValue(
+  private static void setFieldValue(
       @NonNull final Field field, @NonNull final Object target, final Object value) {
     try {
       final String fieldName = field.getName();
       final String setterName =
           MessageFormat.format(
-              "set{0}{1}", fieldName.substring(0, 1).toUpperCase(), fieldName.substring(1));
+              "set{0}{1}", fieldName.substring(0, 1).toUpperCase(Locale.ROOT), fieldName.substring(1));
       final Method setter = target.getClass().getMethod(setterName, field.getType());
       setter.invoke(target, value);
     } catch (final NoSuchMethodException e) {
@@ -188,50 +223,25 @@ public class CustomAuditingEntityListener {
   }
 
   /**
-   * Attempts to set the value of the given field on the provided entity, only if the field exists.
-   * If the specified field is not found in the entity's class, a warning is logged.
+   * Attempts to set the value of the given field on the provided entity only if the field exists in
+   * the class hierarchy.
    *
    * @param baseEntity the entity containing the field
    * @param fieldName the name of the field to be set
    * @param value the value to set the field to
    */
-  private void setIfFieldExists(
+  private static void setIfFieldExists(
       @NonNull final BaseEntity<?> baseEntity, final String fieldName, final Object value) {
-    try {
-      final Field field = baseEntity.getClass().getDeclaredField(fieldName);
-      setFieldValue(field, baseEntity, value);
-    } catch (final NoSuchFieldException ignored) {
-      log.warn("Field {} not found for entity: {}", fieldName, baseEntity);
+    Class<?> current = baseEntity.getClass();
+    while (null != current && Object.class != current) {
+      try {
+        final Field field = current.getDeclaredField(fieldName);
+        setFieldValue(field, baseEntity, value);
+        return; // Field found and set, exit
+      } catch (final NoSuchFieldException ignored) {
+        current = current.getSuperclass();
+      }
     }
-  }
-
-  /**
-   * Updates the auditing fields for the specified entity. If the entity is marked as deleted and
-   * the {@code deletedDate} is not set, it processes fields annotated with {@code DeletedBy} or
-   * {@code DeletedDate} using reflection. Additionally, it sets fields for audit information such
-   * as creation or modification timestamps and user details.
-   *
-   * @param baseEntity the entity for which auditing fields need to be updated
-   * @param isCreate a flag indicating whether the operation is for entity creation. If {@code
-   *     true}, creation-specific fields such as {@code createdDate} and {@code createdBy} are set
-   */
-  private void updateAuditFields(@NonNull final BaseEntity<?> baseEntity, final boolean isCreate) {
-    if (baseEntity.isDeleted() && baseEntity.getDeletedDate().isEmpty()) {
-      Arrays.stream(baseEntity.getClass().getDeclaredFields())
-          .forEach(field -> setFieldIfAnnotated(baseEntity, field));
-    }
-
-    final Optional<User> currentAuditor = userAuditorAware.getCurrentAuditor();
-    if (currentAuditor.isEmpty()) {
-      log.warn("Current auditor is null for entity: {}", baseEntity);
-    }
-
-    final LocalDateTime now = LocalDateTime.now();
-    setIfFieldExists(baseEntity, LAST_MODIFIED_DATE, now);
-    setIfFieldExists(baseEntity, LAST_MODIFIED_BY, currentAuditor.orElse(null));
-    if (isCreate) {
-      setIfFieldExists(baseEntity, CREATED_DATE, now);
-      setIfFieldExists(baseEntity, CREATED_BY, currentAuditor.orElse(null));
-    }
+    log.warn("Field {} not found in class hierarchy for entity: {}", fieldName, baseEntity);
   }
 }
