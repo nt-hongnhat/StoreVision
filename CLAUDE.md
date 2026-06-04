@@ -173,7 +173,7 @@ To restore: call `entity.setDeletedBy(null)`, `entity.setDeletedDate(null)`, `en
 ### 10. API Documentation
 
 - All controllers and endpoints must include **SpringDoc/OpenAPI annotations** so the Swagger UI at `/swagger-ui.html` stays accurate.
-- API base path: `/store-vision/api`
+- API base path: `/` (at the root)
 - Swagger config: `application-swagger.yml` — do not duplicate configuration elsewhere.
 
 #### Controller Interface-Implementation pattern
@@ -346,4 +346,4 @@ spring:
 | Response factories   | `factory/`                                                        |
 | i18n messages        | `src/main/resources/i18n/messages*.properties`                    |
 | DB migrations        | `src/main/resources/db/changelog/` (Liquibase)                    |
-| API docs (runtime)   | `http://localhost:{port}/store-vision/api/swagger-ui.html`        |
+| API docs (runtime)   | `http://localhost:{port}/swagger-ui.html`        |

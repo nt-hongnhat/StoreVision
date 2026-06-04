@@ -1,6 +1,5 @@
 server:
-  servlet:
-    context-path: /store-vision/api
+  port: 8080
 spring:
   application:
     name: StoreVision

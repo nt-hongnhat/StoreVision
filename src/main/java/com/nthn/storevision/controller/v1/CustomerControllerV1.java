@@ -4,6 +4,7 @@ import com.nthn.storevision.constant.api.ResponseCode;
 import com.nthn.storevision.constant.api.ResponseDescription;
 import com.nthn.storevision.controller.CustomerController;
 import com.nthn.storevision.dto.CustomerDTO;
+import com.nthn.storevision.service.customer.CustomerService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -23,25 +24,25 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-/**
- * Version 1 implementation of {@link CustomerController}.
- */
+/** Version 1 implementation of {@link CustomerController}. */
 @Tag(name = "Customer", description = "Customer management endpoints")
 @Slf4j
 @RestController
-@RequestMapping(value = "/v1/customers", version = "v1")
+@RequestMapping(value = "/customers", version = "v1")
 @RequiredArgsConstructor
 public class CustomerControllerV1 implements CustomerController {
 
   private static final String ID_DESC = "Customer ID";
 
-  private final com.nthn.storevision.service.customer.CustomerService customerService;
+  private final CustomerService customerService;
 
   @Operation(
       summary = "Create a new customer",
       description = "Creates a new customer record and persists it to the database.")
   @ApiResponse(responseCode = ResponseCode.CREATED, description = ResponseDescription.CREATED)
-  @ApiResponse(responseCode = ResponseCode.BAD_REQUEST, description = ResponseDescription.INVALID_INPUT)
+  @ApiResponse(
+      responseCode = ResponseCode.BAD_REQUEST,
+      description = ResponseDescription.INVALID_INPUT)
   @ResponseStatus(HttpStatus.CREATED)
   @PostMapping
   @Override
@@ -52,15 +53,15 @@ public class CustomerControllerV1 implements CustomerController {
 
   @Operation(
       summary = "Soft-delete a customer by ID",
-      description = "Marks the customer as deleted without physically removing the record."
-          + " The record can be restored later.")
+      description =
+          "Marks the customer as deleted without physically removing the record."
+              + " The record can be restored later.")
   @ApiResponse(responseCode = ResponseCode.NO_CONTENT, description = ResponseDescription.DELETED)
   @ApiResponse(responseCode = ResponseCode.NOT_FOUND, description = ResponseDescription.NOT_FOUND)
   @ResponseStatus(HttpStatus.NO_CONTENT)
   @DeleteMapping("/{id}")
   @Override
-  public void deleteCustomer(
-      @Parameter(description = ID_DESC) @PathVariable final Long id) {
+  public void deleteCustomer(@Parameter(description = ID_DESC) @PathVariable final Long id) {
     log.debug("DELETE /customers/{}", id);
     customerService.delete(id);
   }
@@ -91,9 +92,12 @@ public class CustomerControllerV1 implements CustomerController {
 
   @Operation(
       summary = "Update a customer by ID",
-      description = "Updates the mutable fields (name, email, phone, address) of an existing customer.")
+      description =
+          "Updates the mutable fields (name, email, phone, address) of an existing customer.")
   @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)
-  @ApiResponse(responseCode = ResponseCode.BAD_REQUEST, description = ResponseDescription.INVALID_INPUT)
+  @ApiResponse(
+      responseCode = ResponseCode.BAD_REQUEST,
+      description = ResponseDescription.INVALID_INPUT)
   @ApiResponse(responseCode = ResponseCode.NOT_FOUND, description = ResponseDescription.NOT_FOUND)
   @PutMapping("/{id}")
   @Override

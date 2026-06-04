@@ -30,7 +30,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "Employee", description = "Employee management endpoints")
 @Slf4j
 @RestController
-@RequestMapping(value = "/v1/employees", version = "v1")
+@RequestMapping(value = "/employees", version = "v1")
 @RequiredArgsConstructor
 public class EmployeeControllerV1 implements EmployeeController {
 
