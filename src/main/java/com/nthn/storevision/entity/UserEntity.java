@@ -6,7 +6,7 @@
  * File: UserEntity.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-04 17:18:07
+ * Last Modified: 2026-06-04 17:22:10
  */
 
 package com.nthn.storevision.entity;
@@ -84,22 +84,22 @@ public class UserEntity extends BaseEntity<Integer> implements User {
    * Compares this UserEntity to the specified object. The result is {@code true} if and only if the
    * argument is not {@code null} and is a UserEntity object that has the same id field value.
    *
-   * @param o The object to compare this UserEntity against.
+   * @param obj The object to compare this UserEntity against.
    * @return {@code true} if the given object represents a UserEntity equivalent to this UserEntity,
    *     {@code false} otherwise.
    */
   @Override
-  public final boolean equals(final Object o) {
-    if (this == o) {
+  public final boolean equals(final Object obj) {
+    if (this == obj) {
       return true;
     }
-    if (null == o) {
+    if (null == obj) {
       return false;
     }
     final Class<?> oEffectiveClass =
-        o instanceof final HibernateProxy hibernateProxy
+        obj instanceof final HibernateProxy hibernateProxy
             ? hibernateProxy.getHibernateLazyInitializer().getPersistentClass()
-            : o.getClass();
+            : obj.getClass();
     final Class<?> thisEffectiveClass =
         this instanceof final HibernateProxy hibernateProxy
             ? hibernateProxy.getHibernateLazyInitializer().getPersistentClass()
@@ -107,8 +107,8 @@ public class UserEntity extends BaseEntity<Integer> implements User {
     if (thisEffectiveClass != oEffectiveClass) {
       return false;
     }
-    final UserEntity that = (UserEntity) o;
-    return null != getId() && Objects.equals(getId(), that.getId());
+    final UserEntity user = (UserEntity) obj;
+    return null != getId() && Objects.equals(getId(), user.getId());
   }
 
   /**
