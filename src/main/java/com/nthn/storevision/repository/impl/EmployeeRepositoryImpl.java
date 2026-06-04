@@ -6,7 +6,7 @@
  * File: EmployeeRepositoryImpl.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-05-17 14:52:55
+ * Last Modified: 2026-06-04 14:53:15
  */
 
 package com.nthn.storevision.repository.impl;
@@ -36,26 +36,6 @@ public class EmployeeRepositoryImpl implements EmployeeRepository {
   }
 
   @Override
-  public boolean existsById(final Long id) {
-    return jpaRepository.existsById(id);
-  }
-
-  @Override
-  public List<EmployeeEntity> findAll() {
-    return jpaRepository.findAll();
-  }
-
-  @Override
-  public Optional<EmployeeEntity> findById(final Long id) {
-    return jpaRepository.findById(id);
-  }
-
-  @Override
-  public EmployeeEntity save(final EmployeeEntity employee) {
-    return jpaRepository.save(employee);
-  }
-
-  @Override
   public void markDeletedById(final Long id) {
     findById(id).ifPresent(entity -> {
       entity.setDeleted(true);
@@ -74,7 +54,27 @@ public class EmployeeRepositoryImpl implements EmployeeRepository {
   }
 
   @Override
+  public boolean existsById(final Long id) {
+    return jpaRepository.existsById(id);
+  }
+
+  @Override
+  public List<EmployeeEntity> findAll() {
+    return jpaRepository.findAll();
+  }
+
+  @Override
+  public Optional<EmployeeEntity> findById(final Long id) {
+    return jpaRepository.findById(id);
+  }
+
+  @Override
   public Optional<EmployeeEntity> findByUsername(final String username) {
     return jpaRepository.findByUsername(username);
+  }
+
+  @Override
+  public EmployeeEntity save(final EmployeeEntity employee) {
+    return jpaRepository.save(employee);
   }
 }

@@ -6,13 +6,12 @@
  * File: EmployeeRepository.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-04 14:37:16
+ * Last Modified: 2026-06-04 14:53:15
  */
 
 package com.nthn.storevision.repository;
 
 import com.nthn.storevision.entity.EmployeeEntity;
-import com.nthn.storevision.model.Employee;
 import com.nthn.storevision.repository.generic.DeleteRepository;
 import com.nthn.storevision.repository.generic.ReadRepository;
 import com.nthn.storevision.repository.generic.SaveRepository;
@@ -23,7 +22,9 @@ import java.util.Optional;
  * operations and custom queries for employees.
  */
 public interface EmployeeRepository
-    extends ReadRepository<Employee, Long>, SaveRepository<Employee>, DeleteRepository<Long> {
+    extends ReadRepository<EmployeeEntity, Long>,
+        SaveRepository<EmployeeEntity>,
+        DeleteRepository<Long> {
 
   /**
    * Retrieves an employee by their username.
