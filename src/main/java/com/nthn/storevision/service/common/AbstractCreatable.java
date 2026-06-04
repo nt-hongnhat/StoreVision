@@ -12,37 +12,46 @@
 package com.nthn.storevision.service.common;
 
 import com.nthn.storevision.service.generic.Creatable;
+import java.util.function.Function;
 import java.util.function.UnaryOperator;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Persistable;
 
 /**
  * Abstract base class providing a generic implementation of the {@link Creatable} interface for
  * creating and persisting entities.
  *
- * <p>A {@link UnaryOperator} is used for the save operation so that the service layer remains
- * decoupled from Spring Data JPA. Subclasses supply {@code repository::save} as the operator.
+ * <p>Subclasses supply three functions at construction time:
  *
- * @param <M> the domain model type, extending {@link Persistable}
- * @param <I> the type of the entity's identifier
- * @param <E> the JPA entity type, extending {@code M}
+ * <ul>
+ *   <li>{@code toEntity} — converts the input DTO to a JPA entity ready for persistence
+ *   <li>{@code saveFunction} — persists the entity and returns the saved instance (typically {@code
+ *       repository::save})
+ *   <li>{@code toDTO} — converts the saved entity back to the output DTO
+ * </ul>
+ *
+ * <p>This design keeps the service layer decoupled from Spring Data JPA while providing a reusable
+ * creation flow.
+ *
+ * @param <T> the DTO type (input and output)
+ * @param <E> the JPA entity type
  */
 @Slf4j
-public abstract class AbstractCreatable<M extends Persistable<I>, I, E extends M>
-    implements Creatable<M, I> {
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
+public abstract class AbstractCreatable<T, E> implements Creatable<T> {
 
   private final UnaryOperator<E> saveFunction;
+  private final Function<? super E, ? extends T> toDTO;
+  private final Function<? super T, ? extends E> toEntity;
 
-  protected AbstractCreatable(final UnaryOperator<E> saveFunction) {
-    this.saveFunction = saveFunction;
-  }
-
-  @SuppressWarnings("unchecked")
   @Override
-  public I create(final M entity) {
-    log.debug("Creating entity: {}", entity);
-    final M saved = saveFunction.apply((E) entity);
-    log.info("Entity created with id: {}", saved.getId());
-    return saved.getId();
+  public T create(final T request) {
+    log.debug("Creating entity from request: {}", request);
+    final T created = toDTO.apply(saveFunction.apply(toEntity.apply(request)));
+    log.debug("Entity created successfully: {}", created);
+    return created;
   }
 }
