@@ -28,21 +28,13 @@ public class EmployeeDeletionServiceImpl implements EmployeeDeletionService {
   @Override
   @Transactional
   public void markAsDeleted(final Long id) {
-    repository.findById(id).ifPresent(entity -> {
-      entity.setDeleted(true);
-      repository.save(entity);
-    });
+    repository.markDeletedById(id);
   }
 
   @Override
   @Transactional
   public void restore(final Long id) {
-    repository.findById(id).ifPresent(entity -> {
-      entity.setDeletedBy(null);
-      entity.setDeletedDate(null);
-      entity.setDeleted(false);
-      repository.save(entity);
-    });
+    repository.restoreById(id);
   }
 
   @Override
