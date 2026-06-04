@@ -11,13 +11,13 @@
 
 package com.nthn.storevision.service.customer;
 
-import com.nthn.storevision.entity.CustomerEntity;
+import com.nthn.storevision.dto.CustomerDTO;
 import com.nthn.storevision.service.generic.Updatable;
 
 /**
- * Service interface for updating {@link CustomerEntity} entities.
+ * Service interface for updating customers.
  *
  * @see Updatable
  */
 @FunctionalInterface
-public interface CustomerUpdateService extends Updatable<CustomerEntity> {}
+public interface CustomerUpdateService extends Updatable<CustomerDTO> {}

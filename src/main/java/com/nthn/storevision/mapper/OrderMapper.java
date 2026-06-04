@@ -18,6 +18,7 @@ import org.jspecify.annotations.Nullable;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
+import org.mapstruct.MappingTarget;
 
 /**
  * Mapper interface for converting between {@link OrderEntity} and {@link OrderDTO}. This interface
@@ -63,4 +64,16 @@ public interface OrderMapper {
       target = "customer",
       expression = "java(mapCustomerIdToCustomerEntity(orderDTO.getCustomerId()))")
   OrderEntity toEntity(OrderDTO orderDTO);
+
+  /**
+   * Updates an existing {@link OrderEntity} with values from the given {@link OrderDTO}.
+   * The {@code id} and {@code customer} fields are ignored — {@code customer} association
+   * must be changed via a dedicated workflow, not a regular update.
+   *
+   * @param dto    the source DTO carrying updated field values
+   * @param entity the target entity to be updated in place
+   */
+  @Mapping(target = "id", ignore = true)
+  @Mapping(target = "customer", ignore = true)
+  void updateEntity(OrderDTO dto, @MappingTarget OrderEntity entity);
 }

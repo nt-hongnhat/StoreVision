@@ -6,17 +6,18 @@
  * File: OrderUpdateService.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-03 11:21:37
+ * Last Modified: 2026-06-04 13:59:26
  */
 
 package com.nthn.storevision.service.order;
 
-import com.nthn.storevision.entity.OrderEntity;
+import com.nthn.storevision.dto.OrderDTO;
 import com.nthn.storevision.service.generic.Updatable;
 
 /**
- * Service interface for updating {@link OrderEntity} entities.
+ * Service interface for updating orders.
  *
  * @see Updatable
  */
-public interface OrderUpdateService extends Updatable<OrderEntity> {}
+@FunctionalInterface
+public interface OrderUpdateService extends Updatable<OrderDTO> {}

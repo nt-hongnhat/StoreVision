@@ -6,23 +6,25 @@
  * File: Updatable.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-05-10 13:06:47
+ * Last Modified: 2026-06-04 13:58:22
  */
 
 package com.nthn.storevision.service.generic;
 
 /**
- * Functional interface for updating entities.
+ * Functional interface for updating domain objects by ID.
  *
- * @param <T> the type of the entity to be updated
+ * @param <T> the type of the request/response DTO
  */
 @FunctionalInterface
 public interface Updatable<T> {
 
   /**
-   * Updates an existing entity.
+   * Updates an existing domain object identified by the given ID.
    *
-   * @param entity the entity to be updated
+   * @param id the identifier of the object to update
+   * @param request the DTO carrying the new field values
+   * @return the updated DTO
    */
-  void update(T entity);
+  T update(Long id, T request);
 }

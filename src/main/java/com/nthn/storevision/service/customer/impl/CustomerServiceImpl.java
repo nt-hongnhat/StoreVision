@@ -20,7 +20,6 @@ import com.nthn.storevision.service.customer.CustomerRetrievalService;
 import com.nthn.storevision.service.customer.CustomerService;
 import com.nthn.storevision.service.customer.CustomerUpdateService;
 import java.util.List;
-import java.util.function.Function;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -68,14 +67,9 @@ public class CustomerServiceImpl implements CustomerService {
   @Transactional
   public CustomerDTO update(final Long id, final CustomerDTO dto) {
     log.debug("Updating customer id: {}", id);
-    final CustomerEntity entity = retrievalService.findById(id, Function.identity());
-    entity.setName(dto.getName());
-    entity.setEmail(dto.getEmail());
-    entity.setPhone(dto.getPhone());
-    entity.setAddress(dto.getAddress());
-    updateService.update(entity);
+    final CustomerDTO updated = updateService.update(id, dto);
     log.debug("Customer id: {} updated successfully", id);
-    return mapper.toDTO(entity);
+    return updated;
   }
 
   @Override

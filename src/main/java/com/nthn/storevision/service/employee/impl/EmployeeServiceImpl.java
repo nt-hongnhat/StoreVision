@@ -20,7 +20,6 @@ import com.nthn.storevision.service.employee.EmployeeRetrievalService;
 import com.nthn.storevision.service.employee.EmployeeService;
 import com.nthn.storevision.service.employee.EmployeeUpdateService;
 import java.util.List;
-import java.util.function.Function;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -68,13 +67,9 @@ public class EmployeeServiceImpl implements EmployeeService {
   @Transactional
   public EmployeeDTO update(final Long id, final EmployeeDTO dto) {
     log.debug("Updating employee id: {}", id);
-    final EmployeeEntity entity = retrievalService.findById(id, Function.identity());
-    entity.setUsername(dto.getUsername());
-    entity.setPassword(dto.getPassword());
-    entity.setRole(dto.getRole());
-    updateService.update(entity);
-    log.debug("Employee id: {} updated — role: {}", id, entity.getRole());
-    return mapper.toDTO(entity);
+    final EmployeeDTO updated = updateService.update(id, dto);
+    log.debug("Employee id: {} updated — role: {}", id, updated.getRole());
+    return updated;
   }
 
   @Override

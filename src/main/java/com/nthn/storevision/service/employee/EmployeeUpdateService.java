@@ -11,13 +11,13 @@
 
 package com.nthn.storevision.service.employee;
 
-import com.nthn.storevision.entity.EmployeeEntity;
+import com.nthn.storevision.dto.EmployeeDTO;
 import com.nthn.storevision.service.generic.Updatable;
 
 /**
- * Service interface for updating {@link EmployeeEntity} entities.
+ * Service interface for updating employees.
  *
  * @see Updatable
  */
 @FunctionalInterface
-public interface EmployeeUpdateService extends Updatable<EmployeeEntity> {}
+public interface EmployeeUpdateService extends Updatable<EmployeeDTO> {}

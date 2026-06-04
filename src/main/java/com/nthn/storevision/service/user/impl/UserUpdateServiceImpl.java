@@ -31,7 +31,8 @@ public class UserUpdateServiceImpl implements UserUpdateService {
 
   @Transactional
   @Override
-  public void update(final User user) {
+  public User update(final Long id, final User user) {
     repository.save((UserEntity) user);
+    return user;
   }
 }

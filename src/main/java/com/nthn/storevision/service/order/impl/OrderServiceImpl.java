@@ -20,7 +20,6 @@ import com.nthn.storevision.service.order.OrderRetrievalService;
 import com.nthn.storevision.service.order.OrderService;
 import com.nthn.storevision.service.order.OrderUpdateService;
 import java.util.List;
-import java.util.function.Function;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -69,13 +68,9 @@ public class OrderServiceImpl implements OrderService {
   @Transactional
   public OrderDTO update(final Long id, final OrderDTO dto) {
     log.debug("Updating order id: {}", id);
-    final OrderEntity entity = retrievalService.findById(id, Function.identity());
-    entity.setOrderDate(dto.getOrderDate());
-    entity.setTotalAmount(dto.getTotalAmount());
-    entity.setStatus(dto.getStatus());
-    updateService.update(entity);
-    log.debug("Order id: {} updated to status: {}", id, entity.getStatus());
-    return mapper.toDTO(entity);
+    final OrderDTO updated = updateService.update(id, dto);
+    log.debug("Order id: {} updated to status: {}", id, updated.getStatus());
+    return updated;
   }
 
   @Override

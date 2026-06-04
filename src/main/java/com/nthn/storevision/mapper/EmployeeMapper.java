@@ -14,7 +14,9 @@ package com.nthn.storevision.mapper;
 import com.nthn.storevision.dto.EmployeeDTO;
 import com.nthn.storevision.entity.EmployeeEntity;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
+import org.mapstruct.MappingTarget;
 
 /**
  * Mapper interface for converting between {@link EmployeeEntity} and {@link EmployeeDTO}. This
@@ -37,4 +39,14 @@ public interface EmployeeMapper {
    * @return The converted EmployeeEntity.
    */
   EmployeeEntity toEntity(EmployeeDTO employeeDTO);
+
+  /**
+   * Updates an existing {@link EmployeeEntity} with values from the given {@link EmployeeDTO}.
+   * The {@code id} field is intentionally ignored to preserve the entity's identity.
+   *
+   * @param dto    the source DTO carrying updated field values
+   * @param entity the target entity to be updated in place
+   */
+  @Mapping(target = "id", ignore = true)
+  void updateEntity(EmployeeDTO dto, @MappingTarget EmployeeEntity entity);
 }
