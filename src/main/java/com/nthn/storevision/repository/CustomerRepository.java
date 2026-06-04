@@ -6,64 +6,31 @@
  * File: CustomerRepository.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-05-17 14:31:36
+ * Last Modified: 2026-06-04 14:42:28
  */
 
 package com.nthn.storevision.repository;
 
 import com.nthn.storevision.entity.CustomerEntity;
-
-import java.util.List;
+import com.nthn.storevision.model.Customer;
+import com.nthn.storevision.repository.generic.DeleteRepository;
+import com.nthn.storevision.repository.generic.ReadRepository;
+import com.nthn.storevision.repository.generic.SaveRepository;
 import java.util.Optional;
 
 /**
- * Repository interface for managing {@link CustomerEntity} instances.
- * Defines standard CRUD operations and custom queries for customers.
+ * Repository interface for managing {@link CustomerEntity} instances. Defines standard CRUD
+ * operations and custom queries for customers.
  */
-public interface CustomerRepository extends ReadRepository<CustomerEntity, Long> {
-  /**
-   * Deletes a customer by its ID.
-   *
-   * @param id The ID of the customer to delete.
-   */
-  void deleteById(Long id);
+public interface CustomerRepository
+    extends ReadRepository<CustomerEntity, Long>, SaveRepository<CustomerEntity>, DeleteRepository<Long> {
 
   /**
-   * Checks if a customer with the given ID exists.
+   * Retrieves a customer by their email address.
    *
-   * @param id The ID of the customer to check.
-   * @return {@code true} if a customer with the given ID exists, {@code false} otherwise.
-   */
-  boolean existsById(Long id);
-
-  /**
-   * Retrieves all customers.
-   *
-   * @return A list of all {@link CustomerEntity} instances.
-   */
-  List<CustomerEntity> findAll();
-
-  /**
-   * Retrieves a customer by its ID.
-   *
-   * @param id The ID of the customer to retrieve.
-   * @return An {@link Optional} containing the {@link CustomerEntity} if found, or empty if not.
-   */
-  Optional<CustomerEntity> findById(Long id);
-
-  /**
-   * Saves a customer entity.
-   *
-   * @param customer The {@link CustomerEntity} to save.
-   * @return The saved {@link CustomerEntity}.
-   */
-  CustomerEntity save(CustomerEntity customer);
-
-  /**
-   * Finds a customer by their email address.
-   *
-   * @param email The email address of the customer.
-   * @return An {@link Optional} containing the {@link CustomerEntity} if found, or empty if not.
+   * @param email the email address to search for.
+   * @return an {@link Optional} containing the {@link CustomerEntity} if found, or an empty {@link
+   *     Optional} if not found.
    */
   Optional<CustomerEntity> findByEmail(String email);
 }

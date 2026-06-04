@@ -1,50 +1,26 @@
+/*
+ * Copyright (c) 2026 Hong Nhat. All rights reserved.
+ *
+ * Project: Store Vision
+ * Module: Store Vision Main
+ * File: ProductRepository.java
+ * Author: Nguyen Thi Hong Nhat
+ * Contact: hongnhat1121@gmail.com
+ * Last Modified: 2026-06-04 14:30:04
+ */
+
 package com.nthn.storevision.repository;
 
 import com.nthn.storevision.entity.ProductEntity;
-
-import java.util.List;
-import java.util.Optional;
+import com.nthn.storevision.repository.generic.DeleteRepository;
+import com.nthn.storevision.repository.generic.ReadRepository;
+import com.nthn.storevision.repository.generic.SaveRepository;
 
 /**
- * Repository interface for managing {@link ProductEntity} instances.
- * Defines standard CRUD operations for products.
+ * Repository interface for managing {@link ProductEntity} instances. Defines standard CRUD
+ * operations for products.
  */
-public interface ProductRepository extends ReadRepository<ProductEntity, Long> {
-  /**
-   * Deletes a product by its ID.
-   *
-   * @param id The ID of the product to delete.
-   */
-  void deleteById(Long id);
-
-  /**
-   * Checks if a product with the given ID exists.
-   *
-   * @param id The ID of the product to check.
-   * @return {@code true} if a product with the given ID exists, {@code false} otherwise.
-   */
-  boolean existsById(Long id);
-
-  /**
-   * Retrieves all products.
-   *
-   * @return A list of all {@link ProductEntity} instances.
-   */
-  List<ProductEntity> findAll();
-
-  /**
-   * Retrieves a product by its ID.
-   *
-   * @param id The ID of the product to retrieve.
-   * @return An {@link Optional} containing the {@link ProductEntity} if found, or empty if not.
-   */
-  Optional<ProductEntity> findById(Long id);
-
-  /**
-   * Saves a product entity.
-   *
-   * @param product The {@link ProductEntity} to save.
-   * @return The saved {@link ProductEntity}.
-   */
-  ProductEntity save(ProductEntity product);
-}
+public interface ProductRepository
+    extends ReadRepository<ProductEntity, Long>,
+        SaveRepository<ProductEntity>,
+        DeleteRepository<Long> {}
