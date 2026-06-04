@@ -13,7 +13,6 @@ package com.nthn.storevision.service.product.impl;
 
 import com.nthn.storevision.dto.ProductDTO;
 import com.nthn.storevision.entity.ProductEntity;
-import com.nthn.storevision.mapper.ProductMapper;
 import com.nthn.storevision.service.product.ProductCreationService;
 import com.nthn.storevision.service.product.ProductDeletionService;
 import com.nthn.storevision.service.product.ProductRetrievalService;
@@ -21,8 +20,10 @@ import com.nthn.storevision.service.product.ProductService;
 import com.nthn.storevision.service.product.ProductUpdateService;
 import java.util.List;
 import java.util.function.Function;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,18 +38,16 @@ public class ProductServiceImpl implements ProductService {
 
   private final ProductCreationService creationService;
   private final ProductDeletionService deletionService;
-  private final ProductMapper mapper;
   private final ProductRetrievalService retrievalService;
   private final ProductUpdateService updateService;
 
   @Override
   @Transactional
-  public ProductDTO create(final ProductDTO dto) {
+  public ProductDTO create(final @NonNull ProductDTO dto) {
     log.debug("Creating product with name: {}", dto.getName());
-    final ProductEntity entity = mapper.toEntity(dto);
-    creationService.create(entity);
-    log.debug("Product created with id: {}", entity.getId());
-    return mapper.toDTO(entity);
+    final ProductDTO created = creationService.create(dto);
+    log.debug("Product created with id: {}", created.getId());
+    return created;
   }
 
   @Override
@@ -74,7 +73,7 @@ public class ProductServiceImpl implements ProductService {
     entity.setPrice(dto.getPrice());
     entity.setStockQuantity(dto.getStockQuantity());
     entity.setCategory(dto.getCategory());
-    updateService.update(entity);
+    updateService.update(entity.getId());
     log.debug("Product id: {} updated successfully", id);
     return mapper.toDTO(entity);
   }
