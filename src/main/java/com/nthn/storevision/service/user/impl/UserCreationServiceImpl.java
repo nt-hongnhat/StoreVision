@@ -12,6 +12,7 @@
 package com.nthn.storevision.service.user.impl;
 
 import com.nthn.storevision.entity.UserEntity;
+import com.nthn.storevision.mapper.EntityMapper;
 import com.nthn.storevision.mapper.UserMapper;
 import com.nthn.storevision.model.User;
 import com.nthn.storevision.repository.jpa.JpaUserRepository;
@@ -29,11 +30,11 @@ import org.springframework.stereotype.Service;
  * {@link User} model without an additional conversion step.
  */
 @Service
-public class UserCreationServiceImpl
-    extends AbstractCreatable<User, UserEntity, JpaUserRepository>
+public class UserCreationServiceImpl extends AbstractCreatable<User, UserEntity, JpaUserRepository>
     implements UserCreationService {
 
-  public UserCreationServiceImpl(final JpaUserRepository repository, final UserMapper mapper) {
-    super(repository, user -> user, mapper::toEntity);
+  protected UserCreationServiceImpl(
+      final EntityMapper<User, ?, UserEntity> mapper, final JpaUserRepository repository) {
+    super(mapper, repository);
   }
 }

@@ -13,7 +13,7 @@ package com.nthn.storevision.service.order.impl;
 
 import com.nthn.storevision.dto.OrderDTO;
 import com.nthn.storevision.entity.OrderEntity;
-import com.nthn.storevision.mapper.OrderMapper;
+import com.nthn.storevision.mapper.EntityMapper;
 import com.nthn.storevision.repository.OrderRepository;
 import com.nthn.storevision.service.common.AbstractCreatable;
 import com.nthn.storevision.service.order.OrderCreationService;
@@ -28,7 +28,8 @@ public class OrderCreationServiceImpl
     extends AbstractCreatable<OrderDTO, OrderEntity, OrderRepository>
     implements OrderCreationService {
 
-  public OrderCreationServiceImpl(final OrderRepository repository, final OrderMapper mapper) {
-    super(repository, mapper::toDTO, mapper::toEntity);
+  protected OrderCreationServiceImpl(
+      final EntityMapper<OrderDTO, ?, OrderEntity> mapper, final OrderRepository repository) {
+    super(mapper, repository);
   }
 }

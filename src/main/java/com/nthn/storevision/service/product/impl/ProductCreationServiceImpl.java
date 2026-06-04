@@ -13,6 +13,7 @@ package com.nthn.storevision.service.product.impl;
 
 import com.nthn.storevision.dto.ProductDTO;
 import com.nthn.storevision.entity.ProductEntity;
+import com.nthn.storevision.mapper.EntityMapper;
 import com.nthn.storevision.mapper.ProductMapper;
 import com.nthn.storevision.repository.ProductRepository;
 import com.nthn.storevision.service.common.AbstractCreatable;
@@ -28,8 +29,8 @@ public class ProductCreationServiceImpl
     extends AbstractCreatable<ProductDTO, ProductEntity, ProductRepository>
     implements ProductCreationService {
 
-  public ProductCreationServiceImpl(
-      final ProductRepository repository, final ProductMapper mapper) {
-    super(repository, mapper::toDTO, mapper::toEntity);
+  protected ProductCreationServiceImpl(
+      final EntityMapper<ProductDTO, ?, ProductEntity> mapper, final ProductRepository repository) {
+    super(mapper, repository);
   }
 }

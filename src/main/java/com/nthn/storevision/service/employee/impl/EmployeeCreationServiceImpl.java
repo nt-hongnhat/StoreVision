@@ -13,7 +13,7 @@ package com.nthn.storevision.service.employee.impl;
 
 import com.nthn.storevision.dto.EmployeeDTO;
 import com.nthn.storevision.entity.EmployeeEntity;
-import com.nthn.storevision.mapper.EmployeeMapper;
+import com.nthn.storevision.mapper.EntityMapper;
 import com.nthn.storevision.repository.EmployeeRepository;
 import com.nthn.storevision.service.common.AbstractCreatable;
 import com.nthn.storevision.service.employee.EmployeeCreationService;
@@ -28,8 +28,8 @@ public class EmployeeCreationServiceImpl
     extends AbstractCreatable<EmployeeDTO, EmployeeEntity, EmployeeRepository>
     implements EmployeeCreationService {
 
-  public EmployeeCreationServiceImpl(
-      final EmployeeRepository repository, final EmployeeMapper mapper) {
-    super(repository, mapper::toDTO, mapper::toEntity);
+  protected EmployeeCreationServiceImpl(
+      final EntityMapper<EmployeeDTO, ?, EmployeeEntity> mapper, final EmployeeRepository repository) {
+    super(mapper, repository);
   }
 }

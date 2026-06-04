@@ -13,7 +13,7 @@ package com.nthn.storevision.service.customer.impl;
 
 import com.nthn.storevision.dto.CustomerDTO;
 import com.nthn.storevision.entity.CustomerEntity;
-import com.nthn.storevision.mapper.CustomerMapper;
+import com.nthn.storevision.mapper.EntityMapper;
 import com.nthn.storevision.repository.CustomerRepository;
 import com.nthn.storevision.service.common.AbstractCreatable;
 import com.nthn.storevision.service.customer.CustomerCreationService;
@@ -28,8 +28,7 @@ public class CustomerCreationServiceImpl
     extends AbstractCreatable<CustomerDTO, CustomerEntity, CustomerRepository>
     implements CustomerCreationService {
 
-  public CustomerCreationServiceImpl(
-      final CustomerRepository repository, final CustomerMapper mapper) {
-    super(repository, mapper::toDTO, mapper::toEntity);
+  protected CustomerCreationServiceImpl(final EntityMapper<CustomerDTO, ?, CustomerEntity> mapper, CustomerRepository repository) {
+    super(mapper, repository);
   }
 }
