@@ -6,14 +6,14 @@
  * File: UserCreationServiceImpl.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-04 14:58:34
+ * Last Modified: 2026-06-04 16:02:35
  */
 
 package com.nthn.storevision.service.user.impl;
 
+import com.nthn.storevision.dto.UserDTO;
 import com.nthn.storevision.entity.UserEntity;
 import com.nthn.storevision.mapper.EntityMapper;
-import com.nthn.storevision.mapper.UserMapper;
 import com.nthn.storevision.model.User;
 import com.nthn.storevision.repository.jpa.JpaUserRepository;
 import com.nthn.storevision.service.common.AbstractCreatable;
@@ -30,11 +30,12 @@ import org.springframework.stereotype.Service;
  * {@link User} model without an additional conversion step.
  */
 @Service
-public class UserCreationServiceImpl extends AbstractCreatable<User, UserEntity, JpaUserRepository>
+public class UserCreationServiceImpl
+    extends AbstractCreatable<UserDTO, UserEntity, JpaUserRepository>
     implements UserCreationService {
 
   protected UserCreationServiceImpl(
-      final EntityMapper<User, ?, UserEntity> mapper, final JpaUserRepository repository) {
+      final EntityMapper<UserDTO, ?, UserEntity> mapper, final JpaUserRepository repository) {
     super(mapper, repository);
   }
 }

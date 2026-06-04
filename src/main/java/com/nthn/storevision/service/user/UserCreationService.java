@@ -6,12 +6,12 @@
  * File: UserCreationService.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-04 14:05:42
+ * Last Modified: 2026-06-04 15:58:14
  */
 
 package com.nthn.storevision.service.user;
 
-import com.nthn.storevision.model.User;
+import com.nthn.storevision.dto.UserDTO;
 import com.nthn.storevision.service.generic.Creatable;
 
 /**
@@ -21,4 +21,4 @@ import com.nthn.storevision.service.generic.Creatable;
  * @see Creatable
  */
 @FunctionalInterface
-public interface UserCreationService extends Creatable<User> {}
+public interface UserCreationService extends Creatable<UserDTO> {}
