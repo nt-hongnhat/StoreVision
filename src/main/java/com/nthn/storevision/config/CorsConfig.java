@@ -39,13 +39,25 @@ public class CorsConfig implements WebMvcConfigurer {
   @Override
   public void configureApiVersioning(final @NonNull ApiVersionConfigurer configurer) {
     final WebMvcProperties.Apiversion apiversion = webMvcProperties.getApiversion();
-    final String defaultVersion = apiversion.getDefaultVersion();
-    log.debug("Configuring API versioning with default version: {}", defaultVersion);
-    configurer.setDefaultVersion(defaultVersion);
-    final String requestHeader = apiversion.getUse().getHeader();
-    if (null != requestHeader) {
-      configurer.useRequestHeader(requestHeader);
+    if (null == apiversion || null == apiversion.getUse()) {
+      log.debug("API versioning configuration missing in properties, skipping versioning setup");
+      return;
     }
+
+    final String requestHeader = apiversion.getUse().getHeader();
+    if (null == requestHeader) {
+      log.debug("API versioning request header not configured, skipping versioning setup");
+      return;
+    }
+
+    final String defaultVersion = apiversion.getDefaultVersion();
+    log.debug(
+        "Configuring API versioning with header resolver [{}], default version: {}",
+        requestHeader,
+        defaultVersion);
+
+    configurer.setDefaultVersion(defaultVersion);
+    configurer.useRequestHeader(requestHeader);
     log.debug("API versioning configuration completed");
   }
 
