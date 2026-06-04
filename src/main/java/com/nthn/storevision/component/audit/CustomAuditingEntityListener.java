@@ -6,7 +6,7 @@
  * File: CustomAuditingEntityListener.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-02 17:24:59
+ * Last Modified: 2026-06-04 10:27:38
  */
 
 package com.nthn.storevision.component.audit;

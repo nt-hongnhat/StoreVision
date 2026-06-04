@@ -40,7 +40,7 @@ spring:
   mvc:
     apiversion:
       use:
-        request-header: X-API-Version
+        header: X-API-Version
       default: v1
     log-request-details: true
 
