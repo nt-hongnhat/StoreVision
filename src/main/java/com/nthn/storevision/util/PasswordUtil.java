@@ -6,7 +6,7 @@
  * File: PasswordUtil.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-02 17:28:11
+ * Last Modified: 2026-06-04 17:19:31
  */
 
 package com.nthn.storevision.util;
@@ -39,19 +39,6 @@ public class PasswordUtil {
   public @Nullable String ensurePasswordIsHashed(final String password) {
     log.debug("Ensuring password is hashed");
     return isHashedPassword(password) ? password : hashPassword(password);
-  }
-
-  /**
-   * Verifies a plain text password against a hashed password.
-   *
-   * @param plainPassword The plain text password.
-   * @param hashedPassword The hashed password to compare against.
-   * @return {@code true} if the plain password matches the hashed password, {@code false}
-   *     otherwise.
-   */
-  public boolean verifyPassword(final String plainPassword, final String hashedPassword) {
-    log.debug("Verifying password");
-    return PASSWORD_ENCODER.matches(plainPassword, hashedPassword);
   }
 
   /**
