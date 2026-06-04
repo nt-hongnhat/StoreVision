@@ -11,13 +11,14 @@
 
 package com.nthn.storevision.service.product;
 
-import com.nthn.storevision.entity.ProductEntity;
+import com.nthn.storevision.dto.ProductDTO;
 import com.nthn.storevision.service.generic.Creatable;
 
 /**
- * Service interface for creating and persisting {@link ProductEntity} entities.
+ * Service interface for creating and persisting products.
  *
  * @see com.nthn.storevision.service.common.AbstractCreatable
  * @see Creatable
  */
-public interface ProductCreationService extends Creatable<ProductEntity, Long> {}
+@FunctionalInterface
+public interface ProductCreationService extends Creatable<ProductDTO> {}
