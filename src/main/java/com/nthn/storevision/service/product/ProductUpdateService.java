@@ -11,12 +11,13 @@
 
 package com.nthn.storevision.service.product;
 
-import com.nthn.storevision.entity.ProductEntity;
+import com.nthn.storevision.dto.ProductDTO;
 import com.nthn.storevision.service.generic.Updatable;
 
 /**
- * Service interface for updating {@link ProductEntity} entities.
+ * Service interface for updating products.
  *
  * @see Updatable
  */
-public interface ProductUpdateService extends Updatable<ProductEntity> {}
+@FunctionalInterface
+public interface ProductUpdateService extends Updatable<ProductDTO> {}
