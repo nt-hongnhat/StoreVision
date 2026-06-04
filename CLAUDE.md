@@ -50,8 +50,8 @@ Controller (v1/)
 
 - **Controllers**: Only handle HTTP concerns (request mapping, input validation via `@Valid`, status code declaration via `@ResponseStatus`). Delegate all logic to services. **Never wrap responses manually** — `ApiResponseHandler` (`advice/`) intercepts every non-`ResponseEntity` return value and wraps it in `ApiResponse` automatically.
 - **Services**: One service class per operation per domain (e.g., `OrderCreationService`, `OrderRetrievalService`). Implement generic interfaces from `service/generic/` (`Creatable`, `Readable`, `Updatable`, `Deletable`, `SoftDeletable`, `HardDeletable`).
-- **Repositories**: Define interface in `repository/`, implementation in `repository/impl/`, Spring Data JPA repository in `repository/jpa/`.
-- **Entities**: Extend `BaseEntity` for all auditable entities. Never expose entities directly through API — always convert via Mapper.
+- **Repositories**: Define interface in `repository/`, implementation in `repository/impl/`, Spring Data JPA repository in `repository/jpa/`. Repository methods **must return Entity types** (`Entity`, `Optional<Entity>`, `List<Entity>`, `Page<Entity>`) — never DTOs, never primitives constructed from projection queries unless explicitly using `@Query` projections for read-only optimization.
+- **Entities**: Extend `BaseEntity` for all auditable entities. Never expose entities directly through API — always convert via Mapper. Entity-to-DTO conversion is the **exclusive responsibility of the Service layer**.
 
 ### 3. Service Design Rules
 
@@ -99,6 +99,81 @@ No concrete `@Service` class may live directly in `service/domain/` — only int
 - API responses are wrapped automatically by `ApiResponseHandler` (a `ResponseBodyAdvice` in `advice/`) — controllers must return raw DTOs or `void`, **not** `ResponseEntity<>` or `ApiSuccessResponse<>`.
 - `ApiResponseFactory` / `ApiErrorResponseFactory` are used internally by the advice layer — never inject them into controllers.
 - Use `@ResponseStatus(HttpStatus.CREATED)` / `@ResponseStatus(HttpStatus.NO_CONTENT)` on controller methods to declare non-200 status codes without constructing `ResponseEntity`.
+
+#### Repository → Service → Controller data flow (mandatory)
+
+The conversion boundary between Entity and DTO is **always the Service layer**:
+
+| Layer | Returns | Never returns |
+|-------|---------|---------------|
+| `Repository` | `Entity`, `Optional<Entity>`, `List<Entity>`, `Page<Entity>` | DTO, request/response objects |
+| `Service` | `DTO`, `Optional<DTO>`, `List<DTO>`, `Page<DTO>` | raw `Entity` (unless internal private helper within the same class) |
+| `Controller` | raw `DTO` or `void` | `Entity`, `ResponseEntity<>` |
+
+```java
+// correct — Repository returns Entity
+Optional<Customer> findById(Long id);   // CustomerRepository
+
+// correct — Service converts Entity → DTO before returning
+public CustomerDTO getById(Long id) {
+    Customer entity = customerRepository.findById(id)
+            .orElseThrow(() -> new EntityNotFoundException(...));
+    return customerMapper.toDTO(entity);  // conversion happens here, in the service
+}
+
+// wrong — never return DTO from Repository
+Optional<CustomerDTO> findById(Long id);  // ❌
+
+// wrong — never return Entity from Service public API
+public Customer getById(Long id) { ... }  // ❌ (exposes persistence detail to controller)
+```
+
+- Internal helper methods within a service implementation may pass `Entity` objects between private methods — the rule applies to **public method signatures** on service interfaces.
+- Cross-domain service calls (e.g., `OrderCreationService` calling `CustomerRetrievalService`) must use the **DTO** returned by the other domain's service — never reach into another domain's repository directly.
+
+#### Mapper architecture (`mapper/`)
+
+The mapper layer has two levels:
+
+**1. `EntityMapper<T, I, E>` — generic base interface**
+
+All domain mappers extend this interface. It defines three operations every mapper must support:
+
+| Method | Direction | Notes |
+|--------|-----------|-------|
+| `toDTO(E entity)` | Entity → DTO | Used by service layer after persistence or retrieval |
+| `toEntity(T dto)` | DTO → Entity | Audit fields (`id`, `createdBy`, `createdDate`, `lastModifiedBy`, `lastModifiedDate`, `deletedBy`, `deletedDate`, `deleted`) are `ignore = true` |
+| `updateEntity(T dto, @MappingTarget E entity)` | DTO → existing Entity | `id` is always `ignore = true`; other ignored fields are domain-specific |
+
+Abstract service classes (e.g., `AbstractCreatable`) depend on `EntityMapper<T, ?, E>` directly — never on concrete mapper types.
+
+**2. Domain mappers — thin `EntityMapper` extensions**
+
+Each domain mapper extends `EntityMapper` and adds only domain-specific `@Mapping` overrides. All domain mappers must declare `config = BaseEntityMapperConfig.class`:
+
+```java
+// correct — minimal domain mapper
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING, config = BaseEntityMapperConfig.class)
+public interface CustomerMapper extends EntityMapper<CustomerDTO, Long, CustomerEntity> {}
+
+// correct — with domain-specific field mapping overrides
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING, config = BaseEntityMapperConfig.class)
+public interface OrderMapper extends EntityMapper<OrderDTO, Long, OrderEntity> {
+  @Mapping(source = "customer.id", target = "customerId")
+  OrderDTO toDTO(OrderEntity order);
+
+  @Mapping(target = "customer", expression = "java(mapCustomerIdToCustomerEntity(dto.getCustomerId()))")
+  OrderEntity toEntity(OrderDTO dto);
+}
+```
+
+**3. `BaseEntityMapperConfig` — shared `@MapperConfig`**
+
+`BaseEntityMapperConfig` (`mapper/`) is the single shared MapStruct config. Every domain mapper must reference it via `config = BaseEntityMapperConfig.class`. It provides:
+- `unmappedTargetPolicy = IGNORE` — suppresses audit-field warnings for all DTO-based mappers
+- A `toEntity(User)` prototype mapping — handles the `UserEntity ← User` edge case where `User` extends `CustomAuditable` with `Optional<User>` getters that MapStruct cannot auto-unwrap
+
+Do **not** repeat `unmappedTargetPolicy = IGNORE` or the audit-field `@Mapping(ignore = true)` block on individual domain mappers — `BaseEntityMapperConfig` and `EntityMapper.toEntity()` already cover them.
 
 ### 5. Exception Handling
 
