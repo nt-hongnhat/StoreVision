@@ -6,13 +6,17 @@
  * File: EntityMapper.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-04 14:53:43
+ * Last Modified: 2026-06-04 17:01:35
  */
 
 package com.nthn.storevision.mapper;
 
 import com.nthn.storevision.entity.mapped.BaseEntity;
-import org.mapstruct.*;
+import org.mapstruct.MapperConfig;
+import org.mapstruct.Mapping;
+import org.mapstruct.MappingConstants;
+import org.mapstruct.MappingTarget;
+import org.mapstruct.ReportingPolicy;
 
 /**
  * Generic bidirectional mapper contract shared by all domain MapStruct mappers.
@@ -25,7 +29,7 @@ import org.mapstruct.*;
  * @param <I> the ID type
  * @param <E> the JPA entity type
  */
-@Mapper(
+@MapperConfig(
     componentModel = MappingConstants.ComponentModel.SPRING,
     unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface EntityMapper<T, I, E extends BaseEntity<I>> {
@@ -51,7 +55,6 @@ public interface EntityMapper<T, I, E extends BaseEntity<I>> {
   @Mapping(target = "lastModifiedDate", ignore = true)
   @Mapping(target = "deletedBy", ignore = true)
   @Mapping(target = "deletedDate", ignore = true)
-  @Mapping(target = "deleted", ignore = true)
   E toEntity(T dto);
 
   /**

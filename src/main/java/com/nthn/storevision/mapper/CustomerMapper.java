@@ -6,7 +6,7 @@
  * File: CustomerMapper.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-04 14:53:15
+ * Last Modified: 2026-06-04 15:24:26
  */
 
 package com.nthn.storevision.mapper;
@@ -22,5 +22,5 @@ import org.mapstruct.MappingConstants;
  */
 @Mapper(
     componentModel = MappingConstants.ComponentModel.SPRING,
-    config = BaseEntityMapperConfig.class)
+    config = EntityMapper.class)
 public interface CustomerMapper extends EntityMapper<CustomerDTO, Long, CustomerEntity> {}
