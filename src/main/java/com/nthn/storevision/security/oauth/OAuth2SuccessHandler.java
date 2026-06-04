@@ -6,7 +6,7 @@
  * File: OAuth2SuccessHandler.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-02 17:05:07
+ * Last Modified: 2026-06-04 17:26:28
  */
 
 package com.nthn.storevision.security.oauth;
