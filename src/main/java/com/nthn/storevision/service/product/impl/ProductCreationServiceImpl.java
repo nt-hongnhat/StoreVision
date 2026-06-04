@@ -11,7 +11,9 @@
 
 package com.nthn.storevision.service.product.impl;
 
+import com.nthn.storevision.dto.ProductDTO;
 import com.nthn.storevision.entity.ProductEntity;
+import com.nthn.storevision.mapper.ProductMapper;
 import com.nthn.storevision.repository.ProductRepository;
 import com.nthn.storevision.service.common.AbstractCreatable;
 import com.nthn.storevision.service.product.ProductCreationService;
@@ -22,11 +24,11 @@ import org.springframework.stereotype.Service;
  * to persist {@link ProductEntity} instances via {@link ProductRepository}.
  */
 @Service
-public class ProductCreationServiceImpl
-    extends AbstractCreatable<ProductEntity, Long, ProductEntity>
+public class ProductCreationServiceImpl extends AbstractCreatable<ProductDTO, ProductEntity>
     implements ProductCreationService {
 
-  public ProductCreationServiceImpl(final ProductRepository repository) {
-    super(repository::save);
+  public ProductCreationServiceImpl(
+      final ProductRepository repository, final ProductMapper mapper) {
+    super(repository::save, mapper::toDTO, mapper::toEntity);
   }
 }
