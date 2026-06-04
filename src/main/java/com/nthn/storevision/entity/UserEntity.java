@@ -6,7 +6,7 @@
  * File: UserEntity.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-05-17 14:13:29
+ * Last Modified: 2026-06-04 15:23:15
  */
 
 package com.nthn.storevision.entity;
@@ -18,11 +18,9 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.util.Objects;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import lombok.experimental.Accessors;
+import lombok.experimental.SuperBuilder;
 import org.hibernate.proxy.HibernateProxy;
 import org.jspecify.annotations.NonNull;
 
@@ -30,13 +28,14 @@ import org.jspecify.annotations.NonNull;
  * Represents a user entity in the database. This class maps to the "users" table, implements the
  * {@link User} interface, and extends {@link BaseEntity} for auditing purposes.
  */
+@Entity
+@Table(name = "users")
 @Getter
 @Setter
-@Entity
-@ToString
-@RequiredArgsConstructor
+@NoArgsConstructor
+@AllArgsConstructor
+@SuperBuilder
 @Accessors(chain = true)
-@Table(name = "users")
 public class UserEntity extends BaseEntity<Integer> implements User {
 
   @Size(max = 100)

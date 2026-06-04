@@ -6,7 +6,7 @@
  * File: BaseEntity.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-02 21:45:51
+ * Last Modified: 2026-06-04 15:05:57
  */
 
 package com.nthn.storevision.entity.mapped;
@@ -30,6 +30,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.ColumnDefault;
 import org.jspecify.annotations.NonNull;
 import org.springframework.data.annotation.CreatedBy;
@@ -50,6 +51,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 @Setter
 @ToString
 @NoArgsConstructor
+@SuperBuilder
 public abstract class BaseEntity<I> implements CustomAuditable<I> {
   /** The user who created this entity. */
   @CreatedBy

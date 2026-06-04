@@ -6,7 +6,7 @@
  * File: OrderEntity.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-02 21:46:13
+ * Last Modified: 2026-06-04 15:14:44
  */
 
 package com.nthn.storevision.entity;
@@ -20,12 +20,9 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import lombok.experimental.Accessors;
+import lombok.experimental.SuperBuilder;
 
 /**
  * Represents an order entity in the database. This class maps to the "orders" table and extends
@@ -37,7 +34,7 @@ import lombok.experimental.Accessors;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@SuperBuilder
 @Accessors(chain = true)
 public class OrderEntity extends BaseEntity<Long> implements Order {
 
@@ -52,15 +49,16 @@ public class OrderEntity extends BaseEntity<Long> implements Order {
   @Column(nullable = false)
   private LocalDateTime orderDate;
 
+  @Builder.Default
+  @OneToMany(mappedBy = "order", fetch = FetchType.LAZY)
+  private List<OrderItemEntity> orderItems = new ArrayList<>();
+
   @Enumerated(EnumType.STRING)
   @Column(nullable = false, length = 20)
   private OrderStatus status;
 
   @Column(nullable = false)
   private BigDecimal totalAmount;
-
-  @OneToMany(mappedBy = "order", fetch = FetchType.LAZY)
-  private List<OrderItemEntity> orderItems = new ArrayList<>();
 
   @Override
   public Order setCustomer(final Customer customer) {

@@ -6,7 +6,7 @@
  * File: ProductEntity.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-05-17 14:12:03
+ * Last Modified: 2026-06-04 15:09:01
  */
 
 package com.nthn.storevision.entity;
@@ -16,11 +16,11 @@ import com.nthn.storevision.model.Product;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import lombok.experimental.SuperBuilder;
 
 /**
  * Represents a product entity in the database. This class maps to the "products" table and extends
@@ -32,7 +32,7 @@ import lombok.experimental.Accessors;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@SuperBuilder
 @Accessors(chain = true)
 public class ProductEntity extends BaseEntity<Long> implements Product {
 
