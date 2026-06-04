@@ -6,7 +6,7 @@
  * File: UserEntity.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-04 15:23:15
+ * Last Modified: 2026-06-04 17:18:07
  */
 
 package com.nthn.storevision.entity;
@@ -108,7 +108,7 @@ public class UserEntity extends BaseEntity<Integer> implements User {
       return false;
     }
     final UserEntity that = (UserEntity) o;
-    return null != id && Objects.equals(id, that.id);
+    return null != getId() && Objects.equals(getId(), that.getId());
   }
 
   /**
