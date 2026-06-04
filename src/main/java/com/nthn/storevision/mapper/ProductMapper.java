@@ -6,7 +6,7 @@
  * File: ProductMapper.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-04 14:10:16
+ * Last Modified: 2026-06-04 14:53:15
  */
 
 package com.nthn.storevision.mapper;
