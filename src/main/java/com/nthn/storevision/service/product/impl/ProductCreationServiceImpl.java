@@ -24,11 +24,12 @@ import org.springframework.stereotype.Service;
  * to persist {@link ProductEntity} instances via {@link ProductRepository}.
  */
 @Service
-public class ProductCreationServiceImpl extends AbstractCreatable<ProductDTO, ProductEntity>
+public class ProductCreationServiceImpl
+    extends AbstractCreatable<ProductDTO, ProductEntity, ProductRepository>
     implements ProductCreationService {
 
   public ProductCreationServiceImpl(
       final ProductRepository repository, final ProductMapper mapper) {
-    super(repository::save, mapper::toDTO, mapper::toEntity);
+    super(repository, mapper::toDTO, mapper::toEntity);
   }
 }

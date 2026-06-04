@@ -6,7 +6,7 @@
  * File: CustomerCreationServiceImpl.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-04 14:09:20
+ * Last Modified: 2026-06-04
  */
 
 package com.nthn.storevision.service.customer.impl;
@@ -24,11 +24,12 @@ import org.springframework.stereotype.Service;
  * to persist {@link CustomerEntity} instances via {@link CustomerRepository}.
  */
 @Service
-public class CustomerCreationServiceImpl extends AbstractCreatable<CustomerDTO, CustomerEntity>
+public class CustomerCreationServiceImpl
+    extends AbstractCreatable<CustomerDTO, CustomerEntity, CustomerRepository>
     implements CustomerCreationService {
 
   public CustomerCreationServiceImpl(
       final CustomerRepository repository, final CustomerMapper mapper) {
-    super(repository::save, mapper::toDTO, mapper::toEntity);
+    super(repository, mapper::toDTO, mapper::toEntity);
   }
 }

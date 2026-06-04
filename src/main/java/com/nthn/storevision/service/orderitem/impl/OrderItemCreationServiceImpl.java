@@ -24,11 +24,12 @@ import org.springframework.stereotype.Service;
  * to persist {@link OrderItemEntity} instances via {@link OrderItemRepository}.
  */
 @Service
-public class OrderItemCreationServiceImpl extends AbstractCreatable<OrderItemDTO, OrderItemEntity>
+public class OrderItemCreationServiceImpl
+    extends AbstractCreatable<OrderItemDTO, OrderItemEntity, OrderItemRepository>
     implements OrderItemCreationService {
 
   public OrderItemCreationServiceImpl(
       final OrderItemRepository repository, final OrderItemMapper mapper) {
-    super(repository::save, mapper::toDTO, mapper::toEntity);
+    super(repository, mapper::toDTO, mapper::toEntity);
   }
 }

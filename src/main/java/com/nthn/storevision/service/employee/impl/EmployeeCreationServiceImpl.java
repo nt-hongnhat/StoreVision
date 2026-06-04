@@ -24,11 +24,12 @@ import org.springframework.stereotype.Service;
  * to persist {@link EmployeeEntity} instances via {@link EmployeeRepository}.
  */
 @Service
-public class EmployeeCreationServiceImpl extends AbstractCreatable<EmployeeDTO, EmployeeEntity>
+public class EmployeeCreationServiceImpl
+    extends AbstractCreatable<EmployeeDTO, EmployeeEntity, EmployeeRepository>
     implements EmployeeCreationService {
 
   public EmployeeCreationServiceImpl(
       final EmployeeRepository repository, final EmployeeMapper mapper) {
-    super(repository::save, mapper::toDTO, mapper::toEntity);
+    super(repository, mapper::toDTO, mapper::toEntity);
   }
 }

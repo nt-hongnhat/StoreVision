@@ -25,10 +25,10 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class OrderCreationServiceImpl
-    extends AbstractCreatable<OrderDTO, OrderEntity>
+    extends AbstractCreatable<OrderDTO, OrderEntity, OrderRepository>
     implements OrderCreationService {
 
   public OrderCreationServiceImpl(final OrderRepository repository, final OrderMapper mapper) {
-    super(repository::save, mapper::toDTO, mapper::toEntity);
+    super(repository, mapper::toDTO, mapper::toEntity);
   }
 }

@@ -29,10 +29,11 @@ import org.springframework.stereotype.Service;
  * {@link User} model without an additional conversion step.
  */
 @Service
-public class UserCreationServiceImpl extends AbstractCreatable<User, UserEntity>
+public class UserCreationServiceImpl
+    extends AbstractCreatable<User, UserEntity, JpaUserRepository>
     implements UserCreationService {
 
   public UserCreationServiceImpl(final JpaUserRepository repository, final UserMapper mapper) {
-    super(repository::save, user -> user, mapper::toEntity);
+    super(repository, user -> user, mapper::toEntity);
   }
 }
