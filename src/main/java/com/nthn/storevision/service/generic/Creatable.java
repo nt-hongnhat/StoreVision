@@ -6,27 +6,24 @@
  * File: Creatable.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-05-10 13:06:18
+ * Last Modified: 2026-06-04 14:04:40
  */
 
 package com.nthn.storevision.service.generic;
 
-import org.springframework.data.domain.Persistable;
-
 /**
- * Functional interface for creating and persisting new entities.
+ * Functional interface for creating and persisting new domain objects.
  *
- * @param <M> the type of the entity to be created, extending {@link Persistable}
- * @param <I> the type of the entity's identifier
+ * @param <T> the type of the request/response DTO
  */
 @FunctionalInterface
-public interface Creatable<M extends Persistable<I>, I> {
+public interface Creatable<T> {
 
   /**
-   * Creates and persists a new entity.
+   * Creates and persists a new domain object.
    *
-   * @param entity the entity to be created and persisted
-   * @return the identifier of the newly created entity
+   * @param request the DTO carrying the data for the new object
+   * @return the created DTO, including any generated fields such as ID
    */
-  I create(M entity);
+  T create(T request);
 }
