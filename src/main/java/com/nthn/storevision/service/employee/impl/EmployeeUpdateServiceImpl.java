@@ -6,7 +6,7 @@
  * File: EmployeeUpdateServiceImpl.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-04 16:07:28
+ * Last Modified: 2026-06-04 17:15:08
  */
 
 package com.nthn.storevision.service.employee.impl;
@@ -14,7 +14,7 @@ package com.nthn.storevision.service.employee.impl;
 import com.nthn.storevision.dto.EmployeeDTO;
 import com.nthn.storevision.entity.EmployeeEntity;
 import com.nthn.storevision.exception.EntityNotFoundException;
-import com.nthn.storevision.mapper.EntityMapper;
+import com.nthn.storevision.mapper.EntityMapperConfig;
 import com.nthn.storevision.repository.EmployeeRepository;
 import com.nthn.storevision.service.common.AbstractUpdatable;
 import com.nthn.storevision.service.employee.EmployeeUpdateService;
@@ -30,7 +30,7 @@ public class EmployeeUpdateServiceImpl
     implements EmployeeUpdateService {
 
   protected EmployeeUpdateServiceImpl(
-      final EntityMapper<EmployeeDTO, Long, EmployeeEntity> mapper,
+      final EntityMapperConfig<EmployeeDTO, Long, EmployeeEntity> mapper,
       final EmployeeRepository repository) {
     super(mapper, repository);
   }

@@ -6,7 +6,7 @@
  * File: OrderItemMapper.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-04 14:53:15
+ * Last Modified: 2026-06-04 17:15:08
  */
 
 package com.nthn.storevision.mapper;
@@ -25,10 +25,8 @@ import org.mapstruct.MappingTarget;
  * Mapper interface for converting between {@link OrderItemEntity} and {@link OrderItemDTO}. This
  * interface uses MapStruct to generate the implementation.
  */
-@Mapper(
-    componentModel = MappingConstants.ComponentModel.SPRING,
-    config = BaseEntityMapperConfig.class)
-public interface OrderItemMapper extends EntityMapper<OrderItemDTO, Long, OrderItemEntity> {
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING, config = EntityMapperConfig.class)
+public interface OrderItemMapper extends EntityMapperConfig<OrderItemDTO, Long, OrderItemEntity> {
 
   /**
    * Maps a given order ID to an {@link OrderEntity}. If the provided order ID is {@code null}, this

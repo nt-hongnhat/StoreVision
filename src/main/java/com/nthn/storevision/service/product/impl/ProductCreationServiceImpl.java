@@ -6,15 +6,14 @@
  * File: ProductCreationServiceImpl.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-04 14:58:34
+ * Last Modified: 2026-06-04 17:15:08
  */
 
 package com.nthn.storevision.service.product.impl;
 
 import com.nthn.storevision.dto.ProductDTO;
 import com.nthn.storevision.entity.ProductEntity;
-import com.nthn.storevision.mapper.EntityMapper;
-import com.nthn.storevision.mapper.ProductMapper;
+import com.nthn.storevision.mapper.EntityMapperConfig;
 import com.nthn.storevision.repository.ProductRepository;
 import com.nthn.storevision.service.common.AbstractCreatable;
 import com.nthn.storevision.service.product.ProductCreationService;
@@ -30,7 +29,7 @@ public class ProductCreationServiceImpl
     implements ProductCreationService {
 
   protected ProductCreationServiceImpl(
-      final EntityMapper<ProductDTO, ?, ProductEntity> mapper, final ProductRepository repository) {
+      final EntityMapperConfig<ProductDTO, ?, ProductEntity> mapper, final ProductRepository repository) {
     super(mapper, repository);
   }
 }

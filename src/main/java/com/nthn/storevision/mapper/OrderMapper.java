@@ -6,7 +6,7 @@
  * File: OrderMapper.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-04 14:53:15
+ * Last Modified: 2026-06-04 17:15:08
  */
 
 package com.nthn.storevision.mapper;
@@ -24,15 +24,16 @@ import org.mapstruct.MappingTarget;
  * Mapper interface for converting between {@link OrderEntity} and {@link OrderDTO}. This interface
  * uses MapStruct to generate the implementation.
  */
-@Mapper(componentModel = MappingConstants.ComponentModel.SPRING, config = BaseEntityMapperConfig.class)
-public interface OrderMapper extends EntityMapper<OrderDTO,Long, OrderEntity> {
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING, config = EntityMapperConfig.class)
+public interface OrderMapper extends EntityMapperConfig<OrderDTO, Long, OrderEntity> {
   /**
-   * Maps a given customer ID to a {@link CustomerEntity}. If the provided customer ID is
-   * {@code null}, this method will return {@code null}. Otherwise, it creates a
-   * {@link CustomerEntity}, sets the provided ID, and returns the entity.
+   * Maps a given customer ID to a {@link CustomerEntity}. If the provided customer ID is {@code
+   * null}, this method will return {@code null}. Otherwise, it creates a {@link CustomerEntity},
+   * sets the provided ID, and returns the entity.
    *
    * @param customerId The ID of the customer to map. Can be {@code null}.
-   * @return A {@link CustomerEntity} with the provided ID, or {@code null} if the input was {@code null}.
+   * @return A {@link CustomerEntity} with the provided ID, or {@code null} if the input was {@code
+   *     null}.
    */
   default @Nullable CustomerEntity mapCustomerIdToCustomerEntity(final Long customerId) {
     if (null == customerId) {
@@ -66,11 +67,11 @@ public interface OrderMapper extends EntityMapper<OrderDTO,Long, OrderEntity> {
   OrderEntity toEntity(OrderDTO orderDTO);
 
   /**
-   * Updates an existing {@link OrderEntity} with values from the given {@link OrderDTO}.
-   * The {@code id} and {@code customer} fields are ignored — {@code customer} association
-   * must be changed via a dedicated workflow, not a regular update.
+   * Updates an existing {@link OrderEntity} with values from the given {@link OrderDTO}. The {@code
+   * id} and {@code customer} fields are ignored — {@code customer} association must be changed via
+   * a dedicated workflow, not a regular update.
    *
-   * @param dto    the source DTO carrying updated field values
+   * @param dto the source DTO carrying updated field values
    * @param entity the target entity to be updated in place
    */
   @Mapping(target = "id", ignore = true)

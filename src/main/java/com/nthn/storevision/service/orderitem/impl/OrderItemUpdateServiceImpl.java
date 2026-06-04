@@ -6,7 +6,7 @@
  * File: OrderItemUpdateServiceImpl.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-04
+ * Last Modified: 2026-06-04 17:15:08
  */
 
 package com.nthn.storevision.service.orderitem.impl;
@@ -14,7 +14,7 @@ package com.nthn.storevision.service.orderitem.impl;
 import com.nthn.storevision.dto.OrderItemDTO;
 import com.nthn.storevision.entity.OrderItemEntity;
 import com.nthn.storevision.exception.EntityNotFoundException;
-import com.nthn.storevision.mapper.EntityMapper;
+import com.nthn.storevision.mapper.EntityMapperConfig;
 import com.nthn.storevision.repository.OrderItemRepository;
 import com.nthn.storevision.service.common.AbstractUpdatable;
 import com.nthn.storevision.service.orderitem.OrderItemUpdateService;
@@ -30,7 +30,7 @@ public class OrderItemUpdateServiceImpl
     implements OrderItemUpdateService {
 
   protected OrderItemUpdateServiceImpl(
-      final EntityMapper<OrderItemDTO, Long, OrderItemEntity> mapper,
+      final EntityMapperConfig<OrderItemDTO, Long, OrderItemEntity> mapper,
       final OrderItemRepository repository) {
     super(mapper, repository);
   }

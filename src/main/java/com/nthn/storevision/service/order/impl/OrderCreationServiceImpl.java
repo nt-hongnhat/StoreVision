@@ -6,14 +6,14 @@
  * File: OrderCreationServiceImpl.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-04 14:57:16
+ * Last Modified: 2026-06-04 17:15:08
  */
 
 package com.nthn.storevision.service.order.impl;
 
 import com.nthn.storevision.dto.OrderDTO;
 import com.nthn.storevision.entity.OrderEntity;
-import com.nthn.storevision.mapper.EntityMapper;
+import com.nthn.storevision.mapper.EntityMapperConfig;
 import com.nthn.storevision.repository.OrderRepository;
 import com.nthn.storevision.service.common.AbstractCreatable;
 import com.nthn.storevision.service.order.OrderCreationService;
@@ -29,7 +29,7 @@ public class OrderCreationServiceImpl
     implements OrderCreationService {
 
   protected OrderCreationServiceImpl(
-      final EntityMapper<OrderDTO, ?, OrderEntity> mapper, final OrderRepository repository) {
+      final EntityMapperConfig<OrderDTO, ?, OrderEntity> mapper, final OrderRepository repository) {
     super(mapper, repository);
   }
 }

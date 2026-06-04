@@ -3,10 +3,10 @@
  *
  * Project: Store Vision
  * Module: Store Vision Main
- * File: EntityMapper.java
+ * File: EntityMapperConfig.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-04 17:01:35
+ * Last Modified: 2026-06-04 17:15:08
  */
 
 package com.nthn.storevision.mapper;
@@ -32,7 +32,7 @@ import org.mapstruct.ReportingPolicy;
 @MapperConfig(
     componentModel = MappingConstants.ComponentModel.SPRING,
     unmappedTargetPolicy = ReportingPolicy.IGNORE)
-public interface EntityMapper<T, I, E extends BaseEntity<I>> {
+public interface EntityMapperConfig<T, I, E extends BaseEntity<I>> {
 
   /**
    * Converts a JPA entity to its corresponding DTO.

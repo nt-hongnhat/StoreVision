@@ -6,13 +6,13 @@
  * File: AbstractUpdatable.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-04 16:29:22
+ * Last Modified: 2026-06-04 17:15:08
  */
 
 package com.nthn.storevision.service.common;
 
 import com.nthn.storevision.entity.mapped.BaseEntity;
-import com.nthn.storevision.mapper.EntityMapper;
+import com.nthn.storevision.mapper.EntityMapperConfig;
 import com.nthn.storevision.repository.generic.SaveRepository;
 import com.nthn.storevision.service.generic.Updatable;
 import lombok.Getter;
@@ -38,7 +38,7 @@ import lombok.extern.slf4j.Slf4j;
 public abstract class AbstractUpdatable<T, I, E extends BaseEntity<I>, J extends SaveRepository<E>>
     implements Updatable<T, I> {
 
-  private final EntityMapper<T, I, E> mapper;
+  private final EntityMapperConfig<T, I, E> mapper;
   private final J repository;
 
   @Override

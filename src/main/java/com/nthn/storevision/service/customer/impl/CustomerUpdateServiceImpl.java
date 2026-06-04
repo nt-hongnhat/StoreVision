@@ -6,7 +6,7 @@
  * File: CustomerUpdateServiceImpl.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-04 16:32:19
+ * Last Modified: 2026-06-04 17:15:08
  */
 
 package com.nthn.storevision.service.customer.impl;
@@ -14,7 +14,7 @@ package com.nthn.storevision.service.customer.impl;
 import com.nthn.storevision.dto.CustomerDTO;
 import com.nthn.storevision.entity.CustomerEntity;
 import com.nthn.storevision.exception.EntityNotFoundException;
-import com.nthn.storevision.mapper.EntityMapper;
+import com.nthn.storevision.mapper.EntityMapperConfig;
 import com.nthn.storevision.repository.CustomerRepository;
 import com.nthn.storevision.service.common.AbstractUpdatable;
 import com.nthn.storevision.service.customer.CustomerUpdateService;
@@ -30,7 +30,7 @@ public class CustomerUpdateServiceImpl
     implements CustomerUpdateService {
 
   protected CustomerUpdateServiceImpl(
-      final EntityMapper<CustomerDTO, Long, CustomerEntity> mapper,
+      final EntityMapperConfig<CustomerDTO, Long, CustomerEntity> mapper,
       final CustomerRepository repository) {
     super(mapper, repository);
   }

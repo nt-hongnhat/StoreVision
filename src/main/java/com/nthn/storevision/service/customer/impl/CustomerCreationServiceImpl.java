@@ -6,14 +6,14 @@
  * File: CustomerCreationServiceImpl.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-04 14:57:16
+ * Last Modified: 2026-06-04 17:15:08
  */
 
 package com.nthn.storevision.service.customer.impl;
 
 import com.nthn.storevision.dto.CustomerDTO;
 import com.nthn.storevision.entity.CustomerEntity;
-import com.nthn.storevision.mapper.EntityMapper;
+import com.nthn.storevision.mapper.EntityMapperConfig;
 import com.nthn.storevision.repository.CustomerRepository;
 import com.nthn.storevision.service.common.AbstractCreatable;
 import com.nthn.storevision.service.customer.CustomerCreationService;
@@ -28,7 +28,7 @@ public class CustomerCreationServiceImpl
     extends AbstractCreatable<CustomerDTO, CustomerEntity, CustomerRepository>
     implements CustomerCreationService {
 
-  protected CustomerCreationServiceImpl(final EntityMapper<CustomerDTO, ?, CustomerEntity> mapper, CustomerRepository repository) {
+  protected CustomerCreationServiceImpl(final EntityMapperConfig<CustomerDTO, ?, CustomerEntity> mapper, CustomerRepository repository) {
     super(mapper, repository);
   }
 }

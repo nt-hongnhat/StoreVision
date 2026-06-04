@@ -6,7 +6,7 @@
  * File: UserUpdateServiceImpl.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-04 16:52:29
+ * Last Modified: 2026-06-04 17:15:08
  */
 
 package com.nthn.storevision.service.user.impl;
@@ -15,7 +15,7 @@ import com.nthn.storevision.constant.user.UserMessage;
 import com.nthn.storevision.dto.UserDTO;
 import com.nthn.storevision.entity.UserEntity;
 import com.nthn.storevision.exception.EntityNotFoundException;
-import com.nthn.storevision.mapper.EntityMapper;
+import com.nthn.storevision.mapper.EntityMapperConfig;
 import com.nthn.storevision.repository.UserRepository;
 import com.nthn.storevision.service.common.AbstractUpdatable;
 import com.nthn.storevision.service.user.UserUpdateService;
@@ -31,7 +31,7 @@ public class UserUpdateServiceImpl
     implements UserUpdateService {
 
   protected UserUpdateServiceImpl(
-      final EntityMapper<UserDTO, Integer, UserEntity> mapper, final UserRepository repository) {
+      final EntityMapperConfig<UserDTO, Integer, UserEntity> mapper, final UserRepository repository) {
     super(mapper, repository);
   }
 

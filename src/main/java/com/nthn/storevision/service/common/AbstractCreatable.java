@@ -6,13 +6,13 @@
  * File: AbstractCreatable.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-04 14:57:16
+ * Last Modified: 2026-06-04 17:15:08
  */
 
 package com.nthn.storevision.service.common;
 
 import com.nthn.storevision.entity.mapped.BaseEntity;
-import com.nthn.storevision.mapper.EntityMapper;
+import com.nthn.storevision.mapper.EntityMapperConfig;
 import com.nthn.storevision.repository.generic.SaveRepository;
 import com.nthn.storevision.service.generic.Creatable;
 import lombok.AccessLevel;
@@ -46,7 +46,7 @@ import lombok.extern.slf4j.Slf4j;
 public abstract class AbstractCreatable<T, E extends BaseEntity<?>, J extends SaveRepository<E>>
     implements Creatable<T> {
 
-  private final EntityMapper<T, ?, E> mapper;
+  private final EntityMapperConfig<T, ?, E> mapper;
   private final J repository;
 
   @Override

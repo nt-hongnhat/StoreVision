@@ -6,7 +6,7 @@
  * File: CustomerMapper.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-04 15:24:26
+ * Last Modified: 2026-06-04 17:15:08
  */
 
 package com.nthn.storevision.mapper;
@@ -20,7 +20,5 @@ import org.mapstruct.MappingConstants;
  * Mapper interface for converting between {@link CustomerEntity} and {@link CustomerDTO}. This
  * interface uses MapStruct to generate the implementation.
  */
-@Mapper(
-    componentModel = MappingConstants.ComponentModel.SPRING,
-    config = EntityMapper.class)
-public interface CustomerMapper extends EntityMapper<CustomerDTO, Long, CustomerEntity> {}
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING, config = EntityMapperConfig.class)
+public interface CustomerMapper extends EntityMapperConfig<CustomerDTO, Long, CustomerEntity> {}

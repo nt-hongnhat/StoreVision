@@ -6,14 +6,14 @@
  * File: EmployeeCreationServiceImpl.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-04 14:57:16
+ * Last Modified: 2026-06-04 17:15:08
  */
 
 package com.nthn.storevision.service.employee.impl;
 
 import com.nthn.storevision.dto.EmployeeDTO;
 import com.nthn.storevision.entity.EmployeeEntity;
-import com.nthn.storevision.mapper.EntityMapper;
+import com.nthn.storevision.mapper.EntityMapperConfig;
 import com.nthn.storevision.repository.EmployeeRepository;
 import com.nthn.storevision.service.common.AbstractCreatable;
 import com.nthn.storevision.service.employee.EmployeeCreationService;
@@ -29,7 +29,7 @@ public class EmployeeCreationServiceImpl
     implements EmployeeCreationService {
 
   protected EmployeeCreationServiceImpl(
-      final EntityMapper<EmployeeDTO, ?, EmployeeEntity> mapper, final EmployeeRepository repository) {
+      final EntityMapperConfig<EmployeeDTO, ?, EmployeeEntity> mapper, final EmployeeRepository repository) {
     super(mapper, repository);
   }
 }

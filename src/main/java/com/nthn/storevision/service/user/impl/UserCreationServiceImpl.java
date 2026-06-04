@@ -6,14 +6,14 @@
  * File: UserCreationServiceImpl.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-04 16:02:35
+ * Last Modified: 2026-06-04 17:15:08
  */
 
 package com.nthn.storevision.service.user.impl;
 
 import com.nthn.storevision.dto.UserDTO;
 import com.nthn.storevision.entity.UserEntity;
-import com.nthn.storevision.mapper.EntityMapper;
+import com.nthn.storevision.mapper.EntityMapperConfig;
 import com.nthn.storevision.model.User;
 import com.nthn.storevision.repository.jpa.JpaUserRepository;
 import com.nthn.storevision.service.common.AbstractCreatable;
@@ -35,7 +35,7 @@ public class UserCreationServiceImpl
     implements UserCreationService {
 
   protected UserCreationServiceImpl(
-      final EntityMapper<UserDTO, ?, UserEntity> mapper, final JpaUserRepository repository) {
+      final EntityMapperConfig<UserDTO, ?, UserEntity> mapper, final JpaUserRepository repository) {
     super(mapper, repository);
   }
 }
