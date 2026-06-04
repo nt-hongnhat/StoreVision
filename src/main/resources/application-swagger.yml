@@ -36,6 +36,7 @@ springdoc:
   group-configs:
     - group: v1
       display-name: API V1
+      packages-to-scan: com.nthn.storevision.controller
       paths-to-match:
         - /**
       paths-to-exclude:
@@ -44,10 +45,12 @@ springdoc:
         - /login/**
     - group: actuator
       display-name: Actuator
+      packages-to-scan: org.springframework.boot.actuate
       paths-to-match:
         - /actuator/**
     - group: security
       display-name: Security
+      packages-to-scan: org.springframework.security
       paths-to-match:
         - /login
         - /login/**
