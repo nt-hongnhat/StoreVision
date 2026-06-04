@@ -6,7 +6,7 @@
  * File: AbstractCreatable.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-05-17 14:15:02
+ * Last Modified: 2026-06-04 14:09:20
  */
 
 package com.nthn.storevision.service.common;
