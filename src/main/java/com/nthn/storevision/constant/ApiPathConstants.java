@@ -6,7 +6,7 @@
  * File: ApiPathConstants.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-02 21:15:26
+ * Last Modified: 2026-06-04 17:16:57
  */
 
 package com.nthn.storevision.constant;
@@ -48,11 +48,6 @@ public enum ApiPathConstants {
    * allowing developers to explore and understand the application's API structure.
    */
   API_DOCS("/v3/api-docs/**"),
-  /**
-   * Represents the endpoint path for handling login functionality in the application. This constant
-   * is used to define routes associated with user authentication or login-related operations.
-   */
-  LOGIN("/login"),
   /**
    * Represents the endpoint path for handling all login-related operations and subpaths in the
    * application. This constant is used to define routes associated with login functionality,
