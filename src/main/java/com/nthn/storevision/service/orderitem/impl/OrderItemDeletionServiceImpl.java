@@ -1,11 +1,21 @@
+/*
+ * Copyright (c) 2026 Hong Nhat. All rights reserved.
+ *
+ * Project: Store Vision
+ * Module: Store Vision Main
+ * File: OrderItemDeletionServiceImpl.java
+ * Author: Nguyen Thi Hong Nhat
+ * Contact: hongnhat1121@gmail.com
+ * Last Modified: 2026-06-04
+ */
+
 package com.nthn.storevision.service.orderitem.impl;
 
 import com.nthn.storevision.entity.OrderItemEntity;
 import com.nthn.storevision.repository.OrderItemRepository;
+import com.nthn.storevision.service.common.AbstractDeletable;
 import com.nthn.storevision.service.orderitem.OrderItemDeletionService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Default implementation of {@link OrderItemDeletionService} that soft-deletes
@@ -13,33 +23,11 @@ import org.springframework.transaction.annotation.Transactional;
  * {@code CustomAuditingEntityListener} to populate {@code deletedBy} and {@code deletedDate}.
  */
 @Service
-@RequiredArgsConstructor
-public class OrderItemDeletionServiceImpl implements OrderItemDeletionService {
+public class OrderItemDeletionServiceImpl
+    extends AbstractDeletable<OrderItemEntity, Long, OrderItemRepository>
+    implements OrderItemDeletionService {
 
-  private final OrderItemRepository repository;
-
-  @Override
-  @Transactional
-  public void delete(final OrderItemEntity entity) {
-    entity.setDeleted(true);
-    repository.save(entity);
-  }
-
-  @Override
-  @Transactional
-  public void markAsDeleted(final Long id) {
-    repository.markDeletedById(id);
-  }
-
-  @Override
-  @Transactional
-  public void restore(final Long id) {
-    repository.restoreById(id);
-  }
-
-  @Override
-  @Transactional
-  public void permanentlyDelete(final Long id) {
-    repository.deleteById(id);
+  protected OrderItemDeletionServiceImpl(final OrderItemRepository repository) {
+    super(repository);
   }
 }
