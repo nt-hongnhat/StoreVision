@@ -15,10 +15,10 @@ import com.nthn.storevision.model.User;
 import com.nthn.storevision.service.generic.Creatable;
 
 /**
- * Service interface for creating and persisting {@link User} entities.
+ * Service interface for creating and persisting users.
  *
  * @see com.nthn.storevision.service.common.AbstractCreatable
  * @see Creatable
  */
 @FunctionalInterface
-public interface UserCreationService extends Creatable<User, Integer> {}
+public interface UserCreationService extends Creatable<User> {}

@@ -11,14 +11,14 @@
 
 package com.nthn.storevision.service.employee;
 
-import com.nthn.storevision.entity.EmployeeEntity;
+import com.nthn.storevision.dto.EmployeeDTO;
 import com.nthn.storevision.service.generic.Creatable;
 
 /**
- * Service interface for creating and persisting {@link EmployeeEntity} entities.
+ * Service interface for creating and persisting employees.
  *
  * @see com.nthn.storevision.service.common.AbstractCreatable
  * @see Creatable
  */
 @FunctionalInterface
-public interface EmployeeCreationService extends Creatable<EmployeeEntity, Long> {}
+public interface EmployeeCreationService extends Creatable<EmployeeDTO> {}

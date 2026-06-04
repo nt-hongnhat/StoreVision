@@ -11,13 +11,14 @@
 
 package com.nthn.storevision.service.order;
 
-import com.nthn.storevision.entity.OrderEntity;
+import com.nthn.storevision.dto.OrderDTO;
 import com.nthn.storevision.service.generic.Creatable;
 
 /**
- * Service interface for creating and persisting {@link OrderEntity} entities.
+ * Service interface for creating and persisting orders.
  *
  * @see com.nthn.storevision.service.common.AbstractCreatable
  * @see Creatable
  */
-public interface OrderCreationService extends Creatable<OrderEntity, Long> {}
+@FunctionalInterface
+public interface OrderCreationService extends Creatable<OrderDTO> {}

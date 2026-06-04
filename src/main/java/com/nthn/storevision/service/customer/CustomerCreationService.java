@@ -11,14 +11,14 @@
 
 package com.nthn.storevision.service.customer;
 
-import com.nthn.storevision.entity.CustomerEntity;
+import com.nthn.storevision.dto.CustomerDTO;
 import com.nthn.storevision.service.generic.Creatable;
 
 /**
- * Service interface for creating and persisting {@link CustomerEntity} entities.
+ * Service interface for creating and persisting customers.
  *
  * @see com.nthn.storevision.service.common.AbstractCreatable
  * @see Creatable
  */
 @FunctionalInterface
-public interface CustomerCreationService extends Creatable<CustomerEntity, Long> {}
+public interface CustomerCreationService extends Creatable<CustomerDTO> {}
