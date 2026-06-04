@@ -6,23 +6,23 @@
  * File: CustomerRepositoryImpl.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-05-17 14:32:51
+ * Last Modified: 2026-06-04 14:42:28
  */
 
 package com.nthn.storevision.repository.impl;
 
 import com.nthn.storevision.entity.CustomerEntity;
+import com.nthn.storevision.model.Customer;
 import com.nthn.storevision.repository.CustomerRepository;
 import com.nthn.storevision.repository.jpa.JpaCustomerRepository;
+import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-import java.util.Optional;
-
 /**
- * Implementation of the {@link CustomerRepository} interface.
- * This class acts as an adapter, delegating calls to the underlying {@link JpaCustomerRepository}.
+ * Implementation of the {@link CustomerRepository} interface. This class acts as an adapter,
+ * delegating calls to the underlying {@link JpaCustomerRepository}.
  */
 @Repository
 @RequiredArgsConstructor
@@ -33,6 +33,26 @@ public class CustomerRepositoryImpl implements CustomerRepository {
   @Override
   public void deleteById(final Long id) {
     jpaRepository.deleteById(id);
+  }
+
+  @Override
+  public void markDeletedById(final Long id) {
+    findById(id)
+        .ifPresent(
+            entity -> {
+              entity.setDeleted(true);
+              save(entity);
+            });
+  }
+
+  @Override
+  public void restoreById(final Long id) {
+    findById(id)
+        .ifPresent(
+            entity -> {
+              entity.setDeletedBy(null).setDeletedDate(null);
+              save(entity);
+            });
   }
 
   @Override
@@ -51,12 +71,12 @@ public class CustomerRepositoryImpl implements CustomerRepository {
   }
 
   @Override
-  public CustomerEntity save(final CustomerEntity customer) {
-    return jpaRepository.save(customer);
+  public Optional<CustomerEntity> findByEmail(final String email) {
+    return jpaRepository.findByEmail(email);
   }
 
   @Override
-  public Optional<CustomerEntity> findByEmail(final String email) {
-    return jpaRepository.findByEmail(email);
+  public CustomerEntity save(final CustomerEntity customer) {
+    return jpaRepository.save(customer);
   }
 }

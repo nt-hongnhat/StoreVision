@@ -71,4 +71,22 @@ public class ProductRepositoryImpl implements ProductRepository {
   public ProductEntity save(final ProductEntity product) {
     return jpaRepository.save(product);
   }
+
+  @Override
+  public void markDeletedById(final Long id) {
+    findById(id).ifPresent(entity -> {
+      entity.setDeleted(true);
+      save(entity);
+    });
+  }
+
+  @Override
+  public void restoreById(final Long id) {
+    findById(id).ifPresent(entity -> {
+      entity.setDeletedBy(null);
+      entity.setDeletedDate(null);
+      entity.setDeleted(false);
+      save(entity);
+    });
+  }
 }

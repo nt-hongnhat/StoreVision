@@ -54,4 +54,22 @@ public class OrderItemRepositoryImpl implements OrderItemRepository {
   public OrderItemEntity save(final OrderItemEntity orderItem) {
     return jpaRepository.save(orderItem);
   }
+
+  @Override
+  public void markDeletedById(final Long id) {
+    findById(id).ifPresent(entity -> {
+      entity.setDeleted(true);
+      save(entity);
+    });
+  }
+
+  @Override
+  public void restoreById(final Long id) {
+    findById(id).ifPresent(entity -> {
+      entity.setDeletedBy(null);
+      entity.setDeletedDate(null);
+      entity.setDeleted(false);
+      save(entity);
+    });
+  }
 }
