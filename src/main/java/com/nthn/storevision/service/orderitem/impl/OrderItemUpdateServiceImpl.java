@@ -14,31 +14,31 @@ package com.nthn.storevision.service.orderitem.impl;
 import com.nthn.storevision.dto.OrderItemDTO;
 import com.nthn.storevision.entity.OrderItemEntity;
 import com.nthn.storevision.exception.EntityNotFoundException;
-import com.nthn.storevision.mapper.OrderItemMapper;
+import com.nthn.storevision.mapper.EntityMapper;
 import com.nthn.storevision.repository.OrderItemRepository;
+import com.nthn.storevision.service.common.AbstractUpdatable;
 import com.nthn.storevision.service.orderitem.OrderItemUpdateService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
- * Default implementation of {@link OrderItemUpdateService} for persisting updates to
- * {@link OrderItemEntity} instances in the database.
+ * Default implementation of {@link OrderItemUpdateService} for persisting updates to {@link
+ * OrderItemEntity} instances in the database.
  */
 @Service
-@RequiredArgsConstructor
-public class OrderItemUpdateServiceImpl implements OrderItemUpdateService {
+public class OrderItemUpdateServiceImpl
+    extends AbstractUpdatable<OrderItemDTO, Long, OrderItemEntity, OrderItemRepository>
+    implements OrderItemUpdateService {
 
-  private final OrderItemRepository repository;
-  private final OrderItemMapper mapper;
+  protected OrderItemUpdateServiceImpl(
+      final EntityMapper<OrderItemDTO, Long, OrderItemEntity> mapper,
+      final OrderItemRepository repository) {
+    super(mapper, repository);
+  }
 
-  @Transactional
   @Override
-  public OrderItemDTO update(final Long id, final OrderItemDTO dto) {
-    final OrderItemEntity entity = repository.findById(id)
+  protected OrderItemEntity getById(final Long id) {
+    return getRepository()
+        .findById(id)
         .orElseThrow(() -> new EntityNotFoundException("orderitem.not.found", id));
-    mapper.updateEntity(dto, entity);
-    repository.save(entity);
-    return mapper.toDTO(entity);
   }
 }

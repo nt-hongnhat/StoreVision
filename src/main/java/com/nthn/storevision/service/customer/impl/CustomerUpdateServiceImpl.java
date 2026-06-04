@@ -6,7 +6,7 @@
  * File: CustomerUpdateServiceImpl.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-04
+ * Last Modified: 2026-06-04 16:32:19
  */
 
 package com.nthn.storevision.service.customer.impl;
@@ -14,31 +14,31 @@ package com.nthn.storevision.service.customer.impl;
 import com.nthn.storevision.dto.CustomerDTO;
 import com.nthn.storevision.entity.CustomerEntity;
 import com.nthn.storevision.exception.EntityNotFoundException;
-import com.nthn.storevision.mapper.CustomerMapper;
+import com.nthn.storevision.mapper.EntityMapper;
 import com.nthn.storevision.repository.CustomerRepository;
+import com.nthn.storevision.service.common.AbstractUpdatable;
 import com.nthn.storevision.service.customer.CustomerUpdateService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
- * Default implementation of {@link CustomerUpdateService} for persisting updates to
- * {@link CustomerEntity} instances in the database.
+ * Default implementation of {@link CustomerUpdateService} for persisting updates to {@link
+ * CustomerEntity} instances in the database.
  */
 @Service
-@RequiredArgsConstructor
-public class CustomerUpdateServiceImpl implements CustomerUpdateService {
+public class CustomerUpdateServiceImpl
+    extends AbstractUpdatable<CustomerDTO, Long, CustomerEntity, CustomerRepository>
+    implements CustomerUpdateService {
 
-  private final CustomerRepository repository;
-  private final CustomerMapper mapper;
+  protected CustomerUpdateServiceImpl(
+      final EntityMapper<CustomerDTO, Long, CustomerEntity> mapper,
+      final CustomerRepository repository) {
+    super(mapper, repository);
+  }
 
-  @Transactional
   @Override
-  public CustomerDTO update(final Long id, final CustomerDTO dto) {
-    final CustomerEntity entity = repository.findById(id)
+  protected CustomerEntity getById(final Long id) {
+    return getRepository()
+        .findById(id)
         .orElseThrow(() -> new EntityNotFoundException("customer.not.found", id));
-    mapper.updateEntity(dto, entity);
-    repository.save(entity);
-    return mapper.toDTO(entity);
   }
 }

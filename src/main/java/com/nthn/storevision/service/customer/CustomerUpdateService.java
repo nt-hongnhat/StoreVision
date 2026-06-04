@@ -6,7 +6,7 @@
  * File: CustomerUpdateService.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-03 11:21:37
+ * Last Modified: 2026-06-04 16:06:54
  */
 
 package com.nthn.storevision.service.customer;
@@ -20,4 +20,4 @@ import com.nthn.storevision.service.generic.Updatable;
  * @see Updatable
  */
 @FunctionalInterface
-public interface CustomerUpdateService extends Updatable<CustomerDTO> {}
+public interface CustomerUpdateService extends Updatable<CustomerDTO, Long> {}

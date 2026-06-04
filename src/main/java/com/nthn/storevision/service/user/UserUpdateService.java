@@ -6,11 +6,12 @@
  * File: UserUpdateService.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-03 11:21:37
+ * Last Modified: 2026-06-04 16:47:26
  */
 
 package com.nthn.storevision.service.user;
 
+import com.nthn.storevision.dto.UserDTO;
 import com.nthn.storevision.model.User;
 import com.nthn.storevision.service.generic.Updatable;
 
@@ -20,4 +21,4 @@ import com.nthn.storevision.service.generic.Updatable;
  * @see Updatable
  */
 @FunctionalInterface
-public interface UserUpdateService extends Updatable<User> {}
+public interface UserUpdateService extends Updatable<UserDTO, Integer> {}

@@ -6,7 +6,7 @@
  * File: OrderUpdateService.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-04 13:59:26
+ * Last Modified: 2026-06-04 16:12:23
  */
 
 package com.nthn.storevision.service.order;
@@ -20,4 +20,4 @@ import com.nthn.storevision.service.generic.Updatable;
  * @see Updatable
  */
 @FunctionalInterface
-public interface OrderUpdateService extends Updatable<OrderDTO> {}
+public interface OrderUpdateService extends Updatable<OrderDTO, Long> {}

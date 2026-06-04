@@ -6,33 +6,39 @@
  * File: UserUpdateServiceImpl.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-03 11:21:37
+ * Last Modified: 2026-06-04 16:52:29
  */
 
 package com.nthn.storevision.service.user.impl;
 
+import com.nthn.storevision.constant.user.UserMessage;
+import com.nthn.storevision.dto.UserDTO;
 import com.nthn.storevision.entity.UserEntity;
-import com.nthn.storevision.model.User;
+import com.nthn.storevision.exception.EntityNotFoundException;
+import com.nthn.storevision.mapper.EntityMapper;
+import com.nthn.storevision.repository.UserRepository;
+import com.nthn.storevision.service.common.AbstractUpdatable;
 import com.nthn.storevision.service.user.UserUpdateService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Default implementation of {@link UserUpdateService} for persisting updates to {@link UserEntity}
  * instances in the database.
  */
 @Service
-@RequiredArgsConstructor
-public class UserUpdateServiceImpl implements UserUpdateService {
+public class UserUpdateServiceImpl
+    extends AbstractUpdatable<UserDTO, Integer, UserEntity, UserRepository>
+    implements UserUpdateService {
 
-  private final JpaRepository<UserEntity, Integer> repository;
+  protected UserUpdateServiceImpl(
+      final EntityMapper<UserDTO, Integer, UserEntity> mapper, final UserRepository repository) {
+    super(mapper, repository);
+  }
 
-  @Transactional
   @Override
-  public User update(final Long id, final User user) {
-    repository.save((UserEntity) user);
-    return user;
+  protected UserEntity getById(final Integer id) {
+    return (UserEntity) getRepository()
+        .findById(id)
+        .orElseThrow(() -> new EntityNotFoundException(UserMessage.USER_NOT_FOUND.getCode(), id));
   }
 }

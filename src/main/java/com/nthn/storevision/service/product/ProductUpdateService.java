@@ -6,7 +6,7 @@
  * File: ProductUpdateService.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-04 14:12:21
+ * Last Modified: 2026-06-04 16:40:51
  */
 
 package com.nthn.storevision.service.product;
@@ -20,4 +20,4 @@ import com.nthn.storevision.service.generic.Updatable;
  * @see Updatable
  */
 @FunctionalInterface
-public interface ProductUpdateService extends Updatable<ProductDTO> {}
+public interface ProductUpdateService extends Updatable<ProductDTO, Long> {}
