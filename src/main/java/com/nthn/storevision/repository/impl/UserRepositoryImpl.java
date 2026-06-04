@@ -6,7 +6,7 @@
  * File: UserRepositoryImpl.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-04 16:51:22
+ * Last Modified: 2026-06-04 17:20:53
  */
 
 package com.nthn.storevision.repository.impl;
@@ -58,11 +58,6 @@ public class UserRepositoryImpl implements UserRepository {
   }
 
   @Override
-  public boolean existsById(final Integer id) {
-    return jpaUserRepository.existsById(id);
-  }
-
-  @Override
   public List<UserEntity> findAll() {
     return jpaUserRepository.findAll();
   }
@@ -70,6 +65,11 @@ public class UserRepositoryImpl implements UserRepository {
   @Override
   public Optional<UserEntity> findById(final Integer id) {
     return jpaUserRepository.findById(id);
+  }
+
+  @Override
+  public boolean isExistsById(final Integer id) {
+    return jpaUserRepository.existsById(id);
   }
 
   @Override

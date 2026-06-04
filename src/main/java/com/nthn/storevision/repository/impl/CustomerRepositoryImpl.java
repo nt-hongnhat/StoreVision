@@ -6,13 +6,12 @@
  * File: CustomerRepositoryImpl.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-04 14:42:28
+ * Last Modified: 2026-06-04 17:20:12
  */
 
 package com.nthn.storevision.repository.impl;
 
 import com.nthn.storevision.entity.CustomerEntity;
-import com.nthn.storevision.model.Customer;
 import com.nthn.storevision.repository.CustomerRepository;
 import com.nthn.storevision.repository.jpa.JpaCustomerRepository;
 import java.util.List;
@@ -56,11 +55,6 @@ public class CustomerRepositoryImpl implements CustomerRepository {
   }
 
   @Override
-  public boolean existsById(final Long id) {
-    return jpaRepository.existsById(id);
-  }
-
-  @Override
   public List<CustomerEntity> findAll() {
     return jpaRepository.findAll();
   }
@@ -68,6 +62,11 @@ public class CustomerRepositoryImpl implements CustomerRepository {
   @Override
   public Optional<CustomerEntity> findById(final Long id) {
     return jpaRepository.findById(id);
+  }
+
+  @Override
+  public boolean isExistsById(final Long id) {
+    return jpaRepository.existsById(id);
   }
 
   @Override

@@ -6,7 +6,7 @@
  * File: OrderItemRepositoryImpl.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-05-17 14:40:44
+ * Last Modified: 2026-06-04 17:20:39
  */
 
 package com.nthn.storevision.repository.impl;
@@ -36,26 +36,6 @@ public class OrderItemRepositoryImpl implements OrderItemRepository {
   }
 
   @Override
-  public boolean existsById(final Long id) {
-    return jpaRepository.existsById(id);
-  }
-
-  @Override
-  public List<OrderItemEntity> findAll() {
-    return jpaRepository.findAll();
-  }
-
-  @Override
-  public Optional<OrderItemEntity> findById(final Long id) {
-    return jpaRepository.findById(id);
-  }
-
-  @Override
-  public OrderItemEntity save(final OrderItemEntity orderItem) {
-    return jpaRepository.save(orderItem);
-  }
-
-  @Override
   public void markDeletedById(final Long id) {
     findById(id).ifPresent(entity -> {
       entity.setDeleted(true);
@@ -71,5 +51,25 @@ public class OrderItemRepositoryImpl implements OrderItemRepository {
       entity.setDeleted(false);
       save(entity);
     });
+  }
+
+  @Override
+  public List<OrderItemEntity> findAll() {
+    return jpaRepository.findAll();
+  }
+
+  @Override
+  public Optional<OrderItemEntity> findById(final Long id) {
+    return jpaRepository.findById(id);
+  }
+
+  @Override
+  public boolean isExistsById(final Long id) {
+    return jpaRepository.existsById(id);
+  }
+
+  @Override
+  public OrderItemEntity save(final OrderItemEntity orderItem) {
+    return jpaRepository.save(orderItem);
   }
 }

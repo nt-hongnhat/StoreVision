@@ -1,13 +1,23 @@
+/*
+ * Copyright (c) 2026 Hong Nhat. All rights reserved.
+ *
+ * Project: Store Vision
+ * Module: Store Vision Main
+ * File: ProductRepositoryImpl.java
+ * Author: Nguyen Thi Hong Nhat
+ * Contact: hongnhat1121@gmail.com
+ * Last Modified: 2026-06-04 17:20:50
+ */
+
 package com.nthn.storevision.repository.impl;
 
 import com.nthn.storevision.entity.ProductEntity;
 import com.nthn.storevision.repository.ProductRepository;
 import com.nthn.storevision.repository.jpa.JpaProductRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Repository;
-
 import java.util.List;
 import java.util.Optional;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Repository;
 
 /**
  * Implementation of the {@link ProductRepository} interface.
@@ -29,15 +39,22 @@ public class ProductRepositoryImpl implements ProductRepository {
     jpaRepository.deleteById(id);
   }
 
-  /**
-   * Checks if a product with the given ID exists.
-   *
-   * @param id The ID of the product to check.
-   * @return {@code true} if a product with the given ID exists, {@code false} otherwise.
-   */
   @Override
-  public boolean existsById(final Long id) {
-    return jpaRepository.existsById(id);
+  public void markDeletedById(final Long id) {
+    findById(id).ifPresent(entity -> {
+      entity.setDeleted(true);
+      save(entity);
+    });
+  }
+
+  @Override
+  public void restoreById(final Long id) {
+    findById(id).ifPresent(entity -> {
+      entity.setDeletedBy(null);
+      entity.setDeletedDate(null);
+      entity.setDeleted(false);
+      save(entity);
+    });
   }
 
   /**
@@ -62,6 +79,17 @@ public class ProductRepositoryImpl implements ProductRepository {
   }
 
   /**
+   * Checks if a product with the given ID exists.
+   *
+   * @param id The ID of the product to check.
+   * @return {@code true} if a product with the given ID exists, {@code false} otherwise.
+   */
+  @Override
+  public boolean isExistsById(final Long id) {
+    return jpaRepository.existsById(id);
+  }
+
+  /**
    * Saves a product entity.
    *
    * @param product The {@link ProductEntity} to save.
@@ -70,23 +98,5 @@ public class ProductRepositoryImpl implements ProductRepository {
   @Override
   public ProductEntity save(final ProductEntity product) {
     return jpaRepository.save(product);
-  }
-
-  @Override
-  public void markDeletedById(final Long id) {
-    findById(id).ifPresent(entity -> {
-      entity.setDeleted(true);
-      save(entity);
-    });
-  }
-
-  @Override
-  public void restoreById(final Long id) {
-    findById(id).ifPresent(entity -> {
-      entity.setDeletedBy(null);
-      entity.setDeletedDate(null);
-      entity.setDeleted(false);
-      save(entity);
-    });
   }
 }

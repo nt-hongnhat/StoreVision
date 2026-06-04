@@ -6,7 +6,7 @@
  * File: OrderRepositoryImpl.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-05-17 14:36:24
+ * Last Modified: 2026-06-04 17:20:50
  */
 
 package com.nthn.storevision.repository.impl;
@@ -14,11 +14,10 @@ package com.nthn.storevision.repository.impl;
 import com.nthn.storevision.entity.OrderEntity;
 import com.nthn.storevision.repository.OrderRepository;
 import com.nthn.storevision.repository.jpa.JpaOrderRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Repository;
-
 import java.util.List;
 import java.util.Optional;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Repository;
 
 /**
  * Implementation of the {@link OrderRepository} interface.
@@ -33,26 +32,6 @@ public class OrderRepositoryImpl implements OrderRepository {
   @Override
   public void deleteById(final Long id) {
     jpaRepository.deleteById(id);
-  }
-
-  @Override
-  public boolean existsById(final Long id) {
-    return jpaRepository.existsById(id);
-  }
-
-  @Override
-  public List<OrderEntity> findAll() {
-    return jpaRepository.findAll();
-  }
-
-  @Override
-  public Optional<OrderEntity> findById(final Long id) {
-    return jpaRepository.findById(id);
-  }
-
-  @Override
-  public OrderEntity save(final OrderEntity order) {
-    return jpaRepository.save(order);
   }
 
   @Override
@@ -71,5 +50,25 @@ public class OrderRepositoryImpl implements OrderRepository {
       entity.setDeleted(false);
       save(entity);
     });
+  }
+
+  @Override
+  public List<OrderEntity> findAll() {
+    return jpaRepository.findAll();
+  }
+
+  @Override
+  public Optional<OrderEntity> findById(final Long id) {
+    return jpaRepository.findById(id);
+  }
+
+  @Override
+  public boolean isExistsById(final Long id) {
+    return jpaRepository.existsById(id);
+  }
+
+  @Override
+  public OrderEntity save(final OrderEntity order) {
+    return jpaRepository.save(order);
   }
 }

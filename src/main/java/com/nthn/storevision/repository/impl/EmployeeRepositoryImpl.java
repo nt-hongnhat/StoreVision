@@ -6,7 +6,7 @@
  * File: EmployeeRepositoryImpl.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-04 14:53:15
+ * Last Modified: 2026-06-04 17:20:39
  */
 
 package com.nthn.storevision.repository.impl;
@@ -54,11 +54,6 @@ public class EmployeeRepositoryImpl implements EmployeeRepository {
   }
 
   @Override
-  public boolean existsById(final Long id) {
-    return jpaRepository.existsById(id);
-  }
-
-  @Override
   public List<EmployeeEntity> findAll() {
     return jpaRepository.findAll();
   }
@@ -66,6 +61,11 @@ public class EmployeeRepositoryImpl implements EmployeeRepository {
   @Override
   public Optional<EmployeeEntity> findById(final Long id) {
     return jpaRepository.findById(id);
+  }
+
+  @Override
+  public boolean isExistsById(final Long id) {
+    return jpaRepository.existsById(id);
   }
 
   @Override

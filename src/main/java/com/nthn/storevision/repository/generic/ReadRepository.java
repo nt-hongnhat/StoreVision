@@ -6,7 +6,7 @@
  * File: ReadRepository.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-04 14:31:23
+ * Last Modified: 2026-06-04 17:20:28
  */
 
 package com.nthn.storevision.repository.generic;
@@ -25,14 +25,6 @@ import java.util.Optional;
 public interface ReadRepository<E, I> {
 
   /**
-   * Checks whether an entity with the given identifier exists in the data source.
-   *
-   * @param id the identifier of the entity to check
-   * @return true if an entity with the specified identifier exists, false otherwise
-   */
-  boolean existsById(I id);
-
-  /**
    * Retrieves all entities from the data source.
    *
    * @return a list of all entities of type E
@@ -47,4 +39,12 @@ public interface ReadRepository<E, I> {
    *     found
    */
   Optional<E> findById(I id);
+
+  /**
+   * Checks whether an entity with the given identifier exists in the data source.
+   *
+   * @param id the identifier of the entity to check
+   * @return true if an entity with the specified identifier exists, false otherwise
+   */
+  boolean isExistsById(I id);
 }
