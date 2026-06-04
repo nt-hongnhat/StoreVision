@@ -11,6 +11,7 @@
 
 package com.nthn.storevision.service.product.impl;
 
+import com.nthn.storevision.constant.ProductMessageCodes;
 import com.nthn.storevision.dto.ProductDTO;
 import com.nthn.storevision.entity.ProductEntity;
 import com.nthn.storevision.mapper.ProductMapper;
@@ -78,9 +79,6 @@ public class ProductRetrievalServiceImpl
    */
   @Override
   protected String getNotFoundMessageCode() {
-    // Assuming a constant for product not found message exists, similar to
-    // UserMessage.USER_NOT_FOUND
-    // If not, you might need to create one or use a generic message.
-    return "product.not.found"; // Placeholder, replace it with actual message code if available
+    return ProductMessageCodes.NOT_FOUND;
   }
 }
