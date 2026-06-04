@@ -6,13 +6,14 @@
  * File: ProductServiceImpl.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-04 14:12:55
+ * Last Modified: 2026-06-04 15:24:59
  */
 
 package com.nthn.storevision.service.product.impl;
 
 import com.nthn.storevision.dto.ProductDTO;
 import com.nthn.storevision.entity.ProductEntity;
+import com.nthn.storevision.mapper.ProductMapper;
 import com.nthn.storevision.service.product.ProductCreationService;
 import com.nthn.storevision.service.product.ProductDeletionService;
 import com.nthn.storevision.service.product.ProductRetrievalService;
@@ -20,7 +21,6 @@ import com.nthn.storevision.service.product.ProductService;
 import com.nthn.storevision.service.product.ProductUpdateService;
 import java.util.List;
 import java.util.function.Function;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.NonNull;
@@ -38,6 +38,7 @@ public class ProductServiceImpl implements ProductService {
 
   private final ProductCreationService creationService;
   private final ProductDeletionService deletionService;
+  private final ProductMapper productMapper;
   private final ProductRetrievalService retrievalService;
   private final ProductUpdateService updateService;
 
@@ -73,9 +74,9 @@ public class ProductServiceImpl implements ProductService {
     entity.setPrice(dto.getPrice());
     entity.setStockQuantity(dto.getStockQuantity());
     entity.setCategory(dto.getCategory());
-    updateService.update(entity.getId());
+    updateService.update(entity.getId(), dto);
     log.debug("Product id: {} updated successfully", id);
-    return mapper.toDTO(entity);
+    return productMapper.toDTO(entity);
   }
 
   @Override
