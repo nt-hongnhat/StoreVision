@@ -6,11 +6,12 @@
  * File: UserRepository.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-04 14:37:32
+ * Last Modified: 2026-06-04 16:49:55
  */
 
 package com.nthn.storevision.repository;
 
+import com.nthn.storevision.entity.UserEntity;
 import com.nthn.storevision.model.User;
 import com.nthn.storevision.repository.generic.DeleteRepository;
 import com.nthn.storevision.repository.generic.ReadRepository;
@@ -18,11 +19,14 @@ import com.nthn.storevision.repository.generic.SaveRepository;
 import java.util.Optional;
 
 /**
- * Repository interface for managing {@link User} entities. Extends minimal CRUD operations through
- * the {@link DeleteRepository}, {@link ReadRepository}, and {@link SaveRepository} interfaces.
+ * Repository interface for managing {@code User} entities. Combines delete, read, and save
+ * operations from parent repository interfaces. Allows searching for users by specific attributes
+ * such as email and username.
  */
 public interface UserRepository
-    extends DeleteRepository<Integer>, ReadRepository<User, Integer>, SaveRepository<User> {
+    extends DeleteRepository<Integer>,
+        ReadRepository<UserEntity, Integer>,
+        SaveRepository<UserEntity> {
 
   /**
    * Retrieves a user by their email address.

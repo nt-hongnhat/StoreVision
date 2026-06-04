@@ -6,7 +6,7 @@
  * File: UserRepositoryImpl.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-04 14:42:28
+ * Last Modified: 2026-06-04 16:51:22
  */
 
 package com.nthn.storevision.repository.impl;
@@ -52,9 +52,7 @@ public class UserRepositoryImpl implements UserRepository {
         .findById(id)
         .ifPresent(
             entity -> {
-              entity.setDeletedBy(null);
-              entity.setDeletedDate(null);
-              entity.setDeleted(false);
+              entity.setDeletedBy(null).setDeletedDate(null);
               jpaUserRepository.save(entity);
             });
   }
@@ -65,13 +63,13 @@ public class UserRepositoryImpl implements UserRepository {
   }
 
   @Override
-  public List<User> findAll() {
-    return jpaUserRepository.findAll().stream().<User>map(u -> u).toList();
+  public List<UserEntity> findAll() {
+    return jpaUserRepository.findAll();
   }
 
   @Override
-  public Optional<User> findById(final Integer id) {
-    return jpaUserRepository.findById(id).map(User.class::cast);
+  public Optional<UserEntity> findById(final Integer id) {
+    return jpaUserRepository.findById(id);
   }
 
   @Override
@@ -85,7 +83,7 @@ public class UserRepositoryImpl implements UserRepository {
   }
 
   @Override
-  public User save(final User user) {
-    return jpaUserRepository.save((UserEntity) user);
+  public UserEntity save(final UserEntity entity) {
+    return jpaUserRepository.save(entity);
   }
 }
