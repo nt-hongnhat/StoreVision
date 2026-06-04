@@ -6,7 +6,7 @@
  * File: UserDTO.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-04 16:03:03
+ * Last Modified: 2026-06-04 16:07:29
  */
 
 package com.nthn.storevision.dto;
