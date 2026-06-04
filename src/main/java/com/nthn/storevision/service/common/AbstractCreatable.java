@@ -11,9 +11,10 @@
 
 package com.nthn.storevision.service.common;
 
+import com.nthn.storevision.entity.mapped.BaseEntity;
+import com.nthn.storevision.mapper.EntityMapper;
 import com.nthn.storevision.repository.generic.SaveRepository;
 import com.nthn.storevision.service.generic.Creatable;
-import java.util.function.Function;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -42,16 +43,16 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-public abstract class AbstractCreatable<T, E, J extends SaveRepository<E>> implements Creatable<T> {
+public abstract class AbstractCreatable<T, E extends BaseEntity<?>, J extends SaveRepository<E>>
+    implements Creatable<T> {
 
+  private final EntityMapper<T, ?, E> mapper;
   private final J repository;
-  private final Function<? super E, ? extends T> toDTO;
-  private final Function<? super T, ? extends E> toEntity;
 
   @Override
   public T create(final T request) {
     log.debug("Creating entity from request: {}", request);
-    final T created = toDTO.apply(repository.save(toEntity.apply(request)));
+    final T created = mapper.toDTO(repository.save(mapper.toEntity(request)));
     log.debug("Entity created successfully: {}", created);
     return created;
   }
