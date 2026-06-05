@@ -54,7 +54,7 @@ public class ProductServiceImpl implements ProductService {
   @Override
   @Transactional(readOnly = true)
   public List<ProductDTO> findAll() {
-    log.debug("Fetching all products");
+    log.debug("Fetching all active products");
     return retrievalService.findAllProductsAsDTO();
   }
 
@@ -85,5 +85,28 @@ public class ProductServiceImpl implements ProductService {
     log.debug("Deleting product id: {}", id);
     deletionService.markAsDeleted(id);
     log.debug("Product id: {} marked as deleted", id);
+  }
+
+  @Override
+  @Transactional
+  public void permanentlyDelete(final Long id) {
+    log.debug("Permanently deleting product id: {}", id);
+    deletionService.permanentlyDelete(id);
+    log.debug("Product id: {} permanently deleted", id);
+  }
+
+  @Override
+  @Transactional
+  public void restore(final Long id) {
+    log.debug("Restoring product id: {}", id);
+    deletionService.restore(id);
+    log.debug("Product id: {} restored", id);
+  }
+
+  @Override
+  @Transactional(readOnly = true)
+  public List<ProductDTO> search(final String name, final String category) {
+    log.debug("Searching products — name: {}, category: {}", name, category);
+    return retrievalService.search(name, category);
   }
 }

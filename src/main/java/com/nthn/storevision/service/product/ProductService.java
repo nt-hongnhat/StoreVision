@@ -25,5 +25,18 @@ public interface ProductService {
 
   ProductDTO update(Long id, ProductDTO dto);
 
+  /** Soft-deletes the product. Emits a warning (BR-P04) if active PENDING orders exist. */
   void delete(Long id);
+
+  /** Permanently removes the product from the database (Admin only). */
+  void permanentlyDelete(Long id);
+
+  /** Restores a previously soft-deleted product. */
+  void restore(Long id);
+
+  /**
+   * Searches active products by optional name (case-insensitive) and optional category.
+   * Passing {@code null} omits that filter.
+   */
+  List<ProductDTO> search(String name, String category);
 }
