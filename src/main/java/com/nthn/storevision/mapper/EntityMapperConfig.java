@@ -65,5 +65,10 @@ public interface EntityMapperConfig<T, I, E extends BaseEntity<I>> {
    * @param entity The target entity to be updated; should not be null.
    */
   @Mapping(target = "id", ignore = true)
+  @Mapping(target = "createdBy", ignore = true)
+  @Mapping(target = "createdDate", ignore = true)
+  @Mapping(target = "lastModifiedDate", ignore = true)
+  @Mapping(target = "deletedBy", ignore = true)
+  @Mapping(target = "deletedDate", ignore = true)
   void updateEntity(T dto, @MappingTarget E entity);
 }
