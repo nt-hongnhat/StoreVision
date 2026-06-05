@@ -21,6 +21,14 @@ import com.nthn.storevision.repository.generic.SaveRepository;
  * for orders.
  */
 public interface OrderRepository
-    extends ReadRepository<OrderEntity, Long>,
-        SaveRepository<OrderEntity>,
-        DeleteRepository<Long> {}
+    extends ReadRepository<OrderEntity, Long>, SaveRepository<OrderEntity>, DeleteRepository<Long> {
+
+  /**
+   * Checks if there are any pending orders for the specified product.
+   *
+   * @param productId the ID of the product to check for pending orders.
+   * @return {@code true} if there is at least one pending order for the given product; {@code
+   *     false} otherwise.
+   */
+  boolean existsPendingOrderForProduct(Long productId);
+}

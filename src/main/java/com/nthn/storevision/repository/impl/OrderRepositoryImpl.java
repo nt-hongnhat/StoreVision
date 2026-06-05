@@ -11,6 +11,7 @@
 
 package com.nthn.storevision.repository.impl;
 
+import com.nthn.storevision.constant.OrderStatus;
 import com.nthn.storevision.entity.OrderEntity;
 import com.nthn.storevision.repository.OrderRepository;
 import com.nthn.storevision.repository.jpa.JpaOrderRepository;
@@ -50,6 +51,11 @@ public class OrderRepositoryImpl implements OrderRepository {
       entity.setDeleted(false);
       save(entity);
     });
+  }
+
+  @Override
+  public boolean existsPendingOrderForProduct(final Long productId) {
+    return jpaRepository.existsByOrderItemsProductIdAndStatus(productId, OrderStatus.PENDING);
   }
 
   @Override

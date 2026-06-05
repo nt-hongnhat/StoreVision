@@ -72,11 +72,13 @@ public class OrderRetrievalServiceImpl
     return findById(id, orderMapper::toDTO);
   }
 
-  /**
-   * Returns the message code for when an order is not found.
-   *
-   * @return The message code for "order not found".
-   */
+  @Override
+  @Transactional(readOnly = true)
+  public boolean existsPendingOrderForProduct(final Long productId) {
+    log.debug("Checking pending orders for product id: {}", productId);
+    return getRepository().existsPendingOrderForProduct(productId);
+  }
+
   @Override
   protected String getNotFoundMessageCode() {
     // Placeholder, replace with actual message code if available

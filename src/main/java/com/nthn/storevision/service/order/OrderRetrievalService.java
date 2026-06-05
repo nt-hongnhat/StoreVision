@@ -39,4 +39,13 @@ public interface OrderRetrievalService extends Readable<OrderEntity, Long> {
    * @return the {@link OrderDTO} with the specified identifier, or null if not found.
    */
   OrderDTO findOrderDTOById(Long id);
+
+  /**
+   * BR-P04: returns {@code true} if any active (non-deleted) PENDING order contains the given
+   * product. Used by the product soft-delete flow to emit a warning before deletion.
+   *
+   * @param productId the product ID to check
+   * @return {@code true} if at least one pending order references this product
+   */
+  boolean existsPendingOrderForProduct(Long productId);
 }

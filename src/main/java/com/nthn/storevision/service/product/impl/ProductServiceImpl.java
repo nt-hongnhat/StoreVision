@@ -12,15 +12,13 @@
 package com.nthn.storevision.service.product.impl;
 
 import com.nthn.storevision.dto.ProductDTO;
-import com.nthn.storevision.entity.ProductEntity;
-import com.nthn.storevision.mapper.ProductMapper;
+import com.nthn.storevision.service.order.OrderRetrievalService;
 import com.nthn.storevision.service.product.ProductCreationService;
 import com.nthn.storevision.service.product.ProductDeletionService;
 import com.nthn.storevision.service.product.ProductRetrievalService;
 import com.nthn.storevision.service.product.ProductService;
 import com.nthn.storevision.service.product.ProductUpdateService;
 import java.util.List;
-import java.util.function.Function;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.NonNull;
@@ -29,7 +27,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Aggregates all product operation services into a single entry point for the controller layer.
- * Handles DTO ↔ entity conversion and delegates to operation-specific services.
+ * Enforces BR-P04 (warning on soft-delete with pending orders) and delegates all business logic
+ * to operation-specific services.
  */
 @Slf4j
 @Service
@@ -38,7 +37,7 @@ public class ProductServiceImpl implements ProductService {
 
   private final ProductCreationService creationService;
   private final ProductDeletionService deletionService;
-  private final ProductMapper productMapper;
+  private final OrderRetrievalService orderRetrievalService;
   private final ProductRetrievalService retrievalService;
   private final ProductUpdateService updateService;
 
@@ -79,10 +78,20 @@ public class ProductServiceImpl implements ProductService {
     return productMapper.toDTO(entity);
   }
 
+  /**
+   * Soft-deletes a product. BR-P04: if any PENDING order references this product, a warning is
+   * logged but the soft-delete proceeds. Pending order items retain their original unit_price.
+   */
   @Override
   @Transactional
   public void delete(final Long id) {
-    log.debug("Deleting product id: {}", id);
+    log.debug("Soft-deleting product id: {}", id);
+    if (orderRetrievalService.existsPendingOrderForProduct(id)) {
+      log.warn(
+          "BR-P04: product id {} has PENDING orders — soft-deleting anyway;"
+              + " pending order items retain their original unit_price.",
+          id);
+    }
     deletionService.markAsDeleted(id);
     log.debug("Product id: {} marked as deleted", id);
   }
