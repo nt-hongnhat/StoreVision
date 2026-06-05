@@ -183,7 +183,40 @@ Do **not** repeat `unmappedTargetPolicy = IGNORE` or the audit-field `@Mapping(i
 - Use `EntityNotFoundException` for missing entities and `EntityAccessException` for authorization failures.
 - Error messages must be externalized to `/i18n/messages` properties files to support i18n.
 
-### 6. Logging
+### 6. i18n Message Key Convention
+
+All message keys in `/i18n/messages*.properties` must follow the `[PREFIX][3-DIGIT-NUMBER]` format — never dot-notation (`product.not.found` is **wrong**).
+
+#### Prefix registry
+
+| Prefix | Domain | Example |
+|--------|--------|---------|
+| `USM`  | User (`user`)       | `USM001` |
+| `PRM`  | Product (`product`) | `PRM001` |
+
+> When adding a new domain, register its prefix in this table before writing any message keys.
+
+#### Rules
+
+- **Constants file**: every domain must have a `{Domain}MessageCodes` enum in `constant/` whose `static final String` fields reference the code string (e.g. `public static final String NOT_FOUND = "PRM001"`). Never inline the string in business code.
+- **Bean Validation messages**: validation constraint messages in DTOs must also use the coded format — `@NotBlank(message = "{PRM003}")`, not `@NotBlank(message = "Product name is required")`.
+- **Numbering**: allocate codes sequentially per prefix. The first code is `001`. Leave no gaps.
+- **All locales**: every code added to `messages.properties` (EN base) must also be added to `messages-vi.properties` (VI).
+
+#### Current code allocation
+
+| Code | Meaning |
+|------|---------|
+| `USM001` | User not found |
+| `PRM001` | Product not found |
+| `PRM002` | Product name + category already exists (BR-P01) |
+| `PRM003` | Product name required |
+| `PRM004` | Product price required |
+| `PRM005` | Product price must be > 0 |
+| `PRM006` | Stock quantity required |
+| `PRM007` | Stock quantity must be >= 0 |
+
+### 7. Logging
 
 - Use **SLF4J** (`@Slf4j` from Lombok) exclusively for all logging. Never use `System.out.println` or `printStackTrace()`.
 - Log at the correct level: `DEBUG` for service/logic flow, `INFO` for significant state changes, `WARN` for recoverable issues, `ERROR` for exceptions.
@@ -203,7 +236,7 @@ Do **not** repeat `unmappedTargetPolicy = IGNORE` or the audit-field `@Mapping(i
   ```
 - Refer to `application-logging.yml`: project package `com.nthn` logs at `DEBUG`, root at `INFO`.
 
-### 7. Security Rules
+### 8. Security Rules
 
 - Security configuration lives exclusively in `SecurityConfig.java` under `security/config/`.
 - The `security/` package is structured into focused sub-packages: `config/` (SecurityConfig), `context/` (UserContext), `filter/` (UserInfoFilter), `oauth/` (OAuth2SuccessHandler), `user/` (CustomUserDetailsService, UserPrincipal).
@@ -211,7 +244,7 @@ Do **not** repeat `unmappedTargetPolicy = IGNORE` or the audit-field `@Mapping(i
 - Never expose internal user/session data outside the `security/` boundary without going through `UserContext` in `security/context/`.
 - Keep security-related components (JWT provider, custom filters, authentication configuration) isolated inside the `security/` sub-package hierarchy — never scatter them into generic packages such as `component/` or the top-level `config/`.
 
-### 8. Database & Migrations
+### 9. Database & Migrations
 
 - **All schema changes** must be applied via **Liquibase** changesets — never modify the database schema directly or use `spring.jpa.hibernate.ddl-auto=update/create`.
 - Connection pool settings (`max-pool-size`, `connection-timeout`) are externalized via environment variables (`${DATASOURCE_MAX_POOL_SIZE}`, `${DATASOURCE_URL}`).
@@ -233,7 +266,7 @@ Do **not** repeat `unmappedTargetPolicy = IGNORE` or the audit-field `@Mapping(i
 - Each `<changeSet>` must carry a `labels="v{version}"` attribute matching its folder version.
 - File naming: `{NNN}-{action}-{table}-table.sql` / `{NNN}-{action}-{table}-table-rollback.sql`.
 
-### 9. Auditing
+### 10. Auditing
 
 - All entities must extend `BaseEntity` which provides `createdBy`, `createdDate`, `lastModifiedBy`, `lastModifiedDate`, `deletedBy`, `deletedDate`.
 - The `CustomAuditingEntityListener` and `UserAuditorAware` in `component/audit/` handle automatic population — do not set these fields manually.
@@ -245,7 +278,7 @@ Do **not** repeat `unmappedTargetPolicy = IGNORE` or the audit-field `@Mapping(i
 
 To restore: call `entity.setDeletedBy(null)`, `entity.setDeletedDate(null)`, `entity.setDeleted(false)`, then `repository.save(entity)`. The listener will skip the soft-delete block (because `isDeleted == false`) and only update `lastModifiedBy` / `lastModifiedDate`.
 
-### 10. API Documentation
+### 11. API Documentation
 
 - All controllers and endpoints must include **SpringDoc/OpenAPI annotations** so the Swagger UI at `/swagger-ui.html` stays accurate.
 - API base path: `/` (at the root)
@@ -315,13 +348,13 @@ All string literals used in OpenAPI annotations must be defined as compile-time 
 @ApiResponse(responseCode = "404", description = "Not found")
 ```
 
-### 11. Modulith Boundaries
+### 12. Modulith Boundaries
 
 - This project uses **Spring Modulith**. Use `@NamedInterface` to declare explicit module boundaries.
 - Do not create cross-module dependencies that bypass the declared interfaces.
 - Run `ApplicationModularityTests` to verify module structure before merging changes.
 
-### 12. Testing Standards
+### 13. Testing Standards
 
 - **Mandatory**: write unit tests for all service-layer logic using **JUnit 5** (Jupiter) and **Spring Boot Test**.
 - Security-related tests must use **Spring Security Test** (`@WithMockUser`, `SecurityMockMvcRequestPostProcessors`).
@@ -331,7 +364,7 @@ All string literals used in OpenAPI annotations must be defined as compile-time 
 - Use Spring's `@DataJpaTest` (or `@JdbcTest`) for repository layer tests — do not spin up the full application context for persistence tests.
 - Do **not** use mocked databases when integration behavior is under test; prefer the real PostgreSQL via `compose.yaml`.
 
-### 13. Code Quality Rules
+### 14. Code Quality Rules
 
 - **No raw `System.out` or `printStackTrace()`** anywhere in the codebase.
 - **No magic strings or numbers** — externalize to constants in `constant/` or message properties in `i18n/`.
