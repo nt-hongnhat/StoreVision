@@ -57,7 +57,8 @@ Controller (v1/)
 
 - Use **abstract base classes** in `service/common/` (`AbstractCreatable`, `AbstractReadable`) for shared behavior.
 - Use **generic interfaces** in `service/generic/` for contract definition.
-- Each concrete `impl/` class (e.g., `CustomerServiceImpl`) aggregates operation-specific services — it is the single entry point per domain for the controller.
+- **Controllers inject specific operation services directly** — `*CreationService`, `*RetrievalService`, `*UpdateService`, `*DeletionService`. Never inject the aggregator `*Service` (e.g., `ProductService`) into a controller.
+- The aggregator `*ServiceImpl` exists for orchestration (e.g., cross-domain delegations) but is **not** the controller's entry point.
 - Never call a `Repository` directly from a `Controller` or another `Service`'s domain.
 
 #### Interface-Implementation pattern (mandatory for all service beans)
@@ -76,7 +77,7 @@ service/domain/
         XxxRetrievalServiceImpl.java
         XxxUpdateServiceImpl.java
         XxxDeletionServiceImpl.java
-        XxxServiceImpl.java      ← aggregator impl, single entry point for the controller
+        XxxServiceImpl.java      ← aggregator impl (not the controller entry point — see above)
 ```
 
 No concrete `@Service` class may live directly in `service/domain/` — only interfaces belong there.

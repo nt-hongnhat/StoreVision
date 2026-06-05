@@ -215,12 +215,14 @@ graph LR
     end
 
     subgraph Pattern["Per-domain Service Pattern (Interface → impl/)"]
-        IMPL["XxxServiceImpl\n(aggregator)"]
+        CTL_V1["XxxControllerV1\n(injects specific services directly)"]
+        IMPL["XxxServiceImpl\n(aggregator — not controller entry point)"]
         CS["XxxCreationService\n+ XxxCreationServiceImpl"]
         RS["XxxRetrievalService\n+ XxxRetrievalServiceImpl"]
         US["XxxUpdateService\n+ XxxUpdateServiceImpl"]
         DS["XxxDeletionService\n+ XxxDeletionServiceImpl"]
-        IMPL --> CS & RS & US & DS
+        CTL_V1 --> CS & RS & US & DS
+        IMPL -.->|delegates to| CS & RS & US & DS
     end
 
     subgraph Generic["service/generic — Contracts"]
