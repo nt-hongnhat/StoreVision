@@ -11,14 +11,28 @@
 
 package com.nthn.storevision.constant;
 
-/** i18n message codes for the Product domain. */
+/** i18n message codes for the Product domain (prefix: PRM). */
 public enum ProductMessageCodes {
   ;
 
-  /**
-   * Represents the message code for a product that cannot be found. This constant is used for i18n
-   * (internationalization) purposes to provide a consistent identifier for the "product not found"
-   * message within the Product domain.
-   */
-  public static final String NOT_FOUND = "product.not.found";
+  /** PRM001: product with given ID does not exist. */
+  public static final String NOT_FOUND = "PRM001";
+
+  /** PRM002: BR-P01 — name + category combination must be unique among active records. */
+  public static final String ALREADY_EXISTS = "PRM002";
+
+  /** PRM003: product name is a required field. */
+  public static final String NAME_REQUIRED = "PRM003";
+
+  /** PRM004: product price is a required field. */
+  public static final String PRICE_REQUIRED = "PRM004";
+
+  /** PRM005: product price must be greater than 0. */
+  public static final String PRICE_MIN = "PRM005";
+
+  /** PRM006: stock quantity is a required field. */
+  public static final String STOCK_REQUIRED = "PRM006";
+
+  /** PRM007: stock quantity must be >= 0. */
+  public static final String STOCK_MIN = "PRM007";
 }
