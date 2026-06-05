@@ -1,3 +1,14 @@
+/*
+ * Copyright (c) 2026 Hong Nhat. All rights reserved.
+ *
+ * Project: Store Vision
+ * Module: Store Vision Main
+ * File: OrderItemControllerV1.java
+ * Author: Nguyen Thi Hong Nhat
+ * Contact: hongnhat1121@gmail.com
+ * Last Modified: 2026-06-05 16:06:32
+ */
+
 package com.nthn.storevision.controller.v1;
 
 import com.nthn.storevision.constant.api.ResponseCode;
@@ -27,9 +38,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-/**
- * Version 1 implementation of {@link OrderItemController}.
- */
+/** Version 1 implementation of {@link OrderItemController}. */
 @Tag(name = "Order Item", description = "Order item management endpoints")
 @Slf4j
 @RestController
@@ -46,7 +55,9 @@ public class OrderItemControllerV1 implements OrderItemController {
       summary = "Create a new order item",
       description = "Adds a new line item to an existing order and persists it to the database.")
   @ApiResponse(responseCode = ResponseCode.CREATED, description = ResponseDescription.CREATED)
-  @ApiResponse(responseCode = ResponseCode.BAD_REQUEST, description = ResponseDescription.INVALID_INPUT)
+  @ApiResponse(
+      responseCode = ResponseCode.BAD_REQUEST,
+      description = ResponseDescription.INVALID_INPUT)
   @ResponseStatus(HttpStatus.CREATED)
   @PostMapping
   @Override
@@ -57,8 +68,9 @@ public class OrderItemControllerV1 implements OrderItemController {
 
   @Operation(
       summary = "Soft-delete an order item by ID",
-      description = "Marks the order item as deleted without physically removing the record."
-          + " The record can be restored later.")
+      description =
+          "Marks the order item as deleted without physically removing the record."
+              + " The record can be restored later.")
   @ApiResponse(responseCode = ResponseCode.NO_CONTENT, description = ResponseDescription.DELETED)
   @ApiResponse(responseCode = ResponseCode.NOT_FOUND, description = ResponseDescription.NOT_FOUND)
   @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -96,10 +108,13 @@ public class OrderItemControllerV1 implements OrderItemController {
 
   @Operation(
       summary = "Update an order item by ID",
-      description = "Updates the mutable fields (quantity, unitPrice) of an existing order item."
-          + " Order and product associations cannot be changed via this endpoint.")
+      description =
+          "Updates the mutable fields (quantity, unitPrice) of an existing order item."
+              + " Order and product associations cannot be changed via this endpoint.")
   @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)
-  @ApiResponse(responseCode = ResponseCode.BAD_REQUEST, description = ResponseDescription.INVALID_INPUT)
+  @ApiResponse(
+      responseCode = ResponseCode.BAD_REQUEST,
+      description = ResponseDescription.INVALID_INPUT)
   @ApiResponse(responseCode = ResponseCode.NOT_FOUND, description = ResponseDescription.NOT_FOUND)
   @PutMapping("/{id}")
   @Override

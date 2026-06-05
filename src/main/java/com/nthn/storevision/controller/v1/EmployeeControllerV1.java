@@ -1,3 +1,14 @@
+/*
+ * Copyright (c) 2026 Hong Nhat. All rights reserved.
+ *
+ * Project: Store Vision
+ * Module: Store Vision Main
+ * File: EmployeeControllerV1.java
+ * Author: Nguyen Thi Hong Nhat
+ * Contact: hongnhat1121@gmail.com
+ * Last Modified: 2026-06-05 16:06:13
+ */
+
 package com.nthn.storevision.controller.v1;
 
 import com.nthn.storevision.constant.api.ResponseCode;
@@ -27,9 +38,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-/**
- * Version 1 implementation of {@link EmployeeController}.
- */
+/** Version 1 implementation of {@link EmployeeController}. */
 @Tag(name = "Employee", description = "Employee management endpoints")
 @Slf4j
 @RestController
@@ -46,7 +55,9 @@ public class EmployeeControllerV1 implements EmployeeController {
       summary = "Create a new employee",
       description = "Creates a new employee record and persists it to the database.")
   @ApiResponse(responseCode = ResponseCode.CREATED, description = ResponseDescription.CREATED)
-  @ApiResponse(responseCode = ResponseCode.BAD_REQUEST, description = ResponseDescription.INVALID_INPUT)
+  @ApiResponse(
+      responseCode = ResponseCode.BAD_REQUEST,
+      description = ResponseDescription.INVALID_INPUT)
   @ResponseStatus(HttpStatus.CREATED)
   @PostMapping
   @Override
@@ -57,8 +68,9 @@ public class EmployeeControllerV1 implements EmployeeController {
 
   @Operation(
       summary = "Soft-delete an employee by ID",
-      description = "Marks the employee as deleted without physically removing the record."
-          + " The record can be restored later.")
+      description =
+          "Marks the employee as deleted without physically removing the record."
+              + " The record can be restored later.")
   @ApiResponse(responseCode = ResponseCode.NO_CONTENT, description = ResponseDescription.DELETED)
   @ApiResponse(responseCode = ResponseCode.NOT_FOUND, description = ResponseDescription.NOT_FOUND)
   @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -95,9 +107,12 @@ public class EmployeeControllerV1 implements EmployeeController {
 
   @Operation(
       summary = "Update an employee by ID",
-      description = "Updates the mutable fields (username, password, role) of an existing employee.")
+      description =
+          "Updates the mutable fields (username, password, role) of an existing employee.")
   @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)
-  @ApiResponse(responseCode = ResponseCode.BAD_REQUEST, description = ResponseDescription.INVALID_INPUT)
+  @ApiResponse(
+      responseCode = ResponseCode.BAD_REQUEST,
+      description = ResponseDescription.INVALID_INPUT)
   @ApiResponse(responseCode = ResponseCode.NOT_FOUND, description = ResponseDescription.NOT_FOUND)
   @PutMapping("/{id}")
   @Override

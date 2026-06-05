@@ -6,7 +6,7 @@
  * File: ProductControllerV1.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-05 15:45:08
+ * Last Modified: 2026-06-05 16:09:18
  */
 
 package com.nthn.storevision.controller.v1;
@@ -59,8 +59,12 @@ public class ProductControllerV1 implements ProductController {
           "Creates a new product. Name + category must be unique among active records (BR-P01)."
               + " Price must be > 0 (BR-P02). stockQuantity must be >= 0 (BR-P03).")
   @ApiResponse(responseCode = ResponseCode.CREATED, description = ResponseDescription.CREATED)
-  @ApiResponse(responseCode = ResponseCode.BAD_REQUEST, description = ResponseDescription.INVALID_INPUT)
-  @ApiResponse(responseCode = ResponseCode.CONFLICT, description = CONFLICT_DESC)
+  @ApiResponse(
+      responseCode = ResponseCode.BAD_REQUEST,
+      description = ResponseDescription.INVALID_INPUT)
+  @ApiResponse(
+      responseCode = ResponseCode.CONFLICT,
+      description = ResponseDescription.PRODUCT_NAME_EXISTS_IN_CATEGORY)
   @ResponseStatus(HttpStatus.CREATED)
   @PostMapping
   @Override
@@ -126,7 +130,9 @@ public class ProductControllerV1 implements ProductController {
   @Operation(
       summary = "Restore a soft-deleted product",
       description = "Clears the soft-delete markers, making the product active again.")
-  @ApiResponse(responseCode = ResponseCode.NO_CONTENT, description = "Product restored successfully")
+  @ApiResponse(
+      responseCode = ResponseCode.NO_CONTENT,
+      description = "Product restored successfully")
   @ApiResponse(responseCode = ResponseCode.NOT_FOUND, description = ResponseDescription.NOT_FOUND)
   @ResponseStatus(HttpStatus.NO_CONTENT)
   @PatchMapping("/{id}/restore")
@@ -147,9 +153,10 @@ public class ProductControllerV1 implements ProductController {
   @Override
   public List<ProductDTO> searchProducts(
       @Parameter(description = "Partial product name (case-insensitive)")
-          @RequestParam(required = false) final String name,
-      @Parameter(description = "Exact category name")
-          @RequestParam(required = false) final String category) {
+          @RequestParam(required = false)
+          final String name,
+      @Parameter(description = "Exact category name") @RequestParam(required = false)
+          final String category) {
     log.debug("GET /products/search — name: {}, category: {}", name, category);
     return retrievalService.search(name, category);
   }
@@ -160,9 +167,13 @@ public class ProductControllerV1 implements ProductController {
           "Updates all mutable fields of an existing product. Name + category must remain unique"
               + " among active records, excluding this product's own record (BR-P01).")
   @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)
-  @ApiResponse(responseCode = ResponseCode.BAD_REQUEST, description = ResponseDescription.INVALID_INPUT)
+  @ApiResponse(
+      responseCode = ResponseCode.BAD_REQUEST,
+      description = ResponseDescription.INVALID_INPUT)
   @ApiResponse(responseCode = ResponseCode.NOT_FOUND, description = ResponseDescription.NOT_FOUND)
-  @ApiResponse(responseCode = ResponseCode.CONFLICT, description = CONFLICT_DESC)
+  @ApiResponse(
+      responseCode = ResponseCode.CONFLICT,
+      description = ResponseDescription.PRODUCT_NAME_EXISTS_IN_CATEGORY)
   @PutMapping("/{id}")
   @Override
   public ProductDTO updateProduct(
