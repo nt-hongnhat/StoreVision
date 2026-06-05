@@ -124,14 +124,16 @@ service/{domain}/
     {Domain}RetrievalService.java    ← interface, extends Readable<E, I>
     {Domain}UpdateService.java       ← interface, extends Updatable<E>
     {Domain}DeletionService.java     ← interface, extends SoftDeletable<E,I> & HardDeletable<E,I>
-    {Domain}Service.java             ← aggregator interface (entry point cho Controller)
+    {Domain}Service.java             ← aggregator interface (không phải entry point của Controller)
     impl/
         {Domain}CreationServiceImpl.java
         {Domain}RetrievalServiceImpl.java
         {Domain}UpdateServiceImpl.java
-        {Domain}DeletionServiceImpl.java
-        {Domain}ServiceImpl.java     ← aggregator impl, inject 4 service trên
+        {Domain}DeletionServiceImpl.java  ← chứa business rule của thao tác (vd: BR-P04)
+        {Domain}ServiceImpl.java          ← aggregator impl, pure delegator
 ```
+
+> **Controller inject trực tiếp** 4 service cụ thể (`*CreationService`, `*RetrievalService`, `*UpdateService`, `*DeletionService`) — **không** đi qua aggregator `*Service`. Business rule gắn với một thao tác cụ thể (vd: cảnh báo trước khi xóa mềm) phải được override trong `*OperationServiceImpl`, không đặt trong aggregator.
 
 ```mermaid
 graph TD
@@ -141,13 +143,13 @@ graph TD
         CC1["CustomerControllerV1"]
     end
 
-    subgraph "Service Layer — aggregator"
-        PS["ProductService\n(aggregator)"]
-        OS["OrderService\n(aggregator)"]
-        CS["CustomerService\n(aggregator)"]
+    subgraph "Service Layer — aggregator (pure delegator)"
+        PS["ProductServiceImpl"]
+        OS["OrderServiceImpl"]
+        CS["CustomerServiceImpl"]
     end
 
-    subgraph "Service Layer — operation"
+    subgraph "Service Layer — operation (controller injects trực tiếp)"
         PC["ProductCreationService"]
         PR["ProductRetrievalService"]
         PU["ProductUpdateService"]
@@ -160,13 +162,13 @@ graph TD
         CREPO["CustomerRepository\n+ JpaCustomerRepository"]
     end
 
-    CV1 --> PS
-    CO1 --> OS
-    CC1 --> CS
-    PS --> PC & PR & PU & PD
+    CV1 --> PC & PR & PU & PD
+    CO1 --> OREPO
+    CC1 --> CREPO
+    PS -.->|delegates| PC & PR & PU & PD
+    OS -.->|delegates| OREPO
+    CS -.->|delegates| CREPO
     PC & PR & PU & PD --> PREPO
-    OS --> OREPO
-    CS --> CREPO
 ```
 
 ### 2.3 Nhóm chức năng theo domain
@@ -204,9 +206,8 @@ graph TD
 ```mermaid
 flowchart TD
     A["Client: POST /v1/products"] --> B["ProductControllerV1\n@Valid ProductCreationRequest"]
-    B --> C["ProductService.create()"]
-    C --> D["ProductCreationService.create()"]
-    D --> E{Validate nghiệp vụ}
+    B --> C["ProductCreationService.create()"]
+    C --> E{Validate nghiệp vụ}
     E --> F["1. Kiểm tra tên không trùng\nJpaProductRepository\n.existsByNameAndDeletedDateIsNull()"]
     E --> G["2. Giá > 0\n@DecimalMin Bean Validation"]
     E --> H["3. Danh mục hợp lệ\nenum hoặc bảng categories"]
@@ -254,7 +255,7 @@ public record ProductDTO(
 - **BR-P01**: Tên sản phẩm phải duy nhất trong cùng danh mục (kiểm tra `name + category`, bỏ qua bản ghi đã xóa mềm).
 - **BR-P02**: Giá bán phải `> 0`. Giá không thể là `null`.
 - **BR-P03**: `stockQuantity` phải `>= 0`. Không được nhập số âm.
-- **BR-P04**: Khi xóa mềm sản phẩm đang có trong đơn hàng `PENDING`, hệ thống phải cảnh báo (Warning) nhưng vẫn cho phép xóa. Đơn hàng đang chờ xử lý sẽ giữ nguyên `unit_price` đã chốt.
+- **BR-P04**: Khi xóa mềm sản phẩm đang có trong đơn hàng `PENDING`, hệ thống phải cảnh báo (Warning) nhưng vẫn cho phép xóa. Đơn hàng đang chờ xử lý sẽ giữ nguyên `unit_price` đã chốt. _(Kiểm tra được implement bằng cách override `markAsDeleted()` trong `ProductDeletionServiceImpl`, không đặt trong aggregator)_
 - **BR-P05**: Thuộc tính động (`attributes`) được lưu dưới dạng JSONB trong PostgreSQL, không giới hạn tập khóa.
 
 ---
