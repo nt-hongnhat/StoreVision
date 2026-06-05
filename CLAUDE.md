@@ -389,7 +389,8 @@ private static final String CONFLICT_DESC = "Product name already exists in the 
 - Security-related tests must use **Spring Security Test** (`@WithMockUser`, `SecurityMockMvcRequestPostProcessors`).
 - Batch jobs must be tested with **Spring Batch Test**.
 - Minimum code coverage target: **80%** for service layer classes.
-- Test classes mirror the source package structure under `src/test/java/com/nthn/storevision/`.
+- Test classes mirror the source package structure under `src/test/java/com/nthn/storevision/` — including the `impl/` sub-package. A test for `service/product/impl/ProductServiceImpl` lives at `test/java/.../service/product/impl/ProductServiceImplTest`.
+- Test class names use the `<ClassName>Test` suffix matching the implementation class, not the interface (e.g., `ProductServiceImplTest`, not `ProductServiceTest`).
 - Use Spring's `@DataJpaTest` (or `@JdbcTest`) for repository layer tests — do not spin up the full application context for persistence tests.
 - Do **not** use mocked databases when integration behavior is under test; prefer the real PostgreSQL via `compose.yaml`.
 
