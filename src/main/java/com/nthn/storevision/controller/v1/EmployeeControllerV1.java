@@ -4,7 +4,10 @@ import com.nthn.storevision.constant.api.ResponseCode;
 import com.nthn.storevision.constant.api.ResponseDescription;
 import com.nthn.storevision.controller.EmployeeController;
 import com.nthn.storevision.dto.EmployeeDTO;
-import com.nthn.storevision.service.employee.EmployeeService;
+import com.nthn.storevision.service.employee.EmployeeCreationService;
+import com.nthn.storevision.service.employee.EmployeeDeletionService;
+import com.nthn.storevision.service.employee.EmployeeRetrievalService;
+import com.nthn.storevision.service.employee.EmployeeUpdateService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -34,9 +37,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class EmployeeControllerV1 implements EmployeeController {
 
-  private static final String ID_DESC = "Employee ID";
-
-  private final EmployeeService employeeService;
+  private final EmployeeCreationService creationService;
+  private final EmployeeDeletionService deletionService;
+  private final EmployeeRetrievalService retrievalService;
+  private final EmployeeUpdateService updateService;
 
   @Operation(
       summary = "Create a new employee",
@@ -48,7 +52,7 @@ public class EmployeeControllerV1 implements EmployeeController {
   @Override
   public EmployeeDTO createEmployee(@Valid @RequestBody final EmployeeDTO dto) {
     log.debug("POST /employees");
-    return employeeService.create(dto);
+    return creationService.create(dto);
   }
 
   @Operation(
@@ -60,10 +64,9 @@ public class EmployeeControllerV1 implements EmployeeController {
   @ResponseStatus(HttpStatus.NO_CONTENT)
   @DeleteMapping("/{id}")
   @Override
-  public void deleteEmployee(
-      @Parameter(description = ID_DESC) @PathVariable final Long id) {
+  public void deleteEmployee(@Parameter(description = ResponseDescription.EMPLOYEE_ID) @PathVariable final Long id) {
     log.debug("DELETE /employees/{}", id);
-    employeeService.delete(id);
+    deletionService.markAsDeleted(id);
   }
 
   @Operation(
@@ -74,7 +77,7 @@ public class EmployeeControllerV1 implements EmployeeController {
   @Override
   public List<EmployeeDTO> getAllEmployees() {
     log.debug("GET /employees");
-    return employeeService.findAll();
+    return retrievalService.findAllEmployeesAsDTO();
   }
 
   @Operation(
@@ -85,9 +88,9 @@ public class EmployeeControllerV1 implements EmployeeController {
   @GetMapping("/{id}")
   @Override
   public EmployeeDTO getEmployeeById(
-      @Parameter(description = ID_DESC) @PathVariable final Long id) {
+      @Parameter(description = ResponseDescription.EMPLOYEE_ID) @PathVariable final Long id) {
     log.debug("GET /employees/{}", id);
-    return employeeService.findById(id);
+    return retrievalService.findEmployeeDTOById(id);
   }
 
   @Operation(
@@ -99,9 +102,9 @@ public class EmployeeControllerV1 implements EmployeeController {
   @PutMapping("/{id}")
   @Override
   public EmployeeDTO updateEmployee(
-      @Parameter(description = ID_DESC) @PathVariable final Long id,
+      @Parameter(description = ResponseDescription.EMPLOYEE_ID) @PathVariable final Long id,
       @Valid @RequestBody final EmployeeDTO dto) {
     log.debug("PUT /employees/{}", id);
-    return employeeService.update(id, dto);
+    return updateService.update(id, dto);
   }
 }
