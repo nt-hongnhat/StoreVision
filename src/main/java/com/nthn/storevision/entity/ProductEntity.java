@@ -15,12 +15,15 @@ import com.nthn.storevision.entity.mapped.BaseEntity;
 import com.nthn.storevision.model.Product;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
+import java.util.Map;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 /**
  * Represents a product entity in the database. This class maps to the "products" table and extends
@@ -36,8 +39,13 @@ import lombok.experimental.SuperBuilder;
 @Accessors(chain = true)
 public class ProductEntity extends BaseEntity<Long> implements Product {
 
-  @Column // Assuming category can be null initially
-  private String category;
+  @JdbcTypeCode(SqlTypes.JSON)
+  @Column(columnDefinition = "jsonb")
+  private Map<String, String> attributes;
+
+  @Column private String category;
+
+  @Column private String description;
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -46,8 +54,11 @@ public class ProductEntity extends BaseEntity<Long> implements Product {
   @Column(nullable = false)
   private String name;
 
-  @Column(nullable = false)
+  @Column(nullable = false, precision = 15, scale = 2)
   private BigDecimal price;
+
+  @Column(unique = true)
+  private String sku;
 
   @Column(nullable = false)
   private Integer stockQuantity;
