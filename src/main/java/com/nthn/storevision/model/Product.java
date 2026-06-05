@@ -12,9 +12,27 @@
 package com.nthn.storevision.model;
 
 import java.math.BigDecimal;
+import java.util.Map;
 
 /** Represents a product in the StoreVision domain. */
 public interface Product extends CustomAuditable<Long> {
+
+  /**
+   * Retrieves a map of attributes associated with the product.
+   *
+   * @return a map where the keys and values are both strings, representing the attributes of the
+   *     product. The map may be empty but will not be null.
+   */
+  Map<String, String> getAttributes();
+
+  /**
+   * Sets the attributes of the product.
+   *
+   * @param attributes a map where the keys and values are both strings, representing the attributes
+   *     of the product. The map should not be null but may be empty.
+   * @return the updated {@code Product} instance.
+   */
+  Product setAttributes(Map<String, String> attributes);
 
   /**
    * Gets the category of the product.
@@ -30,6 +48,15 @@ public interface Product extends CustomAuditable<Long> {
    * @return the updated {@code Product} instance.
    */
   Product setCategory(String category);
+
+  /**
+   * Retrieves the description of the product.
+   *
+   * @return the description as a {@link String}, or {@code null} if no description is available.
+   */
+  String getDescription();
+
+  Product setDescription(String description);
 
   /**
    * Gets the name of the product.
@@ -60,6 +87,22 @@ public interface Product extends CustomAuditable<Long> {
    * @return the updated {@code Product} instance.
    */
   Product setPrice(BigDecimal price);
+
+  /**
+   * Retrieves the SKU (Stock Keeping Unit) of the product.
+   *
+   * @return the SKU as a {@link String}, or {@code null} if not assigned.
+   */
+  String getSku();
+
+  /**
+   * Sets the SKU (Stock Keeping Unit) of the product.
+   *
+   * @param sku the SKU to set. Must be a non-null {@link String} that uniquely identifies the
+   *     product.
+   * @return the updated {@code Product} instance.
+   */
+  Product setSku(String sku);
 
   /**
    * Gets the current stock quantity of the product.
