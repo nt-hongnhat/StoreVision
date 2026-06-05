@@ -1,3 +1,14 @@
+/*
+ * Copyright (c) 2026 Hong Nhat. All rights reserved.
+ *
+ * Project: Store Vision
+ * Module: Store Vision Main
+ * File: ProductController.java
+ * Author: Nguyen Thi Hong Nhat
+ * Contact: hongnhat1121@gmail.com
+ * Last Modified: 2026-06-05 15:45:08
+ */
+
 package com.nthn.storevision.controller;
 
 import com.nthn.storevision.dto.ProductDTO;
@@ -20,14 +31,14 @@ public interface ProductController {
   ProductDTO createProduct(@Valid ProductDTO dto);
 
   /**
-   * Soft-deletes a product by ID.
+   * Soft-deletes a product by ID. Emits a warning if PENDING orders reference it (BR-P04).
    *
-   * @param id the ID of the product to delete
+   * @param id the ID of the product to soft-delete
    */
   void deleteProduct(Long id);
 
   /**
-   * Retrieves all active products.
+   * Retrieves all active (non-deleted) products.
    *
    * @return list of all non-deleted products
    */
@@ -42,7 +53,31 @@ public interface ProductController {
   ProductDTO getProductById(Long id);
 
   /**
-   * Updates an existing product.
+   * Permanently removes a product from the database (Admin only).
+   *
+   * @param id the ID of the product to permanently delete
+   */
+  void permanentlyDeleteProduct(Long id);
+
+  /**
+   * Restores a previously soft-deleted product.
+   *
+   * @param id the ID of the product to restore
+   */
+  void restoreProduct(Long id);
+
+  /**
+   * Searches active products by optional name (case-insensitive contains) and optional category.
+   *
+   * @param name     partial name filter, or {@code null} to skip
+   * @param category exact category filter, or {@code null} to skip
+   * @return matching active products
+   */
+  List<ProductDTO> searchProducts(String name, String category);
+
+  /**
+   * Updates an existing product (name, price, stockQuantity, category, description, sku,
+   * attributes). Enforces BR-P01 (name + category uniqueness).
    *
    * @param id  the ID of the product to update
    * @param dto the updated product data
