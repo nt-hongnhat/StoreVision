@@ -55,8 +55,8 @@ public class ProductRetrievalServiceImpl
   @Override
   @Transactional(readOnly = true)
   public List<ProductDTO> findAllProductsAsDTO() {
-    log.debug("Fetching all products as DTO");
-    return findAll(productMapper::toDTO);
+    log.debug("Fetching all active products as DTO");
+    return getRepository().findAllActive().stream().map(productMapper::toDTO).toList();
   }
 
   /**
@@ -77,6 +77,12 @@ public class ProductRetrievalServiceImpl
    *
    * @return The message code for "product not found".
    */
+  @Override
+  @Transactional(readOnly = true)
+  public List<ProductDTO> search(final String name, final String category) {
+    log.debug("Searching active products — name: {}, category: {}", name, category);
+    return getRepository().searchActive(name, category).stream().map(productMapper::toDTO).toList();
+  }
   @Override
   protected String getNotFoundMessageCode() {
     return ProductMessageCodes.NOT_FOUND;

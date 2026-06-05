@@ -89,12 +89,27 @@ public class ProductRepositoryImpl implements ProductRepository {
     return jpaRepository.existsById(id);
   }
 
-  /**
-   * Saves a product entity.
-   *
-   * @param product The {@link ProductEntity} to save.
-   * @return The saved {@link ProductEntity}.
-   */
+  @Override
+  public List<ProductEntity> findAllActive() {
+    return jpaRepository.findByDeletedDateIsNull();
+  }
+
+  @Override
+  public boolean isProductActiveAndInCategory(final String name, final String category) {
+    return jpaRepository.existsByNameAndCategoryAndDeletedDateIsNull(name, category);
+  }
+
+  @Override
+  public boolean isProductActiveInCategoryExcludingId(
+      final String name, final String category, final Long id) {
+    return jpaRepository.existsByNameAndCategoryAndDeletedDateIsNullAndIdNot(name, category, id);
+  }
+
+  @Override
+  public List<ProductEntity> searchActive(final String name, final String category) {
+    return jpaRepository.searchByNameAndCategory(name, category);
+  }
+
   @Override
   public ProductEntity save(final ProductEntity product) {
     return jpaRepository.save(product);
