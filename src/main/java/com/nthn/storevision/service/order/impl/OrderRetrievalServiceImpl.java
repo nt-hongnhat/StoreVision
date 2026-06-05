@@ -6,7 +6,7 @@
  * File: OrderRetrievalServiceImpl.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-03 16:36:31
+ * Last Modified: 2026-06-05 15:41:44
  */
 
 package com.nthn.storevision.service.order.impl;
@@ -17,21 +17,18 @@ import com.nthn.storevision.mapper.OrderMapper;
 import com.nthn.storevision.repository.OrderRepository;
 import com.nthn.storevision.service.common.AbstractReadable;
 import com.nthn.storevision.service.order.OrderRetrievalService;
-import lombok.RequiredArgsConstructor;
+import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
 /**
- * Service for retrieving {@link OrderEntity} entities. Extends {@link AbstractReadable} to provide read
- * operations for {@link OrderEntity} entities.
+ * Service for retrieving {@link OrderEntity} entities. Extends {@link AbstractReadable} to provide
+ * read operations for {@link OrderEntity} entities.
  */
 @Slf4j
 @Service
-public class OrderRetrievalServiceImpl
-    extends AbstractReadable<OrderEntity, Long, OrderRepository>
+public class OrderRetrievalServiceImpl extends AbstractReadable<OrderEntity, Long, OrderRepository>
     implements OrderRetrievalService {
 
   private final OrderMapper orderMapper;
@@ -42,7 +39,8 @@ public class OrderRetrievalServiceImpl
    * @param repository the repository used for accessing {@link OrderEntity} entities
    * @param orderMapper the mapper used for converting between entity and DTO
    */
-  public OrderRetrievalServiceImpl(final OrderRepository repository, final OrderMapper orderMapper) {
+  public OrderRetrievalServiceImpl(
+      final OrderRepository repository, final OrderMapper orderMapper) {
     super(repository);
     this.orderMapper = orderMapper;
   }
@@ -81,7 +79,6 @@ public class OrderRetrievalServiceImpl
 
   @Override
   protected String getNotFoundMessageCode() {
-    // Placeholder, replace with actual message code if available
     return "order.not.found";
   }
 }

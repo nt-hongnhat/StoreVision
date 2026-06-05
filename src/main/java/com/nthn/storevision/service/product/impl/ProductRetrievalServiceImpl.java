@@ -6,7 +6,7 @@
  * File: ProductRetrievalServiceImpl.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-03 16:40:34
+ * Last Modified: 2026-06-05
  */
 
 package com.nthn.storevision.service.product.impl;
@@ -35,23 +35,12 @@ public class ProductRetrievalServiceImpl
 
   private final ProductMapper productMapper;
 
-  /**
-   * Constructs a {@code ProductRetrievalServiceImpl} with the specified repository.
-   *
-   * @param repository the repository used for accessing {@link ProductEntity} entities
-   * @param productMapper the mapper used for converting between entity and DTO
-   */
   public ProductRetrievalServiceImpl(
       final ProductRepository repository, final ProductMapper productMapper) {
     super(repository);
     this.productMapper = productMapper;
   }
 
-  /**
-   * Retrieves all products and maps them to {@link ProductDTO}.
-   *
-   * @return a list of all {@link ProductDTO}s.
-   */
   @Override
   @Transactional(readOnly = true)
   public List<ProductDTO> findAllProductsAsDTO() {
@@ -59,12 +48,6 @@ public class ProductRetrievalServiceImpl
     return getRepository().findAllActive().stream().map(productMapper::toDTO).toList();
   }
 
-  /**
-   * Retrieves a product by its identifier and maps it to {@link ProductDTO}.
-   *
-   * @param id the identifier of the product to be retrieved.
-   * @return the {@link ProductDTO} with the specified identifier, or null if not found.
-   */
   @Override
   @Transactional(readOnly = true)
   public ProductDTO findProductDTOById(final Long id) {
@@ -72,17 +55,13 @@ public class ProductRetrievalServiceImpl
     return findById(id, productMapper::toDTO);
   }
 
-  /**
-   * Returns the message code for when a product is not found.
-   *
-   * @return The message code for "product not found".
-   */
   @Override
   @Transactional(readOnly = true)
   public List<ProductDTO> search(final String name, final String category) {
     log.debug("Searching active products — name: {}, category: {}", name, category);
     return getRepository().searchActive(name, category).stream().map(productMapper::toDTO).toList();
   }
+
   @Override
   protected String getNotFoundMessageCode() {
     return ProductMessageCodes.NOT_FOUND;

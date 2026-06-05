@@ -6,7 +6,7 @@
  * File: Product.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-02 21:43:46
+ * Last Modified: 2026-06-05 15:44:42
  */
 
 package com.nthn.storevision.model;

@@ -6,7 +6,7 @@
  * File: EntityMapperConfig.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-04 17:15:08
+ * Last Modified: 2026-06-05 15:27:14
  */
 
 package com.nthn.storevision.mapper;

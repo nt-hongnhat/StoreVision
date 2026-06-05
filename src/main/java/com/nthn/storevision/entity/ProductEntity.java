@@ -6,7 +6,7 @@
  * File: ProductEntity.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-04 15:09:01
+ * Last Modified: 2026-06-05 15:43:24
  */
 
 package com.nthn.storevision.entity;

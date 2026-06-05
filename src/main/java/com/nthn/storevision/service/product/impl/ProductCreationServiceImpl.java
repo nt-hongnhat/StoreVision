@@ -6,7 +6,7 @@
  * File: ProductCreationServiceImpl.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-04 17:15:08
+ * Last Modified: 2026-06-05 15:43:24
  */
 
 package com.nthn.storevision.service.product.impl;
@@ -23,8 +23,8 @@ import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Service;
 
 /**
- * Default implementation of {@link ProductCreationService} that extends {@link AbstractCreatable}
- * to persist {@link ProductEntity} instances via {@link ProductRepository}.
+ * Default implementation of {@link ProductCreationService}. Enforces BR-P01 (name + category
+ * uniqueness among active records) before delegating persistence to {@link AbstractCreatable}.
  */
 @Slf4j
 @Service
@@ -33,7 +33,8 @@ public class ProductCreationServiceImpl
     implements ProductCreationService {
 
   protected ProductCreationServiceImpl(
-      final EntityMapperConfig<ProductDTO, ?, ProductEntity> mapper, final ProductRepository repository) {
+      final EntityMapperConfig<ProductDTO, ?, ProductEntity> mapper,
+      final ProductRepository repository) {
     super(mapper, repository);
   }
 

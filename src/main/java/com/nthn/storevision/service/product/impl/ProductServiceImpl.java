@@ -6,7 +6,7 @@
  * File: ProductServiceImpl.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-04 15:24:59
+ * Last Modified: 2026-06-05
  */
 
 package com.nthn.storevision.service.product.impl;
@@ -68,14 +68,9 @@ public class ProductServiceImpl implements ProductService {
   @Transactional
   public ProductDTO update(final Long id, final ProductDTO dto) {
     log.debug("Updating product id: {}", id);
-    final ProductEntity entity = retrievalService.findById(id, Function.identity());
-    entity.setName(dto.getName());
-    entity.setPrice(dto.getPrice());
-    entity.setStockQuantity(dto.getStockQuantity());
-    entity.setCategory(dto.getCategory());
-    updateService.update(entity.getId(), dto);
+    final ProductDTO updated = updateService.update(id, dto);
     log.debug("Product id: {} updated successfully", id);
-    return productMapper.toDTO(entity);
+    return updated;
   }
 
   /**

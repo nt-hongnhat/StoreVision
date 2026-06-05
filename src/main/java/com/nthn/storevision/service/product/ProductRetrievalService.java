@@ -14,10 +14,7 @@ package com.nthn.storevision.service.product;
 import com.nthn.storevision.dto.ProductDTO;
 import com.nthn.storevision.entity.ProductEntity;
 import com.nthn.storevision.service.generic.Readable;
-
 import java.util.List;
-import java.util.Optional;
-import java.util.function.Function;
 
 /**
  * Service interface for retrieving {@link ProductEntity} entities.
@@ -41,4 +38,14 @@ public interface ProductRetrievalService extends Readable<ProductEntity, Long> {
    * @return the {@link ProductDTO} with the specified identifier, or null if not found.
    */
   ProductDTO findProductDTOById(Long id);
+
+  /**
+   * Searches active products by optional name (case-insensitive contains) and optional category
+   * (exact match). Passing {@code null} for either parameter omits that filter.
+   *
+   * @param name     partial product name to match (case-insensitive), or {@code null} to skip
+   * @param category exact category to match, or {@code null} to skip
+   * @return list of matching active {@link ProductDTO}s
+   */
+  List<ProductDTO> search(String name, String category);
 }
