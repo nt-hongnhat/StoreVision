@@ -311,7 +311,7 @@ classDiagram
 
 Each domain (Product, Customer, Employee, Order, OrderItem) has dedicated **interface + implementation** pairs per operation, all implementing generic interfaces from `service/generic/`. Interfaces live in `service/domain/`, implementations in `service/domain/impl/`. Spring Modulith enforces module boundaries at compiler and test time.
 
-**Deletion strategy**: `XxxDeletionService` implements both `SoftDeletable` and `HardDeletable`. The default delete flow calls `markAsDeleted(id)` — the `CustomAuditingEntityListener` then autopopulates `deletedBy` / `deletedDate` via `@PreUpdate`. `permanentlyDelete(id)` is reserved for admin / GDPR use cases.
+**Deletion strategy**: `XxxDeletionService` implements both `SoftDeletable` and `HardDeletable`. The default delete flow calls `markAsDeleted(id)` directly from the controller — the `CustomAuditingEntityListener` then autopopulates `deletedBy` / `deletedDate` via `@PreUpdate`. `permanentlyDelete(id)` is reserved for admin / GDPR use cases. Pre-condition checks tied to deletion (e.g., warning when a product has pending orders) are implemented by overriding `markAsDeleted()` in `XxxDeletionServiceImpl`, keeping the aggregator as a pure delegator.
 
 ## License
 

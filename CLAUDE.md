@@ -88,10 +88,31 @@ No concrete `@Service` class may live directly in `service/domain/` — only int
 
 | Method | When to call | How it works |
 |--------|-------------|--------------|
-| `markAsDeleted(id)` | Default delete flow (called from aggregator) | Sets `entity.isDeleted = true`, saves → `CustomAuditingEntityListener` fills `deletedBy` / `deletedDate` |
+| `markAsDeleted(id)` | Default delete flow (called directly from controller) | Sets `entity.isDeleted = true`, saves → `CustomAuditingEntityListener` fills `deletedBy` / `deletedDate` |
 | `restore(id)` | Undo a soft delete | Clears `deletedBy`, `deletedDate`, `isDeleted`; saves |
 | `permanentlyDelete(id)` | Admin / compliance (GDPR) only | `repository.deleteById(id)` — physical removal |
 | `delete(entity)` | Inline soft delete via object | Sets `entity.isDeleted = true`, saves |
+
+**Business rules in specific service impls**: Pre-condition checks and warnings tied to an operation (e.g., BR-P04: warn when soft-deleting a product that has pending orders) must be implemented by **overriding the relevant method in `*DeletionServiceImpl`** (or the appropriate `*OperationServiceImpl`), not in the aggregator. The aggregator must remain a pure delegator.
+
+```java
+// correct — BR-P04 lives in ProductDeletionServiceImpl.markAsDeleted()
+@Override
+@Transactional
+public void markAsDeleted(final Long id) {
+    if (orderRetrievalService.existsPendingOrderForProduct(id)) {
+        log.warn("BR-P04: product id {} has PENDING orders — soft-deleting anyway;...", id);
+    }
+    super.markAsDeleted(id);
+}
+
+// wrong — business rule buried in aggregator, invisible to direct callers
+@Override
+public void delete(final Long id) {
+    if (orderRetrievalService.existsPendingOrderForProduct(id)) { ... }  // ❌
+    deletionService.markAsDeleted(id);
+}
+```
 
 ### 4. DTO & Mapping Rules
 
