@@ -15,7 +15,10 @@ import com.nthn.storevision.constant.api.ResponseCode;
 import com.nthn.storevision.constant.api.ResponseDescription;
 import com.nthn.storevision.controller.ProductController;
 import com.nthn.storevision.dto.ProductDTO;
-import com.nthn.storevision.service.product.ProductService;
+import com.nthn.storevision.service.product.ProductCreationService;
+import com.nthn.storevision.service.product.ProductDeletionService;
+import com.nthn.storevision.service.product.ProductRetrievalService;
+import com.nthn.storevision.service.product.ProductUpdateService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -45,9 +48,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class ProductControllerV1 implements ProductController {
 
-  private static final String CONFLICT_DESC = "Product name already exists in the same category";
-  private static final String ID_DESC = "Product ID";
-  private final ProductService productService;
+  private final ProductCreationService creationService;
+  private final ProductDeletionService deletionService;
+  private final ProductRetrievalService retrievalService;
+  private final ProductUpdateService updateService;
 
   @Operation(
       summary = "Create a new product",
@@ -62,7 +66,7 @@ public class ProductControllerV1 implements ProductController {
   @Override
   public ProductDTO createProduct(@Valid @RequestBody final ProductDTO dto) {
     log.debug("POST /products");
-    return productService.create(dto);
+    return creationService.create(dto);
   }
 
   @Operation(
@@ -76,9 +80,9 @@ public class ProductControllerV1 implements ProductController {
   @DeleteMapping("/{id}")
   @Override
   public void deleteProduct(
-      @Parameter(description = ID_DESC) @PathVariable final Long id) {
+      @Parameter(description = ResponseDescription.PRODUCT_ID) @PathVariable final Long id) {
     log.debug("DELETE /products/{}", id);
-    productService.delete(id);
+    deletionService.markAsDeleted(id);
   }
 
   @Operation(
@@ -89,7 +93,7 @@ public class ProductControllerV1 implements ProductController {
   @Override
   public List<ProductDTO> getAllProducts() {
     log.debug("GET /products");
-    return productService.findAll();
+    return retrievalService.findAllProductsAsDTO();
   }
 
   @Operation(
@@ -100,9 +104,9 @@ public class ProductControllerV1 implements ProductController {
   @GetMapping("/{id}")
   @Override
   public ProductDTO getProductById(
-      @Parameter(description = ID_DESC) @PathVariable final Long id) {
+      @Parameter(description = ResponseDescription.PRODUCT_ID) @PathVariable final Long id) {
     log.debug("GET /products/{}", id);
-    return productService.findById(id);
+    return retrievalService.findProductDTOById(id);
   }
 
   @Operation(
@@ -114,9 +118,9 @@ public class ProductControllerV1 implements ProductController {
   @DeleteMapping("/{id}/permanent")
   @Override
   public void permanentlyDeleteProduct(
-      @Parameter(description = ID_DESC) @PathVariable final Long id) {
+      @Parameter(description = ResponseDescription.PRODUCT_ID) @PathVariable final Long id) {
     log.debug("DELETE /products/{}/permanent", id);
-    productService.permanentlyDelete(id);
+    deletionService.permanentlyDelete(id);
   }
 
   @Operation(
@@ -128,9 +132,9 @@ public class ProductControllerV1 implements ProductController {
   @PatchMapping("/{id}/restore")
   @Override
   public void restoreProduct(
-      @Parameter(description = ID_DESC) @PathVariable final Long id) {
+      @Parameter(description = ResponseDescription.PRODUCT_ID) @PathVariable final Long id) {
     log.debug("PATCH /products/{}/restore", id);
-    productService.restore(id);
+    deletionService.restore(id);
   }
 
   @Operation(
@@ -147,7 +151,7 @@ public class ProductControllerV1 implements ProductController {
       @Parameter(description = "Exact category name")
           @RequestParam(required = false) final String category) {
     log.debug("GET /products/search — name: {}, category: {}", name, category);
-    return productService.search(name, category);
+    return retrievalService.search(name, category);
   }
 
   @Operation(
@@ -162,9 +166,9 @@ public class ProductControllerV1 implements ProductController {
   @PutMapping("/{id}")
   @Override
   public ProductDTO updateProduct(
-      @Parameter(description = ID_DESC) @PathVariable final Long id,
+      @Parameter(description = ResponseDescription.PRODUCT_ID) @PathVariable final Long id,
       @Valid @RequestBody final ProductDTO dto) {
     log.debug("PUT /products/{}", id);
-    return productService.update(id, dto);
+    return updateService.update(id, dto);
   }
 }
