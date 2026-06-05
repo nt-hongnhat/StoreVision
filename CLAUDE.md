@@ -358,17 +358,24 @@ public CustomerDTO createCustomer(@Valid @RequestBody final CustomerDTO dto) {
 #### String constants for annotation values
 
 All string literals used in OpenAPI annotations must be defined as compile-time constants — never inline strings:
-- **Cross-controller constants** (response codes, generic descriptions) → `constant/ApiDocConstants`
-- **Within-controller constants** (entity-specific ID descriptions) → `private static final String` in the class
+- **HTTP response codes and generic descriptions** (e.g., `"200"`, `"Resource not found"`) → `constant/api/ResponseCode` and `constant/api/ResponseDescription`
+- **Domain-specific ID descriptions** (e.g., `"Product ID"`, `"Order ID"`) → `static final String` in `constant/api/ResponseDescription` — **not** as private constants in the controller class
+- **Operation-specific descriptions unique to one controller** (e.g., a conflict message for a specific business rule) → `private static final String` in that controller class
 
 ```java
-// correct
-@ApiResponse(responseCode = ApiDocConstants.HTTP_404, description = ApiDocConstants.DESC_NOT_FOUND)
-@Parameter(description = ID_DESC) @PathVariable final Long id   // ID_DESC = private static final
+// correct — domain ID uses ResponseDescription constant
+@Parameter(description = ResponseDescription.PRODUCT_ID) @PathVariable final Long id
 
-// wrong — duplicate string literals flagged by linter
-@ApiResponse(responseCode = "404", description = "Not found")
+// correct — controller-unique string stays private
+private static final String CONFLICT_DESC = "Product name already exists in the same category";
+@ApiResponse(responseCode = ResponseCode.CONFLICT, description = CONFLICT_DESC)
+
+// wrong — inline strings flagged by linter as duplicates
+@Parameter(description = "Product ID") @PathVariable final Long id   // ❌
+@ApiResponse(responseCode = "409", description = "Conflict")          // ❌
 ```
+
+**Registering a new domain ID constant in `ResponseDescription`**: when adding a new domain (e.g., `Supplier`), add `public static final String SUPPLIER_ID = "Supplier ID"` to `ResponseDescription` before writing any controller code.
 
 ### 12. Modulith Boundaries
 
