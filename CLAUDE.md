@@ -215,6 +215,7 @@ All message keys in `/i18n/messages*.properties` must follow the `[PREFIX][3-DIG
 |--------|--------|---------|
 | `USM`  | User (`user`)       | `USM001` |
 | `PRM`  | Product (`product`) | `PRM001` |
+| `INM`  | Inventory (`inventory`) | `INM001` |
 
 > When adding a new domain, register its prefix in this table before writing any message keys.
 
@@ -224,6 +225,7 @@ All message keys in `/i18n/messages*.properties` must follow the `[PREFIX][3-DIG
 - **Bean Validation messages**: validation constraint messages in DTOs must also use the coded format — `@NotBlank(message = "{PRM003}")`, not `@NotBlank(message = "Product name is required")`.
 - **Numbering**: allocate codes sequentially per prefix. The first code is `001`. Leave no gaps.
 - **All locales**: every code added to `messages.properties` (EN base) must also be added to `messages-vi.properties` (VI).
+- **Parameter placeholders**: use bare `{0}`, `{1}` for dynamic values — never surround with escaped single quotes (`''{0}''`). MessageFormat's `''{n}''` pattern emits literal quotes around the value, which is almost never desired. Use `'{n}'` only when you need to display a literal `{n}` string (no substitution).
 
 #### Current code allocation
 
@@ -237,6 +239,11 @@ All message keys in `/i18n/messages*.properties` must follow the `[PREFIX][3-DIG
 | `PRM005` | Product price must be > 0 |
 | `PRM006` | Stock quantity required |
 | `PRM007` | Stock quantity must be >= 0 |
+| `INM001` | Product ID required (StockReceiptRequest) |
+| `INM002` | Quantity required (StockReceiptRequest) |
+| `INM003` | Quantity must be >= 1 (BR-I02) |
+| `INM004` | Unit cost must be >= 0 |
+| `INM005` | No authenticated user found for performed_by (BR-I01) |
 
 ### 7. Logging
 
@@ -402,6 +409,26 @@ private static final String CONFLICT_DESC = "Product name already exists in the 
 - Prefer `Optional<T>` over `null` returns in service and repository methods.
 - Validate all incoming request bodies with Bean Validation (`@Valid`, `@NotNull`, `@NotBlank`, etc.) at the controller boundary.
 - Factory classes in `factory/` must be used for constructing response objects — do not construct `ApiResponse` subclasses inline.
+
+### 15. Javadoc Requirements
+
+Every **public** method on any `interface` or `public class` must have a Javadoc comment. This is enforced by the project's checkstyle/linter configuration.
+
+#### Mandatory elements
+
+| Element | Required tags |
+|---------|--------------|
+| Interface method | `@param` for every parameter, `@return` unless `void` |
+| `model/` interface methods | Same as above; setters must also document valid/invalid values (e.g., `null` policy) and return `{@code Self}` instance |
+| Class-level Javadoc | Required on every `public` class, interface, and enum |
+| Enum constants | Required on every constant if the enum is part of the public API |
+
+#### Style rules
+
+- The first sentence is the summary — keep it under 120 characters.
+- Use `{@link ClassName}` for type references; `{@code value}` for literal values.
+- Do **not** write trivial "Gets the X" / "Sets the X" Javadocs that add no information — but do include `@param` and `@return` even when the summary is minimal.
+- Describe the **null policy** for every parameter and return value: either "must not be {@code null}" or "may be {@code null}; returns/accepts null if …".
 
 ---
 
