@@ -4,7 +4,10 @@ import com.nthn.storevision.constant.api.ResponseCode;
 import com.nthn.storevision.constant.api.ResponseDescription;
 import com.nthn.storevision.controller.OrderController;
 import com.nthn.storevision.dto.OrderDTO;
-import com.nthn.storevision.service.order.OrderService;
+import com.nthn.storevision.service.order.OrderCreationService;
+import com.nthn.storevision.service.order.OrderDeletionService;
+import com.nthn.storevision.service.order.OrderRetrievalService;
+import com.nthn.storevision.service.order.OrderUpdateService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -34,9 +37,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class OrderControllerV1 implements OrderController {
 
-  private static final String ID_DESC = "Order ID";
-
-  private final OrderService orderService;
+  private final OrderCreationService creationService;
+  private final OrderDeletionService deletionService;
+  private final OrderRetrievalService retrievalService;
+  private final OrderUpdateService updateService;
 
   @Operation(
       summary = "Create a new order",
@@ -48,7 +52,7 @@ public class OrderControllerV1 implements OrderController {
   @Override
   public OrderDTO createOrder(@Valid @RequestBody final OrderDTO dto) {
     log.debug("POST /orders");
-    return orderService.create(dto);
+    return creationService.create(dto);
   }
 
   @Operation(
@@ -61,9 +65,9 @@ public class OrderControllerV1 implements OrderController {
   @DeleteMapping("/{id}")
   @Override
   public void deleteOrder(
-      @Parameter(description = ID_DESC) @PathVariable final Long id) {
+      @Parameter(description = ResponseDescription.ORDER_ID) @PathVariable final Long id) {
     log.debug("DELETE /orders/{}", id);
-    orderService.delete(id);
+    deletionService.markAsDeleted(id);
   }
 
   @Operation(
@@ -74,7 +78,7 @@ public class OrderControllerV1 implements OrderController {
   @Override
   public List<OrderDTO> getAllOrders() {
     log.debug("GET /orders");
-    return orderService.findAll();
+    return retrievalService.findAllOrdersAsDTO();
   }
 
   @Operation(
@@ -85,9 +89,9 @@ public class OrderControllerV1 implements OrderController {
   @GetMapping("/{id}")
   @Override
   public OrderDTO getOrderById(
-      @Parameter(description = ID_DESC) @PathVariable final Long id) {
+      @Parameter(description = ResponseDescription.ORDER_ID) @PathVariable final Long id) {
     log.debug("GET /orders/{}", id);
-    return orderService.findById(id);
+    return retrievalService.findOrderDTOById(id);
   }
 
   @Operation(
@@ -100,9 +104,9 @@ public class OrderControllerV1 implements OrderController {
   @PutMapping("/{id}")
   @Override
   public OrderDTO updateOrder(
-      @Parameter(description = ID_DESC) @PathVariable final Long id,
+      @Parameter(description = ResponseDescription.ORDER_ID) @PathVariable final Long id,
       @Valid @RequestBody final OrderDTO dto) {
     log.debug("PUT /orders/{}", id);
-    return orderService.update(id, dto);
+    return updateService.update(id, dto);
   }
 }
