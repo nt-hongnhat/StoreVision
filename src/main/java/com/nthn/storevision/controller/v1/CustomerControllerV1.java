@@ -15,7 +15,10 @@ import com.nthn.storevision.constant.api.ResponseCode;
 import com.nthn.storevision.constant.api.ResponseDescription;
 import com.nthn.storevision.controller.CustomerController;
 import com.nthn.storevision.dto.CustomerDTO;
-import com.nthn.storevision.service.customer.CustomerService;
+import com.nthn.storevision.service.customer.CustomerCreationService;
+import com.nthn.storevision.service.customer.CustomerDeletionService;
+import com.nthn.storevision.service.customer.CustomerRetrievalService;
+import com.nthn.storevision.service.customer.CustomerUpdateService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -43,9 +46,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class CustomerControllerV1 implements CustomerController {
 
-  private static final String ID_DESC = "Customer ID";
-
-  private final CustomerService customerService;
+  private final CustomerCreationService creationService;
+  private final CustomerDeletionService deletionService;
+  private final CustomerRetrievalService retrievalService;
+  private final CustomerUpdateService updateService;
 
   @Operation(
       summary = "Create a new customer",
@@ -59,7 +63,7 @@ public class CustomerControllerV1 implements CustomerController {
   @Override
   public CustomerDTO createCustomer(@Valid @RequestBody final CustomerDTO dto) {
     log.debug("POST /customers");
-    return customerService.create(dto);
+    return creationService.create(dto);
   }
 
   @Operation(
@@ -72,9 +76,9 @@ public class CustomerControllerV1 implements CustomerController {
   @ResponseStatus(HttpStatus.NO_CONTENT)
   @DeleteMapping("/{id}")
   @Override
-  public void deleteCustomer(@Parameter(description = ID_DESC) @PathVariable final Long id) {
+  public void deleteCustomer(@Parameter(description = ResponseDescription.CUSTOMER_ID) @PathVariable final Long id) {
     log.debug("DELETE /customers/{}", id);
-    customerService.delete(id);
+    deletionService.markAsDeleted(id);
   }
 
   @Operation(
@@ -85,7 +89,7 @@ public class CustomerControllerV1 implements CustomerController {
   @Override
   public List<CustomerDTO> getAllCustomers() {
     log.debug("GET /customers");
-    return customerService.findAll();
+    return retrievalService.findAllCustomersAsDTO();
   }
 
   @Operation(
@@ -96,9 +100,9 @@ public class CustomerControllerV1 implements CustomerController {
   @GetMapping("/{id}")
   @Override
   public CustomerDTO getCustomerById(
-      @Parameter(description = ID_DESC) @PathVariable final Long id) {
+      @Parameter(description = ResponseDescription.CUSTOMER_ID) @PathVariable final Long id) {
     log.debug("GET /customers/{}", id);
-    return customerService.findById(id);
+    return retrievalService.findCustomerDTOById(id);
   }
 
   @Operation(
@@ -113,9 +117,9 @@ public class CustomerControllerV1 implements CustomerController {
   @PutMapping("/{id}")
   @Override
   public CustomerDTO updateCustomer(
-      @Parameter(description = ID_DESC) @PathVariable final Long id,
+      @Parameter(description = ResponseDescription.CUSTOMER_ID) @PathVariable final Long id,
       @Valid @RequestBody final CustomerDTO dto) {
     log.debug("PUT /customers/{}", id);
-    return customerService.update(id, dto);
+    return updateService.update(id, dto);
   }
 }
