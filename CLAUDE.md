@@ -69,16 +69,18 @@ Every `@Service` bean must follow the Interface-Implementation split:
 service/domain/
     XxxCreationService.java      ← interface, extends Creatable<E, I>
     XxxRetrievalService.java     ← interface, extends Readable<E, I>  (@NamedInterface if cross-module)
-    XxxUpdateService.java        ← interface, extends Updatable<E>
-    XxxDeletionService.java      ← interface, extends SoftDeletable<E, I> & HardDeletable<E, I>
-    XxxService.java              ← aggregator interface (domain contract)
-    impl/
+    XxxUpdateService.java        ← interface, extends Updatable<E>          (omit if domain has no update)
+    XxxDeletionService.java      ← interface, extends SoftDeletable<E, I> & HardDeletable<E, I>  (omit if no delete)
+    XxxService.java              ← aggregator interface — OPTIONAL; create only when cross-operation
+    impl/                           orchestration is needed (e.g. ProductService delegates to all 4 ops)
         XxxCreationServiceImpl.java
         XxxRetrievalServiceImpl.java
-        XxxUpdateServiceImpl.java
-        XxxDeletionServiceImpl.java
-        XxxServiceImpl.java      ← aggregator impl (not the controller entry point — see above)
+        XxxUpdateServiceImpl.java   (omit if no update)
+        XxxDeletionServiceImpl.java (omit if no delete)
+        XxxServiceImpl.java         (omit if aggregator is not needed — see rule below)
 ```
+
+**Aggregator rule**: only create `XxxService.java` + `XxxServiceImpl.java` when the domain genuinely needs cross-operation orchestration. Domains that expose only a subset of operations (e.g., Inventory with creation + retrieval only) must **not** have an aggregator — the controller injects the two specific services directly. Creating an aggregator for a domain that does not need it adds indirection without value.
 
 No concrete `@Service` class may live directly in `service/domain/` — only interfaces belong there.
 
@@ -475,7 +477,7 @@ logs/
 
 ### Environment Variables
 
-The following **must** be provided at runtime (never hardcode in source):
+The following **must** be provided at runtime (never hardcode in a source):
 
 | Variable                          | Purpose                                    |
 |-----------------------------------|--------------------------------------------|

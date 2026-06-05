@@ -122,18 +122,20 @@ Mỗi domain có một nhóm service riêng theo mẫu **Interface → Implement
 service/{domain}/
     {Domain}CreationService.java     ← interface, extends Creatable<E, I>
     {Domain}RetrievalService.java    ← interface, extends Readable<E, I>
-    {Domain}UpdateService.java       ← interface, extends Updatable<E>
-    {Domain}DeletionService.java     ← interface, extends SoftDeletable<E,I> & HardDeletable<E,I>
-    {Domain}Service.java             ← aggregator interface (không phải entry point của Controller)
+    {Domain}UpdateService.java       ← interface, extends Updatable<E>           (bỏ nếu domain không có update)
+    {Domain}DeletionService.java     ← interface, extends SoftDeletable<E,I> & HardDeletable<E,I>  (bỏ nếu không có delete)
+    {Domain}Service.java             ← aggregator interface — TÙY CHỌN (xem quy tắc bên dưới)
     impl/
         {Domain}CreationServiceImpl.java
         {Domain}RetrievalServiceImpl.java
-        {Domain}UpdateServiceImpl.java
-        {Domain}DeletionServiceImpl.java  ← chứa business rule của thao tác (vd: BR-P04)
-        {Domain}ServiceImpl.java          ← aggregator impl, pure delegator
+        {Domain}UpdateServiceImpl.java   (bỏ nếu không có update)
+        {Domain}DeletionServiceImpl.java  ← chứa business rule của thao tác (vd: BR-P04)  (bỏ nếu không có delete)
+        {Domain}ServiceImpl.java          ← aggregator impl, pure delegator  (bỏ nếu không cần aggregator)
 ```
 
-> **Controller inject trực tiếp** 4 service cụ thể (`*CreationService`, `*RetrievalService`, `*UpdateService`, `*DeletionService`) — **không** đi qua aggregator `*Service`. Business rule gắn với một thao tác cụ thể (vd: cảnh báo trước khi xóa mềm) phải được override trong `*OperationServiceImpl`, không đặt trong aggregator.
+> **Controller inject trực tiếp** vào các service cụ thể (`*CreationService`, `*RetrievalService`, …) — **không** đi qua aggregator `*Service`. Business rule gắn với một thao tác cụ thể phải được override trong `*OperationServiceImpl`, không đặt trong aggregator.
+>
+> **Quy tắc aggregator**: chỉ tạo `{Domain}Service` + `{Domain}ServiceImpl` khi domain thực sự cần điều phối liên-thao-tác (cross-operation orchestration). Domain chỉ có creation + retrieval (vd: **Inventory**) **không có aggregator** — controller inject trực tiếp 2 service cụ thể. Tạo aggregator khi không cần sẽ thêm tầng gián tiếp vô ích.
 
 ```mermaid
 graph TD
@@ -278,7 +280,7 @@ public record ProductDTO(
 ```mermaid
 flowchart TD
     A["Manager: POST /v1/inventory/receipts"] --> B["StockReceiptCreationRequest\nproductId · quantity · unitCost · note"]
-    B --> C["InventoryService.receiveStock()"]
+    B --> C["InventoryCreationService.receiveStock()"]
     C --> V{Validate}
     V --> V1["ProductRetrievalService.findById(productId)\nKiểm tra product tồn tại & active"]
     V --> V2["quantity >= 1\n@Min validation"]
