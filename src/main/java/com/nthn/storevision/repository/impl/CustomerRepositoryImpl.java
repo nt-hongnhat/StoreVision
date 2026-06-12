@@ -6,7 +6,7 @@
  * File: CustomerRepositoryImpl.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-12 22:49:57
+ * Last Modified: 2026-06-12 23:23:57
  */
 
 package com.nthn.storevision.repository.impl;
@@ -17,6 +17,8 @@ import com.nthn.storevision.repository.jpa.JpaCustomerRepository;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -57,6 +59,11 @@ public class CustomerRepositoryImpl implements CustomerRepository {
   @Override
   public List<CustomerEntity> findAll() {
     return jpaRepository.findByDeletedDateIsNull();
+  }
+
+  @Override
+  public Page<CustomerEntity> findAllActive(final Pageable pageable) {
+    return jpaRepository.findByDeletedDateIsNull(pageable);
   }
 
   @Override

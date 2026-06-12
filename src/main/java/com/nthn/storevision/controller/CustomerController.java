@@ -6,7 +6,7 @@
  * File: CustomerController.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-12 22:06:27
+ * Last Modified: 2026-06-12 23:27:23
  */
 
 package com.nthn.storevision.controller;
@@ -16,6 +16,7 @@ import com.nthn.storevision.dto.LoyaltyDetailsDTO;
 import com.nthn.storevision.dto.OrderDTO;
 import com.nthn.storevision.dto.VoucherDTO;
 import com.nthn.storevision.dto.request.RedeemPointsRequest;
+import com.nthn.storevision.dto.response.PageDTO;
 import jakarta.validation.Valid;
 import java.util.List;
 
@@ -43,11 +44,13 @@ public interface CustomerController {
   void deleteCustomer(Long id);
 
   /**
-   * Retrieves all active customers.
+   * Retrieves one page of active customers ordered by name.
    *
-   * @return list of all non-deleted customers
+   * @param page zero-based page index
+   * @param size page size
+   * @return the requested page of customers
    */
-  List<CustomerDTO> getAllCustomers();
+  PageDTO<CustomerDTO> getAllCustomers(int page, int size);
 
   /**
    * Retrieves a customer by ID.
@@ -66,7 +69,7 @@ public interface CustomerController {
   List<OrderDTO> getCustomerOrders(Long id);
 
   /**
-   * Retrieves a customer's loyalty overview: tier, point balance, total spending and the point
+   * Retrieves a customer's loyalty overview: tier, point balance, total spending, and the point
    * transaction history.
    *
    * @param id the ID of the customer to query
@@ -87,7 +90,7 @@ public interface CustomerController {
   /**
    * Updates an existing customer.
    *
-   * @param id  the ID of the customer to update
+   * @param id the ID of the customer to update
    * @param dto the updated customer data
    * @return the updated customer
    */

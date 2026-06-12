@@ -6,7 +6,7 @@
  * File: JpaCustomerRepository.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-12 23:07:09
+ * Last Modified: 2026-06-12 23:21:51
  */
 
 package com.nthn.storevision.repository.jpa;
@@ -14,6 +14,8 @@ package com.nthn.storevision.repository.jpa;
 import com.nthn.storevision.entity.CustomerEntity;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -34,6 +36,14 @@ public interface JpaCustomerRepository extends JpaRepository<CustomerEntity, Lon
   List<CustomerEntity> findByDeletedDateIsNull();
 
   /**
+   * Returns one page of active (non-soft-deleted) customers.
+   *
+   * @param pageable page request carrying index, size, and sort; must not be {@code null}
+   * @return the requested page of active customers; never {@code null}
+   */
+  Page<CustomerEntity> findByDeletedDateIsNull(Pageable pageable);
+
+  /**
    * Finds a customer by their email address.
    *
    * @param email The email address of the customer.
@@ -49,7 +59,7 @@ public interface JpaCustomerRepository extends JpaRepository<CustomerEntity, Lon
    * @param id the customer being updated, excluded from the check; must not be {@code null}
    * @return {@code true} if the email is registered to another customer
    */
-  @Query("SELECT (COUNT(c) > 0) FROM CustomerEntity c" + " WHERE c.email = :email AND c.id <> :id")
+  @Query("SELECT (COUNT(c) > 0) FROM CustomerEntity c WHERE c.email = :email AND c.id <> :id")
   boolean isEmailAlreadyRegistered(@Param("email") String email, @Param("id") Long id);
 
   /**

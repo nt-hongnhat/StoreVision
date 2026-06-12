@@ -6,13 +6,14 @@
  * File: CustomerRetrievalService.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-12 22:00:59
+ * Last Modified: 2026-06-12 23:24:30
  */
 
 package com.nthn.storevision.service.customer;
 
 import com.nthn.storevision.dto.CustomerDTO;
 import com.nthn.storevision.dto.OrderDTO;
+import com.nthn.storevision.dto.response.PageDTO;
 import com.nthn.storevision.entity.CustomerEntity;
 import com.nthn.storevision.service.generic.Readable;
 
@@ -54,6 +55,16 @@ public interface CustomerRetrievalService extends Readable<CustomerEntity, Long>
    * @return the {@link CustomerDTO} with the specified identifier, or null if not found.
    */
   CustomerDTO findCustomerDTOById(Long id);
+
+  /**
+   * Retrieves one page of active customers ordered by name, mapped to {@link CustomerDTO}.
+   * Out-of-range parameters are clamped instead of rejected.
+   *
+   * @param page zero-based page index; negative values are treated as 0
+   * @param size page size; clamped to a sane maximum
+   * @return the requested page of customers; never {@code null}
+   */
+  PageDTO<CustomerDTO> findCustomersPage(int page, int size);
 
   /**
    * Retrieves the order history of a customer, most recent first. The customer must exist —

@@ -6,7 +6,7 @@
  * File: CustomerControllerV1.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-12 22:06:27
+ * Last Modified: 2026-06-12 23:27:08
  */
 
 package com.nthn.storevision.controller.v1;
@@ -19,11 +19,13 @@ import com.nthn.storevision.dto.LoyaltyDetailsDTO;
 import com.nthn.storevision.dto.OrderDTO;
 import com.nthn.storevision.dto.VoucherDTO;
 import com.nthn.storevision.dto.request.RedeemPointsRequest;
+import com.nthn.storevision.dto.response.PageDTO;
 import com.nthn.storevision.service.customer.CustomerCreationService;
 import com.nthn.storevision.service.customer.CustomerDeletionService;
 import com.nthn.storevision.service.customer.CustomerRetrievalService;
 import com.nthn.storevision.service.customer.CustomerUpdateService;
 import com.nthn.storevision.service.customer.LoyaltyService;
+import com.nthn.storevision.util.PaginationUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -40,6 +42,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -103,20 +106,27 @@ public class CustomerControllerV1 implements CustomerController {
   @ResponseStatus(HttpStatus.NO_CONTENT)
   @DeleteMapping("/{id}")
   @Override
-  public void deleteCustomer(@Parameter(description = ResponseDescription.CUSTOMER_ID) @PathVariable final Long id) {
+  public void deleteCustomer(
+      @Parameter(description = ResponseDescription.CUSTOMER_ID) @PathVariable final Long id) {
     log.debug("DELETE /customers/{}", id);
     deletionService.markAsDeleted(id);
   }
 
   @Operation(
-      summary = "Retrieve all customers",
-      description = "Returns a list of all active (non-deleted) customer records.")
+      summary = "Retrieve customers (paginated)",
+      description = "Returns one page of active (non-deleted) customer records ordered by name.")
   @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)
   @GetMapping
   @Override
-  public List<CustomerDTO> getAllCustomers() {
-    log.debug("GET /customers");
-    return retrievalService.findAllCustomersAsDTO();
+  public PageDTO<CustomerDTO> getAllCustomers(
+      @Parameter(description = ResponseDescription.PAGE_INDEX)
+          @RequestParam(defaultValue = PaginationUtil.DEFAULT_PAGE)
+          final int page,
+      @Parameter(description = ResponseDescription.PAGE_SIZE)
+          @RequestParam(defaultValue = PaginationUtil.DEFAULT_SIZE)
+          final int size) {
+    log.debug("GET /customers — page: {}, size: {}", page, size);
+    return retrievalService.findCustomersPage(page, size);
   }
 
   @Operation(
