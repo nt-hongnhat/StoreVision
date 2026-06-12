@@ -6,11 +6,12 @@
  * File: CustomerUpdateServiceImpl.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-04 17:15:08
+ * Last Modified: 2026-06-12 17:15:56
  */
 
 package com.nthn.storevision.service.customer.impl;
 
+import com.nthn.storevision.constant.message.CustomerMessageCode;
 import com.nthn.storevision.dto.CustomerDTO;
 import com.nthn.storevision.entity.CustomerEntity;
 import com.nthn.storevision.exception.EntityNotFoundException;
@@ -39,6 +40,6 @@ public class CustomerUpdateServiceImpl
   protected CustomerEntity getById(final Long id) {
     return getRepository()
         .findById(id)
-        .orElseThrow(() -> new EntityNotFoundException("customer.not.found", id));
+        .orElseThrow(() -> new EntityNotFoundException(CustomerMessageCode.NOT_FOUND, id));
   }
 }

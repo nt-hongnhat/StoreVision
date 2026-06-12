@@ -6,29 +6,29 @@
  * File: CustomerRetrievalServiceImpl.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-03 16:27:26
+ * Last Modified: 2026-06-12 17:17:44
  */
 
 package com.nthn.storevision.service.customer.impl;
 
+import com.nthn.storevision.constant.message.CustomerMessageCode;
+import com.nthn.storevision.constant.message.LocalizedMessageCode;
 import com.nthn.storevision.dto.CustomerDTO;
 import com.nthn.storevision.entity.CustomerEntity;
 import com.nthn.storevision.mapper.CustomerMapper;
 import com.nthn.storevision.repository.CustomerRepository;
 import com.nthn.storevision.service.common.AbstractReadable;
 import com.nthn.storevision.service.customer.CustomerRetrievalService;
-import lombok.RequiredArgsConstructor;
+import java.util.List;
+import java.util.Optional;
+import java.util.function.Function;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.function.Function;
-
 /**
- * Service for retrieving {@link CustomerEntity} entities. Extends {@link AbstractReadable} to provide read
- * operations for {@link CustomerEntity} entities.
+ * Service for retrieving {@link CustomerEntity} entities. Extends {@link AbstractReadable} to
+ * provide read operations for {@link CustomerEntity} entities.
  */
 @Slf4j
 @Service
@@ -44,7 +44,8 @@ public class CustomerRetrievalServiceImpl
    * @param repository the repository used for accessing {@link CustomerEntity} entities
    * @param customerMapper the mapper used for converting between entity and DTO
    */
-  public CustomerRetrievalServiceImpl(final CustomerRepository repository, final CustomerMapper customerMapper) {
+  public CustomerRetrievalServiceImpl(
+      final CustomerRepository repository, final CustomerMapper customerMapper) {
     super(repository);
     this.customerMapper = customerMapper;
   }
@@ -62,21 +63,8 @@ public class CustomerRetrievalServiceImpl
   }
 
   /**
-   * Retrieves a customer by its identifier and maps it to {@link CustomerDTO}.
-   *
-   * @param id the identifier of the customer to be retrieved.
-   * @return the {@link CustomerDTO} with the specified identifier, or null if not found.
-   */
-  @Override
-  @Transactional(readOnly = true)
-  public CustomerDTO findCustomerDTOById(Long id) {
-    log.debug("Fetching customer DTO by id: {}", id);
-    return findById(id, customerMapper::toDTO);
-  }
-
-  /**
-   * Finds a customer by their email address and maps the result using the provided mapping function.
-   * This operation is read-only and transactional.
+   * Finds a customer by their email address and maps the result using the provided mapping
+   * function. This operation is read-only and transactional.
    *
    * @param email the email address of the customer to retrieve
    * @param mapper a function to map the retrieved customer instance into the desired type
@@ -86,9 +74,22 @@ public class CustomerRetrievalServiceImpl
    */
   @Override
   @Transactional(readOnly = true)
-  public <T> Optional<T> findByEmail(String email, Function<? super CustomerEntity, T> mapper) {
+  public <T> Optional<T> findByEmail(final String email, final Function<? super CustomerEntity, T> mapper) {
     log.debug("Fetching customer by email: {}", email);
     return getRepository().findByEmail(email).map(mapper);
+  }
+
+  /**
+   * Retrieves a customer by its identifier and maps it to {@link CustomerDTO}.
+   *
+   * @param id the identifier of the customer to be retrieved.
+   * @return the {@link CustomerDTO} with the specified identifier, or null if not found.
+   */
+  @Override
+  @Transactional(readOnly = true)
+  public CustomerDTO findCustomerDTOById(final Long id) {
+    log.debug("Fetching customer DTO by id: {}", id);
+    return findById(id, customerMapper::toDTO);
   }
 
   /**
@@ -97,8 +98,7 @@ public class CustomerRetrievalServiceImpl
    * @return The message code for "customer not found".
    */
   @Override
-  protected String getNotFoundMessageCode() {
-    // Placeholder, replace with actual message code if available
-    return "customer.not.found";
+  protected LocalizedMessageCode getNotFoundMessageCode() {
+    return CustomerMessageCode.NOT_FOUND;
   }
 }

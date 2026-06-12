@@ -3,10 +3,10 @@
  *
  * Project: Store Vision
  * Module: Store Vision Main
- * File: InventoryMessageCodes.java
+ * File: InventoryMessageCode.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-12 17:02:10
+ * Last Modified: 2026-06-12 17:05:40
  */
 
 package com.nthn.storevision.constant.message;
@@ -21,7 +21,7 @@ import lombok.RequiredArgsConstructor;
  */
 @Getter
 @RequiredArgsConstructor
-public enum InventoryMessageCodes implements LocalizedMessageCodes {
+public enum InventoryMessageCode implements LocalizedMessageCode {
   /**
    * Represents the message code for a validation error where a performer is required.
    *

@@ -6,11 +6,12 @@
  * File: AbstractReadable.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-05-17 14:18:27
+ * Last Modified: 2026-06-12 17:13:46
  */
 
 package com.nthn.storevision.service.common;
 
+import com.nthn.storevision.constant.message.LocalizedMessageCode;
 import com.nthn.storevision.exception.EntityNotFoundException;
 import com.nthn.storevision.repository.generic.ReadRepository;
 import com.nthn.storevision.service.generic.Readable;
@@ -74,7 +75,7 @@ public abstract class AbstractReadable<T, I, J extends ReadRepository<? extends 
   /**
    * Retrieves the message code to be used when a resource isn't found.
    *
-   * @return the message code for a not found resource
+   * @return the {@link LocalizedMessageCode} for a not found resource; must not be {@code null}
    */
-  protected abstract String getNotFoundMessageCode();
+  protected abstract LocalizedMessageCode getNotFoundMessageCode();
 }

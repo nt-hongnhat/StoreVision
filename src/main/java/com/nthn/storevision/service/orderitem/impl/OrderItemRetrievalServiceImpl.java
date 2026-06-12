@@ -6,18 +6,19 @@
  * File: OrderItemRetrievalServiceImpl.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-03 16:36:31
+ * Last Modified: 2026-06-12 17:14:42
  */
 
 package com.nthn.storevision.service.orderitem.impl;
 
+import com.nthn.storevision.constant.message.LocalizedMessageCode;
+import com.nthn.storevision.constant.message.OrderItemMessageCode;
 import com.nthn.storevision.dto.OrderItemDTO;
 import com.nthn.storevision.entity.OrderItemEntity;
 import com.nthn.storevision.mapper.OrderItemMapper;
 import com.nthn.storevision.repository.OrderItemRepository; // Changed from JpaOrderItemRepository
 import com.nthn.storevision.service.common.AbstractReadable;
 import com.nthn.storevision.service.orderitem.OrderItemRetrievalService;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -78,8 +79,7 @@ public class OrderItemRetrievalServiceImpl
    * @return The message code for "order item not found".
    */
   @Override
-  protected String getNotFoundMessageCode() {
-    // Placeholder, replace with actual message code if available
-    return "orderitem.not.found";
+  protected LocalizedMessageCode getNotFoundMessageCode() {
+    return OrderItemMessageCode.NOT_FOUND;
   }
 }

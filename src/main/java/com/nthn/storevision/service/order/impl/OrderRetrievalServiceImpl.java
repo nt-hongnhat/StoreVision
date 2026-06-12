@@ -11,6 +11,8 @@
 
 package com.nthn.storevision.service.order.impl;
 
+import com.nthn.storevision.constant.message.LocalizedMessageCode;
+import com.nthn.storevision.constant.message.OrderMessageCode;
 import com.nthn.storevision.dto.OrderDTO;
 import com.nthn.storevision.entity.OrderEntity;
 import com.nthn.storevision.mapper.OrderMapper;
@@ -78,7 +80,7 @@ public class OrderRetrievalServiceImpl extends AbstractReadable<OrderEntity, Lon
   }
 
   @Override
-  protected String getNotFoundMessageCode() {
-    return "order.not.found";
+  protected LocalizedMessageCode getNotFoundMessageCode() {
+    return OrderMessageCode.NOT_FOUND;
   }
 }

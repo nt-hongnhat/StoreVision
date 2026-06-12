@@ -11,6 +11,7 @@
 
 package com.nthn.storevision.service.orderitem.impl;
 
+import com.nthn.storevision.constant.message.OrderItemMessageCode;
 import com.nthn.storevision.dto.OrderItemDTO;
 import com.nthn.storevision.entity.OrderItemEntity;
 import com.nthn.storevision.exception.EntityNotFoundException;
@@ -39,6 +40,6 @@ public class OrderItemUpdateServiceImpl
   protected OrderItemEntity getById(final Long id) {
     return getRepository()
         .findById(id)
-        .orElseThrow(() -> new EntityNotFoundException("orderitem.not.found", id));
+        .orElseThrow(() -> new EntityNotFoundException(OrderItemMessageCode.NOT_FOUND, id));
   }
 }

@@ -6,17 +6,17 @@
  * File: InventoryCreationServiceImpl.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-12 17:02:10
+ * Last Modified: 2026-06-12 17:17:44
  */
 
 package com.nthn.storevision.service.inventory.impl;
 
-import com.nthn.storevision.constant.message.InventoryMessageCodes;
+import com.nthn.storevision.constant.StockMovementType;
+import com.nthn.storevision.constant.message.InventoryMessageCode;
 import com.nthn.storevision.dto.StockReceiptDTO;
 import com.nthn.storevision.dto.request.StockReceiptRequest;
 import com.nthn.storevision.entity.ProductEntity;
 import com.nthn.storevision.entity.StockMovementEntity;
-import com.nthn.storevision.constant.StockMovementType;
 import com.nthn.storevision.entity.UserEntity;
 import com.nthn.storevision.exception.EntityAccessException;
 import com.nthn.storevision.mapper.StockMovementMapper;
@@ -115,6 +115,6 @@ public class InventoryCreationServiceImpl implements InventoryCreationService {
     return (UserEntity)
         auditorAware
             .getCurrentAuditor()
-            .orElseThrow(() -> new EntityAccessException(InventoryMessageCodes.PERFORMER_REQUIRED));
+            .orElseThrow(() -> new EntityAccessException(InventoryMessageCode.PERFORMER_REQUIRED));
   }
 }

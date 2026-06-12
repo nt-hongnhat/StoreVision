@@ -6,11 +6,12 @@
  * File: EmployeeUpdateServiceImpl.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-04 17:15:08
+ * Last Modified: 2026-06-12 17:16:06
  */
 
 package com.nthn.storevision.service.employee.impl;
 
+import com.nthn.storevision.constant.message.EmployeeMessageCode;
 import com.nthn.storevision.dto.EmployeeDTO;
 import com.nthn.storevision.entity.EmployeeEntity;
 import com.nthn.storevision.exception.EntityNotFoundException;
@@ -39,6 +40,6 @@ public class EmployeeUpdateServiceImpl
   protected EmployeeEntity getById(final Long id) {
     return getRepository()
         .findById(id)
-        .orElseThrow(() -> new EntityNotFoundException("employee.not.found", id));
+        .orElseThrow(() -> new EntityNotFoundException(EmployeeMessageCode.NOT_FOUND, id));
   }
 }

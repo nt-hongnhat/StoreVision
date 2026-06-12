@@ -3,13 +3,13 @@
  *
  * Project: Store Vision
  * Module: Store Vision Main
- * File: UserMessage.java
+ * File: UserMessageCode.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-05-10 13:19:12
+ * Last Modified: 2026-06-12 17:07:38
  */
 
-package com.nthn.storevision.constant.user;
+package com.nthn.storevision.constant.message;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +20,7 @@ import lombok.RequiredArgsConstructor;
  */
 @Getter
 @RequiredArgsConstructor
-public enum UserMessage {
+public enum UserMessageCode implements LocalizedMessageCode {
   /**
    * Represents a message indicating that a user could not be found. The message includes a format
    * string for specifying the user ID.

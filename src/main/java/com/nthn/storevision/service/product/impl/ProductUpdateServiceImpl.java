@@ -6,12 +6,12 @@
  * File: ProductUpdateServiceImpl.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-12 17:02:10
+ * Last Modified: 2026-06-12 17:14:05
  */
 
 package com.nthn.storevision.service.product.impl;
 
-import com.nthn.storevision.constant.ProductMessageCodes;
+import com.nthn.storevision.constant.message.ProductMessageCode;
 import com.nthn.storevision.dto.ProductDTO;
 import com.nthn.storevision.entity.ProductEntity;
 import com.nthn.storevision.exception.EntityNotFoundException;
@@ -69,6 +69,6 @@ public class ProductUpdateServiceImpl
   protected ProductEntity getById(final Long id) {
     return getRepository()
         .findById(id)
-        .orElseThrow(() -> new EntityNotFoundException(ProductMessageCodes.NOT_FOUND, id));
+        .orElseThrow(() -> new EntityNotFoundException(ProductMessageCode.NOT_FOUND, id));
   }
 }

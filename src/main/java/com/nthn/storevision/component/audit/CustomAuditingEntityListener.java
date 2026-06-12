@@ -6,13 +6,14 @@
  * File: CustomAuditingEntityListener.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-04 10:27:38
+ * Last Modified: 2026-06-12 17:13:03
  */
 
 package com.nthn.storevision.component.audit;
 
 import com.nthn.storevision.annotation.DeletedBy;
 import com.nthn.storevision.annotation.DeletedDate;
+import com.nthn.storevision.constant.message.AuditMessageCode;
 import com.nthn.storevision.entity.mapped.BaseEntity;
 import com.nthn.storevision.exception.EntityAccessException;
 import com.nthn.storevision.model.User;
@@ -149,9 +150,7 @@ public class CustomAuditingEntityListener {
           declaredField.getName(),
           exception);
       throw new EntityAccessException(
-          MessageFormat.format(
-              "Failed to set annotated field {0} for entity", declaredField.getName()),
-          exception);
+          AuditMessageCode.ANNOTATED_FIELD_SET_FAILED, exception, declaredField.getName());
     }
   }
 
@@ -207,18 +206,18 @@ public class CustomAuditingEntityListener {
       final String fieldName = field.getName();
       final String setterName =
           MessageFormat.format(
-              "set{0}{1}", fieldName.substring(0, 1).toUpperCase(Locale.ROOT), fieldName.substring(1));
+              "set{0}{1}",
+              fieldName.substring(0, 1).toUpperCase(Locale.ROOT), fieldName.substring(1));
       final Method setter = target.getClass().getMethod(setterName, field.getType());
       setter.invoke(target, value);
     } catch (final NoSuchMethodException e) {
       log.error(
           "No setter found for field {} in class {}", field.getName(), target.getClass().getName());
-      throw new EntityAccessException(
-          MessageFormat.format("No setter found for field {0}", field.getName()), e);
+      throw new EntityAccessException(AuditMessageCode.SETTER_NOT_FOUND, e, field.getName());
     } catch (final IllegalAccessException | InvocationTargetException e) {
       log.error("Failed to invoke setter for field {} on entity: {}", field.getName(), target, e);
       throw new EntityAccessException(
-          MessageFormat.format("Failed to invoke setter for field {0}", field.getName()), e);
+          AuditMessageCode.SETTER_INVOCATION_FAILED, e, field.getName());
     }
   }
 

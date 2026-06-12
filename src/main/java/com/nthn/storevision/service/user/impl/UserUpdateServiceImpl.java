@@ -6,12 +6,12 @@
  * File: UserUpdateServiceImpl.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-04 17:24:31
+ * Last Modified: 2026-06-12 17:13:59
  */
 
 package com.nthn.storevision.service.user.impl;
 
-import com.nthn.storevision.constant.user.UserMessage;
+import com.nthn.storevision.constant.message.UserMessageCode;
 import com.nthn.storevision.dto.UserDTO;
 import com.nthn.storevision.entity.UserEntity;
 import com.nthn.storevision.exception.EntityNotFoundException;
@@ -40,6 +40,6 @@ public class UserUpdateServiceImpl
   protected UserEntity getById(final Integer id) {
     return getRepository()
         .findById(id)
-        .orElseThrow(() -> new EntityNotFoundException(UserMessage.USER_NOT_FOUND.getCode(), id));
+        .orElseThrow(() -> new EntityNotFoundException(UserMessageCode.USER_NOT_FOUND, id));
   }
 }

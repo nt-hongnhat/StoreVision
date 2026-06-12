@@ -6,7 +6,7 @@
  * File: GlobalExceptionHandler.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-05-10 13:13:42
+ * Last Modified: 2026-06-12 17:12:24
  */
 
 package com.nthn.storevision.advice;
@@ -16,8 +16,8 @@ import com.nthn.storevision.exception.ApplicationException;
 import com.nthn.storevision.exception.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.MessageSource;
 import org.jspecify.annotations.NonNull;
+import org.springframework.context.MessageSource;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
@@ -42,8 +42,11 @@ class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
    */
   @ExceptionHandler(ApplicationException.class)
   public Error handleCustomException(@NonNull final ApplicationException exception) {
-    log.warn("ApplicationException: [{}] {}", exception.getCode(), exception.getMessage(messageSource));
-    return new Error(exception.getCode(), exception.getMessage(messageSource));
+    log.warn(
+        "ApplicationException: [{}] {}",
+        exception.getMessageKey(),
+        exception.getMessage(messageSource));
+    return createErrorFromException(exception);
   }
 
   /**
@@ -55,7 +58,14 @@ class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
    */
   @ExceptionHandler(EntityNotFoundException.class)
   public Error handleEntityNotFoundException(@NonNull final EntityNotFoundException exception) {
-    log.warn("EntityNotFoundException: [{}] {}", exception.getCode(), exception.getMessage(messageSource));
-    return new Error(exception.getCode(), exception.getMessage(messageSource));
+    log.warn(
+        "EntityNotFoundException: [{}] {}",
+        exception.getMessageKey(),
+        exception.getMessage(messageSource));
+    return createErrorFromException(exception);
+  }
+
+  private @NonNull Error createErrorFromException(@NonNull final ApplicationException exception) {
+    return new Error(exception.getMessageKey().getCode(), exception.getMessage(messageSource));
   }
 }

@@ -6,11 +6,12 @@
  * File: EntityNotFoundException.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-02 20:29:33
+ * Last Modified: 2026-06-12 17:10:18
  */
 
 package com.nthn.storevision.exception;
 
+import com.nthn.storevision.constant.message.LocalizedMessageCode;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
@@ -22,12 +23,12 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 public class EntityNotFoundException extends ApplicationException {
 
   /**
-   * Constructs a new EntityNotFoundException with the specified code and arguments.
+   * Constructs a new {@code EntityNotFoundException} with the specified code and arguments.
    *
-   * @param code the error code associated with the exception
+   * @param messageKey the error code associated with the exception
    * @param args optional arguments providing additional context for the exception
    */
-  public EntityNotFoundException(final String code, final Object... args) {
-    super(code, args);
+  public EntityNotFoundException(final LocalizedMessageCode messageKey, final Object... args) {
+    super(messageKey, args);
   }
 }

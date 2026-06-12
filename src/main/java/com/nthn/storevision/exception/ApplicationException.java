@@ -6,11 +6,12 @@
  * File: ApplicationException.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-02 20:29:02
+ * Last Modified: 2026-06-12 17:07:38
  */
 
 package com.nthn.storevision.exception;
 
+import com.nthn.storevision.constant.message.LocalizedMessageCode;
 import lombok.Getter;
 import org.jspecify.annotations.NonNull;
 import org.springframework.context.MessageSource;
@@ -25,32 +26,33 @@ public class ApplicationException extends RuntimeException {
 
   private final Object[] args;
 
-  private final String code;
+  private final LocalizedMessageCode messageKey;
 
   /**
    * Constructs a new {@code ApplicationException} with the specified code and arguments.
    *
-   * @param code the error code associated with the exception
+   * @param messageKey the error code associated with the exception
    * @param args optional arguments providing additional context for the exception
    */
-  ApplicationException(final String code, final Object... args) {
+  ApplicationException(final LocalizedMessageCode messageKey, final Object... args) {
     this.args = args;
-    this.code = code;
+    this.messageKey = messageKey;
   }
 
   /**
    * Constructs a new {@code ApplicationException} with the specified code, cause, and arguments.
    *
-   * @param code the error code associated with the exception
+   * @param messageKey the error code associated with the exception
    * @param cause the cause (which is saved for later retrieval by the {@link #getCause()} method).
    *     (A {@code null} value is permitted, and indicates that the cause is nonexistent or
    *     unknown.)
    * @param args optional arguments providing additional context for the exception
    */
-  ApplicationException(final String code, final Throwable cause, final Object... args) {
+  ApplicationException(
+      final LocalizedMessageCode messageKey, final Throwable cause, final Object... args) {
     super(cause);
     this.args = args;
-    this.code = code;
+    this.messageKey = messageKey;
   }
 
   /**
@@ -61,6 +63,6 @@ public class ApplicationException extends RuntimeException {
    * @return The localized error message.
    */
   public String getMessage(@NonNull final MessageSource messageSource) {
-    return messageSource.getMessage(code, args, LocaleContextHolder.getLocale());
+    return messageSource.getMessage(messageKey.getCode(), args, LocaleContextHolder.getLocale());
   }
 }

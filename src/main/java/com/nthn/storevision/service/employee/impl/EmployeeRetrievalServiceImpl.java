@@ -6,34 +6,35 @@
  * File: EmployeeRetrievalServiceImpl.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-03 16:36:31
+ * Last Modified: 2026-06-12 17:16:36
  */
 
 package com.nthn.storevision.service.employee.impl;
 
+import com.nthn.storevision.constant.message.EmployeeMessageCode;
+import com.nthn.storevision.constant.message.LocalizedMessageCode;
 import com.nthn.storevision.dto.EmployeeDTO;
 import com.nthn.storevision.entity.EmployeeEntity;
 import com.nthn.storevision.mapper.EmployeeMapper;
 import com.nthn.storevision.repository.EmployeeRepository; // Changed from JpaEmployeeRepository
 import com.nthn.storevision.service.common.AbstractReadable;
 import com.nthn.storevision.service.employee.EmployeeRetrievalService;
-import lombok.RequiredArgsConstructor;
+import java.util.List;
+import java.util.Optional;
+import java.util.function.Function;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.function.Function;
-
 /**
- * Service for retrieving {@link EmployeeEntity} entities. Extends {@link AbstractReadable} to provide read
- * operations for {@link EmployeeEntity} entities.
+ * Service for retrieving {@link EmployeeEntity} entities. Extends {@link AbstractReadable} to
+ * provide read operations for {@link EmployeeEntity} entities.
  */
 @Slf4j
 @Service
 public class EmployeeRetrievalServiceImpl
-    extends AbstractReadable<EmployeeEntity, Long, EmployeeRepository> // Changed from JpaEmployeeRepository
+    extends AbstractReadable<
+        EmployeeEntity, Long, EmployeeRepository> // Changed from JpaEmployeeRepository
     implements EmployeeRetrievalService {
 
   private final EmployeeMapper employeeMapper;
@@ -44,7 +45,9 @@ public class EmployeeRetrievalServiceImpl
    * @param repository the repository used for accessing {@link EmployeeEntity} entities
    * @param employeeMapper the mapper used for converting between entity and DTO
    */
-  public EmployeeRetrievalServiceImpl(final EmployeeRepository repository, final EmployeeMapper employeeMapper) { // Changed from JpaEmployeeRepository
+  public EmployeeRetrievalServiceImpl(
+      final EmployeeRepository repository,
+      final EmployeeMapper employeeMapper) { // Changed from JpaEmployeeRepository
     super(repository);
     this.employeeMapper = employeeMapper;
   }
@@ -62,19 +65,6 @@ public class EmployeeRetrievalServiceImpl
   }
 
   /**
-   * Retrieves an employee by its identifier and maps it to {@link EmployeeDTO}.
-   *
-   * @param id the identifier of the employee to be retrieved.
-   * @return the {@link EmployeeDTO} with the specified identifier, or null if not found.
-   */
-  @Override
-  @Transactional(readOnly = true)
-  public EmployeeDTO findEmployeeDTOById(Long id) {
-    log.debug("Fetching employee DTO by id: {}", id);
-    return findById(id, employeeMapper::toDTO);
-  }
-
-  /**
    * Finds an employee by their username and maps the result using the provided mapping function.
    * This operation is read-only and transactional.
    *
@@ -86,9 +76,23 @@ public class EmployeeRetrievalServiceImpl
    */
   @Override
   @Transactional(readOnly = true)
-  public <T> Optional<T> findByUsername(String username, Function<? super EmployeeEntity, T> mapper) {
+  public <T> Optional<T> findByUsername(
+      final String username, final Function<? super EmployeeEntity, ? extends T> mapper) {
     log.debug("Fetching employee by username: {}", username);
     return getRepository().findByUsername(username).map(mapper);
+  }
+
+  /**
+   * Retrieves an employee by its identifier and maps it to {@link EmployeeDTO}.
+   *
+   * @param id the identifier of the employee to be retrieved.
+   * @return the {@link EmployeeDTO} with the specified identifier, or null if not found.
+   */
+  @Override
+  @Transactional(readOnly = true)
+  public EmployeeDTO findEmployeeDTOById(final Long id) {
+    log.debug("Fetching employee DTO by id: {}", id);
+    return findById(id, employeeMapper::toDTO);
   }
 
   /**
@@ -97,8 +101,7 @@ public class EmployeeRetrievalServiceImpl
    * @return The message code for "employee not found".
    */
   @Override
-  protected String getNotFoundMessageCode() {
-    // Placeholder, replace with actual message code if available
-    return "employee.not.found";
+  protected LocalizedMessageCode getNotFoundMessageCode() {
+    return EmployeeMessageCode.NOT_FOUND;
   }
 }

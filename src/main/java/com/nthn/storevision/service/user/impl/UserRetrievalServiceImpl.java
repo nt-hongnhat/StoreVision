@@ -6,12 +6,13 @@
  * File: UserRetrievalServiceImpl.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-05-10 13:05:47
+ * Last Modified: 2026-06-12 17:07:38
  */
 
 package com.nthn.storevision.service.user.impl;
 
-import com.nthn.storevision.constant.user.UserMessage;
+import com.nthn.storevision.constant.message.LocalizedMessageCode;
+import com.nthn.storevision.constant.message.UserMessageCode;
 import com.nthn.storevision.model.User;
 import com.nthn.storevision.repository.UserRepository;
 import com.nthn.storevision.service.common.AbstractReadable;
@@ -64,7 +65,7 @@ public class UserRetrievalServiceImpl
    * @return The message code for "user not found".
    */
   @Override
-  protected String getNotFoundMessageCode() {
-    return UserMessage.USER_NOT_FOUND.getCode();
+  protected LocalizedMessageCode getNotFoundMessageCode() {
+    return UserMessageCode.USER_NOT_FOUND;
   }
 }
