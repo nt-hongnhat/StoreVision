@@ -18,6 +18,8 @@ import com.nthn.storevision.repository.jpa.JpaUserRepository;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -60,6 +62,11 @@ public class UserRepositoryImpl implements UserRepository {
   @Override
   public List<UserEntity> findAll() {
     return jpaUserRepository.findByDeletedDateIsNull();
+  }
+
+  @Override
+  public Page<UserEntity> findAllActive(final Pageable pageable) {
+    return jpaUserRepository.findByDeletedDateIsNull(pageable);
   }
 
   @Override

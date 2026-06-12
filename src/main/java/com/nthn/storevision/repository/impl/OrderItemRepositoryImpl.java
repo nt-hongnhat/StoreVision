@@ -15,6 +15,8 @@ import com.nthn.storevision.entity.OrderItemEntity;
 import com.nthn.storevision.repository.OrderItemRepository;
 import com.nthn.storevision.repository.jpa.JpaOrderItemRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -60,6 +62,11 @@ public class OrderItemRepositoryImpl implements OrderItemRepository {
   @Override
   public List<OrderItemEntity> findAll() {
     return jpaRepository.findByDeletedDateIsNull();
+  }
+
+  @Override
+  public Page<OrderItemEntity> findAllActive(final Pageable pageable) {
+    return jpaRepository.findByDeletedDateIsNull(pageable);
   }
 
   @Override

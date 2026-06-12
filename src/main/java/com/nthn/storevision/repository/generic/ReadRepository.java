@@ -6,13 +6,15 @@
  * File: ReadRepository.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-04 17:20:28
+ * Last Modified: 2026-06-12 23:23:57
  */
 
 package com.nthn.storevision.repository.generic;
 
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 /**
  * Minimal read contract shared by all domain repository interfaces. {@link
@@ -30,6 +32,14 @@ public interface ReadRepository<E, I> {
    * @return a list of all entities of type E
    */
   List<E> findAll();
+
+  /**
+   * Retrieves a paginated list of all active entities from the data source.
+   *
+   * @param pageable the pagination information including page number and size; must not be null
+   * @return a {@code Page} containing the active entities of type E
+   */
+  Page<E> findAllActive(Pageable pageable);
 
   /**
    * Retrieves an entity by its identifier from the repository.

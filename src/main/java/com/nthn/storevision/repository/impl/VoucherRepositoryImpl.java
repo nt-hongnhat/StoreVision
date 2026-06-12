@@ -17,6 +17,8 @@ import com.nthn.storevision.repository.jpa.JpaVoucherRepository;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -32,6 +34,11 @@ public class VoucherRepositoryImpl implements VoucherRepository {
   @Override
   public List<VoucherEntity> findAll() {
     return jpaRepository.findByDeletedDateIsNull();
+  }
+
+  @Override
+  public Page<VoucherEntity> findAllActive(final Pageable pageable) {
+    return jpaRepository.findByDeletedDateIsNull(pageable);
   }
 
   @Override

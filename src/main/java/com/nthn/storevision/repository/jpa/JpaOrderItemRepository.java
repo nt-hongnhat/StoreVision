@@ -13,6 +13,8 @@ package com.nthn.storevision.repository.jpa;
 
 import com.nthn.storevision.entity.OrderItemEntity;
 import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -29,4 +31,12 @@ public interface JpaOrderItemRepository extends JpaRepository<OrderItemEntity, L
    * @return the list of active order items; never {@code null}
    */
   List<OrderItemEntity> findByDeletedDateIsNull();
+
+  /**
+   * Returns one page of active (non-soft-deleted) order items.
+   *
+   * @param pageable page request carrying index, size and sort; must not be {@code null}
+   * @return the requested page of active order items; never {@code null}
+   */
+  Page<OrderItemEntity> findByDeletedDateIsNull(Pageable pageable);
 }

@@ -14,6 +14,8 @@ package com.nthn.storevision.repository.jpa;
 import com.nthn.storevision.entity.EmployeeEntity;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -29,6 +31,14 @@ public interface JpaEmployeeRepository extends JpaRepository<EmployeeEntity, Lon
    * @return the list of active employees; never {@code null}
    */
   List<EmployeeEntity> findByDeletedDateIsNull();
+
+  /**
+   * Returns one page of active (non-soft-deleted) employees.
+   *
+   * @param pageable page request carrying index, size and sort; must not be {@code null}
+   * @return the requested page of active employees; never {@code null}
+   */
+  Page<EmployeeEntity> findByDeletedDateIsNull(Pageable pageable);
 
   /**
    * Finds an employee by their username.

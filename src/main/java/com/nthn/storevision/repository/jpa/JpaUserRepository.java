@@ -15,6 +15,8 @@ import com.nthn.storevision.entity.UserEntity;
 import com.nthn.storevision.repository.generic.SaveRepository;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -36,6 +38,14 @@ public interface JpaUserRepository
    * @return the list of active users; never {@code null}
    */
   List<UserEntity> findByDeletedDateIsNull();
+
+  /**
+   * Returns one page of active (non-soft-deleted) users.
+   *
+   * @param pageable page request carrying index, size and sort; must not be {@code null}
+   * @return the requested page of active users; never {@code null}
+   */
+  Page<UserEntity> findByDeletedDateIsNull(Pageable pageable);
 
   /**
    * Finds a {@link UserEntity} by its email.

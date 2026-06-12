@@ -14,6 +14,8 @@ package com.nthn.storevision.repository.jpa;
 import com.nthn.storevision.entity.VoucherEntity;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -38,6 +40,14 @@ public interface JpaVoucherRepository extends JpaRepository<VoucherEntity, Long>
    * @return the list of active vouchers; never {@code null}
    */
   List<VoucherEntity> findByDeletedDateIsNull();
+
+  /**
+   * Returns one page of active (non-soft-deleted) vouchers.
+   *
+   * @param pageable page request carrying index, size and sort; must not be {@code null}
+   * @return the requested page of active vouchers; never {@code null}
+   */
+  Page<VoucherEntity> findByDeletedDateIsNull(Pageable pageable);
 
   /**
    * BR-V03: atomically increments a voucher's usage count only while it is still below the usage
