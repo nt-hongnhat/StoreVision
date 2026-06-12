@@ -41,4 +41,7 @@ public enum ResponseCode {
 
   /** HTTP 401 Unauthorized. */
   public static final String UNAUTHORIZED = "401";
+
+  /** HTTP 422 Unprocessable Entity. */
+  public static final String UNPROCESSABLE_ENTITY = "422";
 }
