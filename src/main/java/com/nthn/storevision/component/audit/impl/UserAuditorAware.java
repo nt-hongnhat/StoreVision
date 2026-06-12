@@ -6,7 +6,7 @@
  * File: UserAuditorAware.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-12 22:26:23
+ * Last Modified: 2026-06-12 22:38:52
  */
 
 package com.nthn.storevision.component.audit.impl;
@@ -18,8 +18,8 @@ import java.util.Optional;
 import java.util.function.Function;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.jspecify.annotations.NonNull;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.data.domain.AuditorAware;
 import org.springframework.data.domain.Persistable;
@@ -37,9 +37,6 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class UserAuditorAware implements AuditorAware<User> {
 
-  @Value("${app.audit.default-admin-email}")
-  private String defaultAdminEmail;
-
   /**
    * A constant representing the key or attribute name used to reference and retrieve the email
    * field, notably in authentication and auditing processes.
@@ -49,9 +46,13 @@ public class UserAuditorAware implements AuditorAware<User> {
    * acts as a standard identifier to ensure consistent handling of email attributes across
    * different parts of the application.
    */
-  private static final String EMAIL = "email";
+  public static final String EMAIL = "email";
 
   private final ApplicationContext applicationContext;
+
+  @Value("${app.audit.default-admin-email}")
+  private String defaultAdminEmail;
+
   private UserRetrievalService userRetrievalService;
 
   /**
