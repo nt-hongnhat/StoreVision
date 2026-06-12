@@ -6,7 +6,6 @@
  * File: JpaOrderRepository.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-05
  * Last Modified: 2026-06-12 22:03:04
  */
 
@@ -14,14 +13,13 @@ package com.nthn.storevision.repository.jpa;
 
 import com.nthn.storevision.constant.OrderStatus;
 import com.nthn.storevision.entity.OrderEntity;
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-/**
- * JPA Repository for {@link OrderEntity}. Provides standard and order-specific queries.
- */
+/** JPA Repository for {@link OrderEntity}. Provides standard and order-specific queries. */
 @Repository
 public interface JpaOrderRepository extends JpaRepository<OrderEntity, Long> {
 

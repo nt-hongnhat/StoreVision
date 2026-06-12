@@ -6,7 +6,7 @@
  * File: OrderRepository.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-05 15:40:26
+ * Last Modified: 2026-06-12 22:03:04
  */
 
 package com.nthn.storevision.repository;
@@ -31,6 +31,7 @@ public interface OrderRepository
    * @return {@code true} if there is at least one active pending order for the given customer
    */
   boolean existsPendingOrderForCustomer(Long customerId);
+
   /**
    * Checks if there are any pending orders for the specified product.
    *
@@ -39,6 +40,7 @@ public interface OrderRepository
    *     false} otherwise.
    */
   boolean existsPendingOrderForProduct(Long productId);
+
   /**
    * Returns all active (non-deleted) orders of a customer, ordered by most recent first.
    *

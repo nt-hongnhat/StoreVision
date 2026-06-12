@@ -83,6 +83,7 @@ public class CustomerRepositoryImpl implements CustomerRepository {
   public boolean isEmailTakenByOther(final String email, final Long excludedId) {
     return jpaRepository.isEmailAlreadyRegistered(email, excludedId);
   }
+
   @Override
   public CustomerEntity save(final CustomerEntity customer) {
     return jpaRepository.save(customer);

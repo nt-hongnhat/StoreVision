@@ -38,4 +38,28 @@ public interface LoyaltyService {
   void addPoints(
       @NonNull Long customerId, @NonNull BigDecimal orderAmount, @NonNull Long referenceOrderId);
 
+  /**
+   * Retrieves a customer's loyalty overview: current tier, point balance, total spending and the
+   * full point transaction history (most recent first).
+   *
+   * @param customerId the customer to query; must not be {@code null}
+   * @return the loyalty overview as a {@link LoyaltyDetailsDTO}; never {@code null}
+   * @throws com.nthn.storevision.exception.EntityNotFoundException if the customer does not exist
+   */
+  LoyaltyDetailsDTO getLoyaltyDetails(@NonNull Long customerId);
+
+  /**
+   * Redeems loyalty points for a single-use fixed-amount discount voucher. The point balance is
+   * decreased by {@code points} — it can never go negative, redemptions exceeding the balance are
+   * rejected (BR-C03) — and a {@code REDEEM} entry referencing the minted voucher is appended to
+   * the point history. The tier and total spending are not affected (BR-C04).
+   *
+   * @param customerId the customer redeeming the points; must not be {@code null}
+   * @param points the number of points to redeem; must not be {@code null} and must be positive
+   * @return the minted voucher as a {@link VoucherDTO}; never {@code null}
+   * @throws com.nthn.storevision.exception.EntityNotFoundException if the customer does not exist
+   * @throws com.nthn.storevision.exception.InsufficientLoyaltyPointsException if {@code points}
+   *     exceeds the customer's balance (BR-C03)
+   */
+  VoucherDTO redeemPoints(@NonNull Long customerId, @NonNull Long points);
 }

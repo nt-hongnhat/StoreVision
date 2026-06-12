@@ -6,7 +6,7 @@
  * File: CustomerRetrievalServiceImpl.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-12 17:17:44
+ * Last Modified: 2026-06-12 22:00:59
  */
 
 package com.nthn.storevision.service.customer.impl;
@@ -14,11 +14,14 @@ package com.nthn.storevision.service.customer.impl;
 import com.nthn.storevision.constant.message.CustomerMessageCode;
 import com.nthn.storevision.constant.message.LocalizedMessageCode;
 import com.nthn.storevision.dto.CustomerDTO;
+import com.nthn.storevision.dto.OrderDTO;
 import com.nthn.storevision.entity.CustomerEntity;
+import com.nthn.storevision.exception.EntityNotFoundException;
 import com.nthn.storevision.mapper.CustomerMapper;
 import com.nthn.storevision.repository.CustomerRepository;
 import com.nthn.storevision.service.common.AbstractReadable;
 import com.nthn.storevision.service.customer.CustomerRetrievalService;
+import com.nthn.storevision.service.order.OrderRetrievalService;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
@@ -79,7 +82,8 @@ public class CustomerRetrievalServiceImpl
    */
   @Override
   @Transactional(readOnly = true)
-  public <T> Optional<T> findByEmail(final String email, final Function<? super CustomerEntity, T> mapper) {
+  public <T> Optional<T> findByEmail(
+      final String email, final Function<? super CustomerEntity, T> mapper) {
     log.debug("Fetching customer by email: {}", email);
     return getRepository().findByEmail(email).map(mapper);
   }
@@ -106,6 +110,8 @@ public class CustomerRetrievalServiceImpl
       throw new EntityNotFoundException(CustomerMessageCode.NOT_FOUND, customerId);
     }
     return orderRetrievalService.findOrdersByCustomerId(customerId);
+  }
+
   /**
    * Returns the message code for when a customer is not found.
    *

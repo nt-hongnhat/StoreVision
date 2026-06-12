@@ -17,20 +17,32 @@ import com.nthn.storevision.repository.CustomerRepository;
 import com.nthn.storevision.service.common.AbstractDeletable;
 import com.nthn.storevision.service.customer.CustomerDeletionService;
 import com.nthn.storevision.service.order.OrderRetrievalService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
- * Default implementation of {@link CustomerDeletionService} that soft-deletes
- * {@link CustomerEntity} instances by setting the {@code isDeleted} flag, which triggers
- * {@code CustomAuditingEntityListener} to populate {@code deletedBy} and {@code deletedDate}.
+ * Default implementation of {@link CustomerDeletionService} that soft-deletes {@link
+ * CustomerEntity} instances by setting the {@code isDeleted} flag, which triggers {@code
+ * CustomAuditingEntityListener} to populate {@code deletedBy} and {@code deletedDate}.
+ *
+ * <p>Enforces BR-C02: a customer who still has PENDING orders cannot be deleted — neither
+ * soft-deleted nor permanently — until the orders are canceled or completed.
  */
+@Slf4j
 @Service
 public class CustomerDeletionServiceImpl
     extends AbstractDeletable<CustomerEntity, Long, CustomerRepository>
     implements CustomerDeletionService {
 
-  protected CustomerDeletionServiceImpl(final CustomerRepository repository) {
+  private final OrderRetrievalService orderRetrievalService;
+
+  protected CustomerDeletionServiceImpl(
+      final CustomerRepository repository, final OrderRetrievalService orderRetrievalService) {
     super(repository);
+    this.orderRetrievalService = orderRetrievalService;
+  }
+
   @Override
   @Transactional
   public void markAsDeleted(final Long id) {

@@ -6,7 +6,7 @@
  * File: OrderRetrievalService.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-05-17 14:17:03
+ * Last Modified: 2026-06-12 22:00:59
  */
 
 package com.nthn.storevision.service.order;
@@ -33,6 +33,16 @@ public interface OrderRetrievalService extends Readable<OrderEntity, Long> {
    * @return {@code true} if at least one pending order belongs to this customer
    */
   boolean existsPendingOrderForCustomer(Long customerId);
+
+  /**
+   * BR-P04: returns {@code true} if any active (non-deleted) PENDING order contains the given
+   * product. Used by the product soft-delete flow to emit a warning before deletion.
+   *
+   * @param productId the product ID to check
+   * @return {@code true} if at least one pending order references this product
+   */
+  boolean existsPendingOrderForProduct(Long productId);
+
   /**
    * Retrieves all orders and maps them to {@link OrderDTO}.
    *
@@ -49,8 +59,6 @@ public interface OrderRetrievalService extends Readable<OrderEntity, Long> {
   OrderDTO findOrderDTOById(Long id);
 
   /**
-   * BR-P04: returns {@code true} if any active (non-deleted) PENDING order contains the given
-   * product. Used by the product soft-delete flow to emit a warning before deletion.
    * Retrieves all active (non-deleted) orders of a customer, most recent first, mapped to {@link
    * OrderDTO}.
    *

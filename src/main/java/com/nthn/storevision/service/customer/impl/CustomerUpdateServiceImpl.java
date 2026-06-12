@@ -6,7 +6,7 @@
  * File: CustomerUpdateServiceImpl.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-12 17:15:56
+ * Last Modified: 2026-06-12 21:56:11
  */
 
 package com.nthn.storevision.service.customer.impl;
@@ -14,6 +14,7 @@ package com.nthn.storevision.service.customer.impl;
 import com.nthn.storevision.constant.message.CustomerMessageCode;
 import com.nthn.storevision.dto.CustomerDTO;
 import com.nthn.storevision.entity.CustomerEntity;
+import com.nthn.storevision.exception.CustomerEmailAlreadyExistsException;
 import com.nthn.storevision.exception.EntityNotFoundException;
 import com.nthn.storevision.mapper.EntityMapperConfig;
 import com.nthn.storevision.repository.CustomerRepository;
@@ -22,11 +23,14 @@ import com.nthn.storevision.service.customer.CustomerUpdateService;
 import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Default implementation of {@link CustomerUpdateService} for persisting updates to {@link
- * CustomerEntity} instances in the database.
+ * CustomerEntity} instances in the database. Enforces BR-C01 (email uniqueness across the whole
+ * system, excluding the record being updated) before persisting.
  */
+@Slf4j
 @Service
 public class CustomerUpdateServiceImpl
     extends AbstractUpdatable<CustomerDTO, Long, CustomerEntity, CustomerRepository>
@@ -48,6 +52,8 @@ public class CustomerUpdateServiceImpl
       throw new CustomerEmailAlreadyExistsException(dto.getEmail());
     }
     return super.update(id, dto);
+  }
+
   @Override
   protected CustomerEntity getById(final Long id) {
     return getRepository()

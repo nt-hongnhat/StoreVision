@@ -11,19 +11,26 @@
 
 package com.nthn.storevision.service.customer.impl;
 
+import com.nthn.storevision.constant.DiscountType;
 import com.nthn.storevision.constant.LoyaltyPointType;
 import com.nthn.storevision.constant.LoyaltyTier;
 import com.nthn.storevision.constant.message.CustomerMessageCode;
 import com.nthn.storevision.dto.LoyaltyDetailsDTO;
+import com.nthn.storevision.dto.VoucherDTO;
 import com.nthn.storevision.entity.CustomerEntity;
 import com.nthn.storevision.entity.LoyaltyPointHistoryEntity;
 import com.nthn.storevision.exception.EntityNotFoundException;
+import com.nthn.storevision.exception.InsufficientLoyaltyPointsException;
 import com.nthn.storevision.mapper.LoyaltyPointHistoryMapper;
 import com.nthn.storevision.repository.CustomerRepository;
 import com.nthn.storevision.repository.LoyaltyPointHistoryRepository;
 import com.nthn.storevision.service.customer.LoyaltyService;
+import com.nthn.storevision.service.voucher.VoucherCreationService;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Locale;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.NonNull;
@@ -33,7 +40,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Default implementation of {@link LoyaltyService}. Computes points from the customer's current
- * {@code EARN} entry to the point history (BR-C05).
+ * tier rate, upgrades the tier based on accumulated spending (BR-C04), redeems points for
+ * single-use vouchers without ever letting the balance go negative (BR-C03), and appends every
+ * transaction to the immutable point history (BR-C05).
  */
 @Slf4j
 @Service
@@ -41,8 +50,19 @@ import org.springframework.transaction.annotation.Transactional;
 public class LoyaltyServiceImpl implements LoyaltyService {
 
   private static final int REDEEM_VOUCHER_CODE_LENGTH = 8;
+  private static final String REDEEM_VOUCHER_CODE_PREFIX = "RDM-";
+  private static final int REDEEM_VOUCHER_MAX_USAGE = 1;
+
   private final CustomerRepository customerRepository;
+  private final LoyaltyPointHistoryMapper loyaltyPointHistoryMapper;
   private final LoyaltyPointHistoryRepository loyaltyPointHistoryRepository;
+  private final VoucherCreationService voucherCreationService;
+
+  @Value("${app.loyalty.point-value:1000}")
+  private BigDecimal pointValue;
+
+  @Value("${app.loyalty.redeem-voucher-validity-days:30}")
+  private int redeemVoucherValidityDays;
 
   /** {@inheritDoc} */
   @Override
@@ -57,11 +77,7 @@ public class LoyaltyServiceImpl implements LoyaltyService {
         orderAmount,
         referenceOrderId);
 
-    final CustomerEntity customer =
-        customerRepository
-            .findById(customerId)
-            .orElseThrow(
-                () -> new EntityNotFoundException(CustomerMessageCode.NOT_FOUND, customerId));
+    final CustomerEntity customer = findCustomerOrThrow(customerId);
 
     final long pointsEarned = customer.getLoyaltyTier().calculatePoints(orderAmount);
     final long newBalance = customer.getLoyaltyPoints() + pointsEarned;
@@ -150,6 +166,7 @@ public class LoyaltyServiceImpl implements LoyaltyService {
         voucher.getCode());
     return voucher;
   }
+
   /**
    * Builds a single-use FIXED_AMOUNT voucher worth {@code points × pointValue} VND, valid from
    * today for the configured number of days.
@@ -167,6 +184,25 @@ public class LoyaltyServiceImpl implements LoyaltyService {
         .active(true)
         .build();
   }
+
+  private CustomerEntity findCustomerOrThrow(final Long customerId) {
+    return customerRepository
+        .findById(customerId)
+        .filter(customer -> customer.getDeletedDate().isEmpty())
+        .orElseThrow(() -> new EntityNotFoundException(CustomerMessageCode.NOT_FOUND, customerId));
+  }
+
+  private static String generateRedeemVoucherCode() {
+    return "%s%s"
+        .formatted(
+            REDEEM_VOUCHER_CODE_PREFIX,
+            UUID.randomUUID()
+                .toString()
+                .replace("-", "")
+                .substring(0, REDEEM_VOUCHER_CODE_LENGTH)
+                .toUpperCase(Locale.ROOT));
+  }
+
   /** BR-C04: tiers are derived from lifetime spending and only ever move upwards. */
   private static void upgradeIfEligible(final @NonNull CustomerEntity customer) {
     final LoyaltyTier eligible = LoyaltyTier.fromTotalSpending(customer.getTotalSpending());

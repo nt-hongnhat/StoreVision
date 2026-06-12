@@ -35,6 +35,7 @@ public interface CustomerRepository
    *     Optional} if not found.
    */
   Optional<CustomerEntity> findByEmail(String email);
+
   /**
    * BR-C01: checks whether the given email is already registered to any customer, including
    * soft-deleted records.
@@ -44,4 +45,13 @@ public interface CustomerRepository
    */
   boolean isEmailTaken(String email);
 
+  /**
+   * BR-C01 on update: checks whether the given email is registered to any customer other than the
+   * specified one, including soft-deleted records.
+   *
+   * @param email the email address to check; must not be {@code null}
+   * @param excludedId the customer being updated, excluded from the check; must not be {@code null}
+   * @return {@code true} if the email is taken by another customer
+   */
+  boolean isEmailTakenByOther(String email, Long excludedId);
 }

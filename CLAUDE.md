@@ -291,6 +291,7 @@ All message keys in `/i18n/messages*.properties` must follow the
 | `ORM`  | Order (`order`)           | `ORM001` |
 | `OIM`  | Order item (`orderitem`)  | `OIM001` |
 | `VCM`  | Voucher (`voucher`)       | `VCM001` |
+| `ANM`  | Analytics (`analytics`)   | `ANM001` |
 
 > When adding a new domain, register its prefix in this table before writing any
 > message keys.
@@ -335,6 +336,14 @@ All message keys in `/i18n/messages*.properties` must follow the
 | `AUM002` | No setter found for audit field                       |
 | `AUM003` | Failed to invoke setter for audit field               |
 | `CSM001` | Customer not found                                    |
+| `CSM002` | Customer email already exists (BR-C01)                |
+| `CSM003` | Customer has pending orders, cannot delete (BR-C02)   |
+| `CSM004` | Insufficient loyalty points (BR-C03)                  |
+| `CSM005` | Points required (RedeemPointsRequest)                 |
+| `CSM006` | Points must be >= 1                                   |
+| `CSM007` | Customer name required                                |
+| `CSM008` | Customer email required                               |
+| `CSM009` | Customer email invalid                                |
 | `EMM001` | Employee not found                                    |
 | `ORM001` | Order not found                                       |
 | `ORM002` | Customer ID required (OrderCreationRequest)           |
@@ -351,6 +360,7 @@ All message keys in `/i18n/messages*.properties` must follow the
 | `VCM003` | Voucher inactive (BR-V02)                             |
 | `VCM004` | Voucher usage limit reached (BR-V03)                  |
 | `VCM005` | Order amount below voucher minimum (BR-V04)           |
+| `ANM001` | Invalid reporting date range (BR-A02)                 |
 
 ### 7. Logging
 
