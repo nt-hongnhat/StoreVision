@@ -6,10 +6,10 @@
  * File: UserAuditorAware.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-02 17:26:12
+ * Last Modified: 2026-06-12 22:26:23
  */
 
-package com.nthn.storevision.component.audit;
+package com.nthn.storevision.component.audit.impl;
 
 import com.nthn.storevision.model.User;
 import com.nthn.storevision.security.user.UserPrincipal;
