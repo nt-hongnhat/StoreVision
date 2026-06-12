@@ -50,6 +50,16 @@ public class VoucherRepositoryImpl implements VoucherRepository {
   }
 
   @Override
+  public Optional<VoucherEntity> findByCode(final String code) {
+    return jpaRepository.findByCode(code);
+  }
+
+  @Override
+  public boolean incrementUsageIfBelowLimit(final Long id) {
+    return 0 < jpaRepository.incrementUsageIfBelowLimit(id);
+  }
+
+  @Override
   public VoucherEntity save(final VoucherEntity voucher) {
     return jpaRepository.save(voucher);
   }

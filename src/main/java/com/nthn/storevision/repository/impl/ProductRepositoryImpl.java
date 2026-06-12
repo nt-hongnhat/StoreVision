@@ -30,6 +30,17 @@ public class ProductRepositoryImpl implements ProductRepository {
   private final JpaProductRepository jpaRepository;
 
   @Override
+  public boolean decreaseStockIfAvailable(final Long id, final Integer quantity) {
+    return 0 < jpaRepository.decreaseStockIfAvailable(id, quantity);
+  }
+
+  @Override
+  @Override
+  public boolean increaseStock(final Long id, final Integer quantity) {
+    return 0 < jpaRepository.increaseStock(id, quantity);
+  }
+
+  @Override
   public void deleteById(final Long id) {
     jpaRepository.deleteById(id);
   }

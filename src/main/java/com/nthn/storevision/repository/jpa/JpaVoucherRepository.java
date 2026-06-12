@@ -14,6 +14,9 @@ package com.nthn.storevision.repository.jpa;
 import com.nthn.storevision.entity.VoucherEntity;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 /** JPA Repository for {@link VoucherEntity}. Provides standard and voucher-specific queries. */
@@ -27,4 +30,19 @@ public interface JpaVoucherRepository extends JpaRepository<VoucherEntity, Long>
    * @return an {@link Optional} containing the matching {@link VoucherEntity}, or empty if none
    */
   Optional<VoucherEntity> findByCode(String code);
+
+  /**
+   * BR-V03: atomically increments a voucher's usage count only while it is still below the usage
+   * limit, in a single guarded UPDATE statement. Two concurrent order completions can therefore
+   * never push the usage count past {@code maxUsage}.
+   *
+   * @param id the voucher to update; must not be {@code null}
+   * @return the number of rows updated: 1 on success, 0 when the voucher does not exist or its
+   *     usage limit is already reached
+   */
+  @Modifying
+  @Query(
+      "UPDATE VoucherEntity v SET v.usageCount = v.usageCount + 1"
+          + " WHERE v.id = :id AND v.usageCount < v.maxUsage")
+  int incrementUsageIfBelowLimit(@Param("id") Long id);
 }

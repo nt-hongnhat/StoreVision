@@ -11,7 +11,30 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface JpaProductRepository extends JpaRepository<ProductEntity, Long> {
 
-  /** BR-P01: checks uniqueness of name + category among active (non-soft-deleted) records. */
+  /**
+   * BR-O01: atomically decrements a product's stock by {@code quantity} only when enough stock
+   * remains, in a single guarded UPDATE statement. Two concurrent order completions can therefore
+   * never drive the stock negative. Bulk update — auditing fields are untouched; the change is
+   * audited through the ISSUE stock movement record (BR-I01).
+   *
+   * @param id the product to update; must not be {@code null}
+   * @param quantity units to deduct; must be positive
+   * @return the number of rows updated: 1 on success, 0 when the product does not exist or the
+   *     remaining stock is not enough
+   */
+  @Modifying
+  @Query(
+      "UPDATE ProductEntity p SET p.stockQuantity = p.stockQuantity - :quantity"
+          + " WHERE p.id = :id AND p.stockQuantity >= :quantity")
+  int decreaseStockIfAvailable(@Param("id") Long id, @Param("quantity") Integer quantity);
+
+  /**
+   * BR-P01: checks uniqueness of name + category among active (non-soft-deleted) records.
+   *
+   * @param category the category to check; must not be {@code null}
+   * @param name the name to check; must not be {@code null}
+   * @return {@code true} if the name + category combination is unique among active products
+   */
   boolean existsByNameAndCategoryAndDeletedDateIsNull(String name, String category);
 
   /**
@@ -23,6 +46,29 @@ public interface JpaProductRepository extends JpaRepository<ProductEntity, Long>
 
   /** Returns all non-soft-deleted products. */
   List<ProductEntity> findByDeletedDateIsNull();
+
+  /**
+   * BR-I04: returns active products with stock at or below the threshold.
+   *
+   * @param threshold the stock threshold
+   * @return active products with stock at or below the threshold
+   */
+  List<ProductEntity> findByStockQuantityLessThanEqualAndDeletedDateIsNull(int threshold);
+
+  /**
+   * Atomically increments a product's stock by {@code quantity} in a single UPDATE statement,
+   * preventing lost updates from concurrent receipts. Bulk update — auditing fields are untouched;
+   * the change is audited through the stock movement record (BR-I01).
+   *
+   * @param id the product to update; must not be {@code null}
+   * @param quantity units to add; must be positive
+   * @return the number of rows updated: 1 on success, 0 when the product does not exist
+   */
+  @Modifying
+  @Query(
+      "UPDATE ProductEntity p SET p.stockQuantity = p.stockQuantity + :quantity"
+          + " WHERE p.id = :id")
+  int increaseStock(@Param("id") Long id, @Param("quantity") Integer quantity);
 
   /**
    * Full-text–style search over active products. Both parameters are optional: passing {@code null}

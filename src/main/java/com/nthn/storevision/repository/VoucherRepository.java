@@ -6,7 +6,7 @@
  * File: VoucherRepository.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-12
+ * Last Modified: 2026-06-12 23:08:47
  */
 
 package com.nthn.storevision.repository;
@@ -31,4 +31,5 @@ public interface VoucherRepository
    *     voucher carries the given code
    */
   Optional<VoucherEntity> findByCode(String code);
+   * @return {@code true} when the count was incremented; {@code false} when the voucher does not
 }

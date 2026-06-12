@@ -27,11 +27,31 @@ public interface ProductRepository
         DeleteRepository<Long> {
 
   /**
+   * BR-O01: atomically decrements a product's stock by {@code quantity} only when enough stock
+   * remains — concurrent order completions can never drive the stock negative.
+   *
+   * @param id the product to update; must not be {@code null}
+   * @param quantity units to deduct; must be positive
+   * @return {@code true} when the stock was deducted; {@code false} when the product does not exist
+   *     or the remaining stock is not enough
+   */
+  boolean decreaseStockIfAvailable(Long id, Integer quantity);
+
+  /**
    * Retrieves a list of all active (non-deleted) products.
    *
    * @return a list of {@code ProductEntity} objects representing the active products.
    */
   List<ProductEntity> findAllActive();
+
+   * Atomically increments a product's stock by {@code quantity}, preventing lost updates from
+   * concurrent receipts.
+   *
+   * @param id the product to update; must not be {@code null}
+   * @param quantity units to add; must be positive
+   * @return {@code true} when the product was updated; {@code false} when it does not exist
+   */
+  boolean increaseStock(Long id, Integer quantity);
 
   /**
    * Checks if an active (non-deleted) product with the specified name and category exists.
@@ -63,13 +83,4 @@ public interface ProductRepository
    * @return a list of {@code ProductEntity} objects that match the search criteria and are active.
    */
   List<ProductEntity> searchActive(String name, String category);
-
-  /**
-   * Returns active (non-deleted) products whose stock quantity is at or below the given threshold.
-   * Used by the inventory module for BR-I04 low-stock alerts.
-   *
-   * @param threshold maximum stock quantity to include
-   * @return list of low-stock active products
-   */
-  List<ProductEntity> findLowStock(int threshold);
 }

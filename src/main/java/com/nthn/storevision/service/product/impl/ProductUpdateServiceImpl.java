@@ -46,23 +46,23 @@ public class ProductUpdateServiceImpl
   @Transactional
   public void addStock(final Long id, final Integer quantity) {
     log.debug("Adding {} units to product id: {}", quantity, id);
-    final ProductEntity entity = getById(id);
-    entity.setStockQuantity(entity.getStockQuantity() + quantity);
-    getRepository().save(entity);
-    log.debug("Product id: {} stock updated to {}", id, entity.getStockQuantity());
+    if (!getRepository().increaseStock(id, quantity)) {
+      throw new EntityNotFoundException(ProductMessageCode.NOT_FOUND, id);
+    }
+    log.debug("Product id: {} stock increased by {}", id, quantity);
   }
 
   @Override
   @Transactional
   public void deductStock(final Long id, final Integer quantity) {
     log.debug("Deducting {} units from product id: {}", quantity, id);
-    final ProductEntity entity = getById(id);
-    if (entity.getStockQuantity() < quantity) {
+    // BR-O01: a single guarded UPDATE — the stock can never go negative even under
+    // concurrent completions. A zero row count on an existing product means insufficient stock.
+    if (!getRepository().decreaseStockIfAvailable(id, quantity)) {
+      final ProductEntity entity = getById(id);
       throw new InsufficientStockException(entity.getName(), entity.getStockQuantity(), quantity);
     }
-    entity.setStockQuantity(entity.getStockQuantity() - quantity);
-    getRepository().save(entity);
-    log.debug("Product id: {} stock updated to {}", id, entity.getStockQuantity());
+    log.debug("Product id: {} stock decreased by {}", id, quantity);
   }
 
   @Override
