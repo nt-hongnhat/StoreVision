@@ -6,7 +6,7 @@
  * File: build.gradle
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-03 13:50:36
+ * Last Modified: 2026-06-12 17:26:35
  */
 
 plugins {
@@ -27,10 +27,6 @@ java {
 
 repositories {
     mavenCentral()
-}
-
-ext {
-    set('springModulithVersion', "2.0.6")
 }
 
 dependencies {
@@ -92,12 +88,6 @@ dependencies {
     testImplementation 'org.springframework.modulith:spring-modulith-starter-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     testAnnotationProcessor 'org.projectlombok:lombok'
-}
-
-dependencyManagement {
-    imports {
-        mavenBom "org.springframework.modulith:spring-modulith-bom:${springModulithVersion}"
-    }
 }
 
 tasks.named('test') {
