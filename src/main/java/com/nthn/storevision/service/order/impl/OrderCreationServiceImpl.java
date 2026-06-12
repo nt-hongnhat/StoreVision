@@ -11,16 +11,19 @@
 
 package com.nthn.storevision.service.order.impl;
 
+import com.nthn.storevision.constant.DiscountType;
 import com.nthn.storevision.constant.OrderStatus;
 import com.nthn.storevision.constant.message.CustomerMessageCode;
 import com.nthn.storevision.constant.message.ProductMessageCode;
 import com.nthn.storevision.dto.OrderDTO;
 import com.nthn.storevision.dto.OrderItemDTO;
+import com.nthn.storevision.dto.VoucherDTO;
 import com.nthn.storevision.dto.request.OrderCreationRequest;
 import com.nthn.storevision.dto.request.OrderItemCreationRequest;
 import com.nthn.storevision.entity.CustomerEntity;
 import com.nthn.storevision.entity.OrderEntity;
 import com.nthn.storevision.entity.ProductEntity;
+import com.nthn.storevision.entity.VoucherEntity;
 import com.nthn.storevision.exception.EntityNotFoundException;
 import com.nthn.storevision.exception.InsufficientStockException;
 import com.nthn.storevision.mapper.EntityMapperConfig;
@@ -30,7 +33,9 @@ import com.nthn.storevision.service.customer.CustomerRetrievalService;
 import com.nthn.storevision.service.order.OrderCreationService;
 import com.nthn.storevision.service.orderitem.OrderItemCreationService;
 import com.nthn.storevision.service.product.ProductRetrievalService;
+import com.nthn.storevision.service.voucher.VoucherValidationService;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -38,6 +43,8 @@ import java.util.Map;
 import java.util.function.Function;
 import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -47,8 +54,9 @@ import org.springframework.transaction.annotation.Transactional;
  *
  * <p>{@link #createOrder} implements the sales-order creation flow: input validation (customer and
  * products must exist and be active), stock availability check without deduction (BR-O01),
- * server-side total calculation (BR-O03), unit-price lock at creation time (BR-O04). The order and
- * all its items are persisted in a single transaction with status {@link OrderStatus#PENDING}.
+ * optional voucher validation (BR-V01–BR-V04), server-side total calculation — {@code totalAmount
+ * = subtotal − discount + tax} (BR-O03) — and unit-price lock at creation time (BR-O04). The order
+ * and all its items are persisted in a single transaction with status {@link OrderStatus#PENDING}.
  */
 @Slf4j
 @Service
@@ -56,20 +64,29 @@ public class OrderCreationServiceImpl
     extends AbstractCreatable<OrderDTO, OrderEntity, OrderRepository>
     implements OrderCreationService {
 
+  private static final BigDecimal PERCENT_DIVISOR = BigDecimal.valueOf(100);
+  private static final int MONEY_SCALE = 2;
+
   private final CustomerRetrievalService customerRetrievalService;
   private final OrderItemCreationService orderItemCreationService;
   private final ProductRetrievalService productRetrievalService;
+  private final VoucherValidationService voucherValidationService;
+  private final BigDecimal taxRate;
 
   protected OrderCreationServiceImpl(
       final EntityMapperConfig<OrderDTO, ?, OrderEntity> mapper,
       final OrderRepository repository,
       final CustomerRetrievalService customerRetrievalService,
       final OrderItemCreationService orderItemCreationService,
-      final ProductRetrievalService productRetrievalService) {
+      final ProductRetrievalService productRetrievalService,
+      final VoucherValidationService voucherValidationService,
+      @Value("${app.order.tax-rate:0.10}") final BigDecimal taxRate) {
     super(mapper, repository);
     this.customerRetrievalService = customerRetrievalService;
     this.orderItemCreationService = orderItemCreationService;
     this.productRetrievalService = productRetrievalService;
+    this.voucherValidationService = voucherValidationService;
+    this.taxRate = taxRate;
   }
 
   /** {@inheritDoc} */
@@ -77,16 +94,21 @@ public class OrderCreationServiceImpl
   @Transactional
   public OrderDTO createOrder(final @NonNull OrderCreationRequest request) {
     log.debug(
-        "Creating order: customerId={}, items={}",
+        "Creating order: customerId={}, items={}, voucherCode={}",
         request.getCustomerId(),
-        request.getItems().size());
+        request.getItems().size(),
+        request.getVoucherCode());
 
     final CustomerEntity customer = findActiveCustomer(request.getCustomerId());
     final Map<Long, ProductEntity> products = findActiveProducts(request.getItems());
 
     verifyStockAvailability(request.getItems(), products);
 
-    final BigDecimal totalAmount = calculateTotalAmount(request.getItems(), products);
+    final BigDecimal subtotal = calculateSubtotal(request.getItems(), products);
+    final VoucherDTO voucher = validateVoucherIfPresent(request.getVoucherCode(), subtotal);
+    final BigDecimal discountAmount = calculateDiscount(voucher, subtotal);
+    final BigDecimal taxAmount = subtotal.multiply(taxRate).setScale(MONEY_SCALE, RoundingMode.HALF_UP);
+    final BigDecimal totalAmount = subtotal.subtract(discountAmount).add(taxAmount);
 
     final OrderEntity saved =
         getRepository()
@@ -95,7 +117,13 @@ public class OrderCreationServiceImpl
                     .customer(customer)
                     .orderDate(LocalDateTime.now())
                     .status(OrderStatus.PENDING)
+                    .channel(request.getChannel())
+                    .note(request.getNote())
+                    .subtotal(subtotal)
+                    .discountAmount(discountAmount)
+                    .taxAmount(taxAmount)
                     .totalAmount(totalAmount)
+                    .voucher(toVoucherReference(voucher))
                     .build());
 
     final List<OrderItemDTO> items = createOrderItems(saved.getId(), request.getItems(), products);
@@ -104,10 +132,13 @@ public class OrderCreationServiceImpl
     result.setOrderItems(items);
 
     log.info(
-        "Order created: id={}, customerId={}, items={}, totalAmount={}",
+        "Order created: id={}, customerId={}, items={}, subtotal={}, discount={}, tax={}, total={}",
         saved.getId(),
         customer.getId(),
         items.size(),
+        subtotal,
+        discountAmount,
+        taxAmount,
         totalAmount);
     return result;
   }
@@ -157,8 +188,8 @@ public class OrderCreationServiceImpl
         });
   }
 
-  /** BR-O03: the total amount is always computed server-side from current product prices. */
-  private BigDecimal calculateTotalAmount(
+  /** BR-O03: the subtotal is always computed server-side from current product prices. */
+  private BigDecimal calculateSubtotal(
       final List<OrderItemCreationRequest> items, final Map<Long, ProductEntity> products) {
     return items.stream()
         .map(
@@ -168,6 +199,47 @@ public class OrderCreationServiceImpl
                     .getPrice()
                     .multiply(BigDecimal.valueOf(item.getQuantity())))
         .reduce(BigDecimal.ZERO, BigDecimal::add);
+  }
+
+  /** BR-V01–BR-V04: delegates voucher validation to the voucher domain when a code is supplied. */
+  private @Nullable VoucherDTO validateVoucherIfPresent(
+      final @Nullable String voucherCode, final BigDecimal orderAmount) {
+    if (null == voucherCode || voucherCode.isBlank()) {
+      return null;
+    }
+    return voucherValidationService.validate(voucherCode, orderAmount);
+  }
+
+  /**
+   * Computes the discount granted by the validated voucher: a percentage of the subtotal capped at
+   * the voucher's maximum (PERCENTAGE), or a fixed amount (FIXED_AMOUNT). The result never exceeds
+   * the subtotal so the total amount cannot become negative.
+   */
+  private BigDecimal calculateDiscount(
+      final @Nullable VoucherDTO voucher, final BigDecimal subtotal) {
+    if (null == voucher) {
+      return BigDecimal.ZERO;
+    }
+    BigDecimal discount;
+    if (DiscountType.PERCENTAGE == voucher.getDiscountType()) {
+      discount =
+          subtotal
+              .multiply(voucher.getDiscountValue())
+              .divide(PERCENT_DIVISOR, MONEY_SCALE, RoundingMode.HALF_UP);
+      if (null != voucher.getMaxDiscountAmount()) {
+        discount = discount.min(voucher.getMaxDiscountAmount());
+      }
+    } else {
+      discount = voucher.getDiscountValue();
+    }
+    return discount.min(subtotal);
+  }
+
+  private static @Nullable VoucherEntity toVoucherReference(final @Nullable VoucherDTO voucher) {
+    if (null == voucher) {
+      return null;
+    }
+    return new VoucherEntity().setId(voucher.getId());
   }
 
   /** BR-O04: each item's unit price is locked from the product's price at creation time. */
