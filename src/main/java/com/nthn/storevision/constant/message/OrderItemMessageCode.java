@@ -27,7 +27,25 @@ public enum OrderItemMessageCode implements LocalizedMessageCode {
    *
    * <p>This code is used when an order item entity is not found in the system.
    */
-  NOT_FOUND("OIM001");
+  NOT_FOUND("OIM001"),
+  /**
+   * Represents the message code for a validation error where a product ID is required.
+   *
+   * <p>This code is used when an order item is missing its product reference.
+   */
+  PRODUCT_ID_REQUIRED("OIM002"),
+  /**
+   * Represents the message code for a validation error where a quantity is less than 1.
+   *
+   * <p>This code is used when an order item quantity is less than 1, which is not allowed.
+   */
+  QUANTITY_MIN("OIM004"),
+  /**
+   * Represents the message code for a validation error where a quantity is required.
+   *
+   * <p>This code is used when an order item quantity is missing, which is a required field.
+   */
+  QUANTITY_REQUIRED("OIM003");
 
   private final String code;
 }

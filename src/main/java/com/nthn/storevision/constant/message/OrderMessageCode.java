@@ -23,6 +23,25 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum OrderMessageCode implements LocalizedMessageCode {
   /**
+   * Represents the message code for a validation error where a customer ID is required.
+   *
+   * <p>This code is used when the customer placing the order is missing from the request.
+   */
+  CUSTOMER_REQUIRED("ORM002"),
+  /**
+   * Represents the message code for an error where stock is insufficient for an order item.
+   *
+   * <p>This code is used when a product's available stock is lower than the requested quantity
+   * (BR-O01).
+   */
+  INSUFFICIENT_STOCK("ORM004"),
+  /**
+   * Represents the message code for a validation error where an order has no items.
+   *
+   * <p>This code is used when an order is created without at least one order item (BR-O05).
+   */
+  ITEMS_REQUIRED("ORM003"),
+  /**
    * Represents the message code for an error where an order entity is not found.
    *
    * <p>This code is used when an order entity is not found in the system.
