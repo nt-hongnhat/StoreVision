@@ -6,7 +6,7 @@
  * File: JpaOrderItemRepository.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-05-17 14:31:21
+ * Last Modified: 2026-06-12 23:07:00
  */
 
 package com.nthn.storevision.repository.jpa;

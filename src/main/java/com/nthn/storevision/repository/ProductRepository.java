@@ -6,7 +6,7 @@
  * File: ProductRepository.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-05 15:43:24
+ * Last Modified: 2026-06-12 23:08:21
  */
 
 package com.nthn.storevision.repository;
@@ -44,6 +44,16 @@ public interface ProductRepository
    */
   List<ProductEntity> findAllActive();
 
+  /**
+   * Returns active (non-deleted) products whose stock quantity is at or below the given threshold.
+   * Used by the inventory module for BR-I04 low-stock alerts.
+   *
+   * @param threshold maximum stock quantity to include
+   * @return list of low-stock active products
+   */
+  List<ProductEntity> findLowStock(int threshold);
+
+  /**
    * Atomically increments a product's stock by {@code quantity}, preventing lost updates from
    * concurrent receipts.
    *
@@ -58,8 +68,8 @@ public interface ProductRepository
    *
    * @param name the name of the product to check for.
    * @param category the category of the product to check for.
-   * @return {@code true} if an active product with the given name and category exists;
-   *         {@code false} otherwise.
+   * @return {@code true} if an active product with the given name and category exists; {@code
+   *     false} otherwise.
    */
   boolean isProductActiveAndInCategory(String name, String category);
 
@@ -71,7 +81,7 @@ public interface ProductRepository
    * @param category the category of the product to check for.
    * @param id the ID of the product to exclude from the check.
    * @return {@code true} if an active product with the given name and category exists, excluding
-   *         the product with the specified ID; {@code false} otherwise.
+   *     the product with the specified ID; {@code false} otherwise.
    */
   boolean isProductActiveInCategoryExcludingId(String name, String category, Long id);
 

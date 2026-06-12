@@ -6,7 +6,7 @@
  * File: JpaCustomerRepository.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-12 22:02:30
+ * Last Modified: 2026-06-12 23:07:09
  */
 
 package com.nthn.storevision.repository.jpa;
@@ -49,9 +49,7 @@ public interface JpaCustomerRepository extends JpaRepository<CustomerEntity, Lon
    * @param id the customer being updated, excluded from the check; must not be {@code null}
    * @return {@code true} if the email is registered to another customer
    */
-  @Query(
-      "SELECT (COUNT(c) > 0) FROM CustomerEntity c"
-          + " WHERE c.email = :email AND c.id <> :id")
+  @Query("SELECT (COUNT(c) > 0) FROM CustomerEntity c" + " WHERE c.email = :email AND c.id <> :id")
   boolean isEmailAlreadyRegistered(@Param("email") String email, @Param("id") Long id);
 
   /**

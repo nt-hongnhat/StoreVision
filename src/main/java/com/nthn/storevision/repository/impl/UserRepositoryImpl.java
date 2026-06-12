@@ -6,7 +6,7 @@
  * File: UserRepositoryImpl.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-04 17:20:53
+ * Last Modified: 2026-06-12 22:51:36
  */
 
 package com.nthn.storevision.repository.impl;

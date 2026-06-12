@@ -6,7 +6,7 @@
  * File: OrderRepositoryImpl.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-12 22:03:04
+ * Last Modified: 2026-06-12 23:07:55
  */
 
 package com.nthn.storevision.repository.impl;
@@ -21,8 +21,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 /**
- * Implementation of the {@link OrderRepository} interface.
- * This class acts as an adapter, delegating calls to the underlying {@link JpaOrderRepository}.
+ * Implementation of the {@link OrderRepository} interface. This class acts as an adapter,
+ * delegating calls to the underlying {@link JpaOrderRepository}.
  */
 @Repository
 @RequiredArgsConstructor

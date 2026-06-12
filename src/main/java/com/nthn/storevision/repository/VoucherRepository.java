@@ -31,5 +31,14 @@ public interface VoucherRepository
    *     voucher carries the given code
    */
   Optional<VoucherEntity> findByCode(String code);
+
+  /**
+   * BR-V03: atomically increments a voucher's usage count only while it is still below the usage
+   * limit — concurrent completions can never push the count past the maximum.
+   *
+   * @param id the voucher to update; must not be {@code null}
    * @return {@code true} when the count was incremented; {@code false} when the voucher does not
+   *     exist or its usage limit is already reached
+   */
+  boolean incrementUsageIfBelowLimit(Long id);
 }

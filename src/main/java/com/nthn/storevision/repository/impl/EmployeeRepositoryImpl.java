@@ -6,7 +6,7 @@
  * File: EmployeeRepositoryImpl.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-04 17:20:39
+ * Last Modified: 2026-06-12 23:07:46
  */
 
 package com.nthn.storevision.repository.impl;
@@ -14,15 +14,14 @@ package com.nthn.storevision.repository.impl;
 import com.nthn.storevision.entity.EmployeeEntity;
 import com.nthn.storevision.repository.EmployeeRepository;
 import com.nthn.storevision.repository.jpa.JpaEmployeeRepository;
+import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-import java.util.Optional;
-
 /**
- * Implementation of the {@link EmployeeRepository} interface.
- * This class acts as an adapter, delegating calls to the underlying {@link JpaEmployeeRepository}.
+ * Implementation of the {@link EmployeeRepository} interface. This class acts as an adapter,
+ * delegating calls to the underlying {@link JpaEmployeeRepository}.
  */
 @Repository
 @RequiredArgsConstructor

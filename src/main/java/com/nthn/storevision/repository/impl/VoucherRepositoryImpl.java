@@ -6,7 +6,7 @@
  * File: VoucherRepositoryImpl.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-12
+ * Last Modified: 2026-06-12 23:08:52
  */
 
 package com.nthn.storevision.repository.impl;
@@ -20,8 +20,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 /**
- * Implementation of the {@link VoucherRepository} interface.
- * This class acts as an adapter, delegating calls to the underlying {@link JpaVoucherRepository}.
+ * Implementation of the {@link VoucherRepository} interface. This class acts as an adapter,
+ * delegating calls to the underlying {@link JpaVoucherRepository}.
  */
 @Repository
 @RequiredArgsConstructor

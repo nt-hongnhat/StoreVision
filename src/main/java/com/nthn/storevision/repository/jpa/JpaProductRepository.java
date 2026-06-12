@@ -1,3 +1,14 @@
+/*
+ * Copyright (c) 2026 Hong Nhat. All rights reserved.
+ *
+ * Project: Store Vision
+ * Module: Store Vision Main
+ * File: JpaProductRepository.java
+ * Author: Nguyen Thi Hong Nhat
+ * Contact: hongnhat1121@gmail.com
+ * Last Modified: 2026-06-12 23:06:51
+ */
+
 package com.nthn.storevision.repository.jpa;
 
 import com.nthn.storevision.entity.ProductEntity;

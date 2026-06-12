@@ -6,7 +6,7 @@
  * File: ProductRepositoryImpl.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-05 15:42:51
+ * Last Modified: 2026-06-12 23:08:21
  */
 
 package com.nthn.storevision.repository.impl;
@@ -38,9 +38,31 @@ public class ProductRepositoryImpl implements ProductRepository {
   public List<ProductEntity> findAllActive() {
     return jpaRepository.findByDeletedDateIsNull();
   }
+
+  @Override
+  public List<ProductEntity> findLowStock(final int threshold) {
+    return jpaRepository.findByStockQuantityLessThanEqualAndDeletedDateIsNull(threshold);
+  }
+
   @Override
   public boolean increaseStock(final Long id, final Integer quantity) {
     return 0 < jpaRepository.increaseStock(id, quantity);
+  }
+
+  @Override
+  public boolean isProductActiveAndInCategory(final String name, final String category) {
+    return jpaRepository.existsByNameAndCategoryAndDeletedDateIsNull(name, category);
+  }
+
+  @Override
+  public boolean isProductActiveInCategoryExcludingId(
+      final String name, final String category, final Long id) {
+    return jpaRepository.existsByNameAndCategoryAndDeletedDateIsNullAndIdNot(name, category, id);
+  }
+
+  @Override
+  public List<ProductEntity> searchActive(final String name, final String category) {
+    return jpaRepository.searchByNameAndCategory(name, category);
   }
 
   @Override
@@ -63,8 +85,7 @@ public class ProductRepositoryImpl implements ProductRepository {
     findById(id)
         .ifPresent(
             entity -> {
-              entity.setDeletedBy(null);
-              entity.setDeletedDate(null);
+              entity.setDeletedBy(null).setDeletedDate(null);
               entity.setDeleted(false);
               save(entity);
             });

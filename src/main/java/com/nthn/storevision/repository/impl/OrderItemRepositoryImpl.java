@@ -6,7 +6,7 @@
  * File: OrderItemRepositoryImpl.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-04 17:20:39
+ * Last Modified: 2026-06-12 23:07:46
  */
 
 package com.nthn.storevision.repository.impl;
@@ -21,8 +21,8 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Implementation of the {@link OrderItemRepository} interface.
- * This class acts as an adapter, delegating calls to the underlying {@link JpaOrderItemRepository}.
+ * Implementation of the {@link OrderItemRepository} interface. This class acts as an adapter,
+ * delegating calls to the underlying {@link JpaOrderItemRepository}.
  */
 @Repository
 @RequiredArgsConstructor

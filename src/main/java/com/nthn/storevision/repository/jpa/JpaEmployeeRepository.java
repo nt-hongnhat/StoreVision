@@ -6,28 +6,35 @@
  * File: JpaEmployeeRepository.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-05-17 14:31:21
+ * Last Modified: 2026-06-12 23:07:04
  */
 
 package com.nthn.storevision.repository.jpa;
 
 import com.nthn.storevision.entity.EmployeeEntity;
+import java.util.List;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.Optional;
-
 /**
- * JPA Repository for {@link EmployeeEntity}.
- * Provides standard JPA operations and custom query methods for Employee entities.
+ * JPA Repository for {@link EmployeeEntity}. Provides standard JPA operations and custom query
+ * methods for Employee entities.
  */
 @Repository
 public interface JpaEmployeeRepository extends JpaRepository<EmployeeEntity, Long> {
-    /**
-     * Finds an employee by their username.
-     *
-     * @param username The username of the employee.
-     * @return An {@link Optional} containing the {@link EmployeeEntity} if found, or empty if not.
-     */
   /**
+   * Returns all active (non-soft-deleted) employees.
+   *
+   * @return the list of active employees; never {@code null}
+   */
+  List<EmployeeEntity> findByDeletedDateIsNull();
+
+  /**
+   * Finds an employee by their username.
+   *
+   * @param username The username of the employee.
+   * @return An {@link Optional} containing the {@link EmployeeEntity} if found, or empty if not.
+   */
+  Optional<EmployeeEntity> findByUsername(String username);
 }
