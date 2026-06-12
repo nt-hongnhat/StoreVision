@@ -11,12 +11,28 @@
 
 package com.nthn.storevision.model;
 
+import com.nthn.storevision.constant.OrderChannel;
 import com.nthn.storevision.constant.OrderStatus;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 /** Represents a customer order in the StoreVision domain. */
 public interface Order extends CustomAuditable<Long> {
+
+  /**
+   * Gets the sales channel this order originates from.
+   *
+   * @return the {@link OrderChannel}; never {@code null}.
+   */
+  OrderChannel getChannel();
+
+  /**
+   * Sets the sales channel of this order.
+   *
+   * @param channel the {@link OrderChannel} to set; must not be {@code null}.
+   * @return the updated {@code Order} instance.
+   */
+  Order setChannel(OrderChannel channel);
 
   /**
    * Gets the customer who placed this order.
@@ -32,6 +48,37 @@ public interface Order extends CustomAuditable<Long> {
    * @return the updated {@code Order} instance.
    */
   Order setCustomer(Customer customer);
+
+  /**
+   * Gets the discount amount granted by the applied voucher.
+   *
+   * @return the discount amount as a non-negative {@link BigDecimal}; never {@code null}, zero
+   *     when no voucher was applied.
+   */
+  BigDecimal getDiscountAmount();
+
+  /**
+   * Sets the discount amount of this order.
+   *
+   * @param discountAmount the discount amount to set; must not be {@code null}.
+   * @return the updated {@code Order} instance.
+   */
+  Order setDiscountAmount(BigDecimal discountAmount);
+
+  /**
+   * Gets the optional note attached to this order.
+   *
+   * @return the note as a {@link String}, or {@code null} if none was provided.
+   */
+  String getNote();
+
+  /**
+   * Sets an optional note for this order.
+   *
+   * @param note the note to set; may be {@code null}.
+   * @return the updated {@code Order} instance.
+   */
+  Order setNote(String note);
 
   /**
    * Gets the date and time when the order was placed.
@@ -64,6 +111,36 @@ public interface Order extends CustomAuditable<Long> {
   Order setStatus(OrderStatus status);
 
   /**
+   * Gets the sum of all order item amounts before discount and tax (BR-O03).
+   *
+   * @return the subtotal as a non-negative {@link BigDecimal}; never {@code null}.
+   */
+  BigDecimal getSubtotal();
+
+  /**
+   * Sets the subtotal of this order.
+   *
+   * @param subtotal the subtotal to set; must not be {@code null}.
+   * @return the updated {@code Order} instance.
+   */
+  Order setSubtotal(BigDecimal subtotal);
+
+  /**
+   * Gets the tax amount applied to this order.
+   *
+   * @return the tax amount as a non-negative {@link BigDecimal}; never {@code null}.
+   */
+  BigDecimal getTaxAmount();
+
+  /**
+   * Sets the tax amount of this order.
+   *
+   * @param taxAmount the tax amount to set; must not be {@code null}.
+   * @return the updated {@code Order} instance.
+   */
+  Order setTaxAmount(BigDecimal taxAmount);
+
+  /**
    * Gets the total monetary amount of the order.
    *
    * @return the total amount as a {@link BigDecimal}.
@@ -77,4 +154,19 @@ public interface Order extends CustomAuditable<Long> {
    * @return the updated {@code Order} instance.
    */
   Order setTotalAmount(BigDecimal totalAmount);
+
+  /**
+   * Gets the voucher applied to this order.
+   *
+   * @return the applied {@link Voucher}, or {@code null} when no voucher was used.
+   */
+  Voucher getVoucher();
+
+  /**
+   * Sets the voucher applied to this order.
+   *
+   * @param voucher the {@link Voucher} to apply; may be {@code null} when no voucher is used.
+   * @return the updated {@code Order} instance.
+   */
+  Order setVoucher(Voucher voucher);
 }

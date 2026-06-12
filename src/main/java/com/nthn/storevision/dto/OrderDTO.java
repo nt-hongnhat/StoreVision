@@ -11,6 +11,7 @@
 
 package com.nthn.storevision.dto;
 
+import com.nthn.storevision.constant.OrderChannel;
 import com.nthn.storevision.constant.OrderStatus;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -49,4 +50,22 @@ public class OrderDTO {
 
     /** Response-only: line items belonging to this order; may be {@code null} on requests. */
     private List<OrderItemDTO> orderItems;
+
+    /** Response-only: sales channel the order originates from (POS or ONLINE). */
+    private OrderChannel channel;
+
+    /** Response-only: discount granted by the applied voucher; zero when no voucher was used. */
+    private BigDecimal discountAmount;
+
+    /** Response-only: optional note attached to the order; may be {@code null}. */
+    private String note;
+
+    /** Response-only: sum of all item amounts before discount and tax (BR-O03). */
+    private BigDecimal subtotal;
+
+    /** Response-only: tax applied to the order. */
+    private BigDecimal taxAmount;
+
+    /** Response-only: ID of the applied voucher; {@code null} when no voucher was used. */
+    private Long voucherId;
 }
