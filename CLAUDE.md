@@ -336,7 +336,13 @@ All message keys in `/i18n/messages*.properties` must follow the
 | `CSM001` | Customer not found                                    |
 | `EMM001` | Employee not found                                    |
 | `ORM001` | Order not found                                       |
+| `ORM002` | Customer ID required (OrderCreationRequest)           |
+| `ORM003` | Order must contain at least one item (BR-O05)         |
+| `ORM004` | Insufficient stock for order item (BR-O01)            |
 | `OIM001` | Order item not found                                  |
+| `OIM002` | Product ID required (OrderItemCreationRequest)        |
+| `OIM003` | Quantity required (OrderItemCreationRequest)          |
+| `OIM004` | Quantity must be >= 1                                 |
 
 ### 7. Logging
 
