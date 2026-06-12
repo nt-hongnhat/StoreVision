@@ -6,7 +6,7 @@
  * File: CustomerRetrievalService.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-05-17 14:13:29
+ * Last Modified: 2026-06-12 17:16:53
  */
 
 package com.nthn.storevision.service.customer;
@@ -35,14 +35,6 @@ public interface CustomerRetrievalService extends Readable<CustomerEntity, Long>
   List<CustomerDTO> findAllCustomersAsDTO();
 
   /**
-   * Retrieves a customer by its identifier and maps it to {@link CustomerDTO}.
-   *
-   * @param id the identifier of the customer to be retrieved.
-   * @return the {@link CustomerDTO} with the specified identifier, or null if not found.
-   */
-  CustomerDTO findCustomerDTOById(Long id);
-
-  /**
    * Finds a customer by their email address and maps the result using the provided mapping function.
    *
    * @param email the email address of the customer to retrieve
@@ -52,4 +44,12 @@ public interface CustomerRetrievalService extends Readable<CustomerEntity, Long>
    *     {@code Optional} if no customer corresponds to the given email
    */
   <T> Optional<T> findByEmail(String email, Function<? super CustomerEntity, T> mapper);
+
+  /**
+   * Retrieves a customer by its identifier and maps it to {@link CustomerDTO}.
+   *
+   * @param id the identifier of the customer to be retrieved.
+   * @return the {@link CustomerDTO} with the specified identifier, or null if not found.
+   */
+  CustomerDTO findCustomerDTOById(Long id);
 }

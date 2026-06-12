@@ -6,7 +6,7 @@
  * File: EmployeeRetrievalService.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-05-17 14:28:36
+ * Last Modified: 2026-06-12 17:16:36
  */
 
 package com.nthn.storevision.service.employee;
@@ -35,14 +35,6 @@ public interface EmployeeRetrievalService extends Readable<EmployeeEntity, Long>
   List<EmployeeDTO> findAllEmployeesAsDTO();
 
   /**
-   * Retrieves an employee by its identifier and maps it to {@link EmployeeDTO}.
-   *
-   * @param id the identifier of the employee to be retrieved.
-   * @return the {@link EmployeeDTO} with the specified identifier, or null if not found.
-   */
-  EmployeeDTO findEmployeeDTOById(Long id);
-
-  /**
    * Finds an employee by their username and maps the result using the provided mapping function.
    *
    * @param username the username of the employee to retrieve
@@ -51,5 +43,13 @@ public interface EmployeeRetrievalService extends Readable<EmployeeEntity, Long>
    * @return an {@code Optional} containing the mapped result if the employee is found, or an empty
    *     {@code Optional} if no employee corresponds to the given username
    */
-  <T> Optional<T> findByUsername(String username, Function<? super EmployeeEntity, T> mapper);
+  <T> Optional<T> findByUsername(String username, Function<? super EmployeeEntity, ? extends T> mapper);
+
+  /**
+   * Retrieves an employee by its identifier and maps it to {@link EmployeeDTO}.
+   *
+   * @param id the identifier of the employee to be retrieved.
+   * @return the {@link EmployeeDTO} with the specified identifier, or null if not found.
+   */
+  EmployeeDTO findEmployeeDTOById(Long id);
 }
