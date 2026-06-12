@@ -6,7 +6,7 @@
  * File: ResponseDescription.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-05 16:08:46
+ * Last Modified: 2026-06-12 23:28:47
  */
 
 package com.nthn.storevision.constant.api;
