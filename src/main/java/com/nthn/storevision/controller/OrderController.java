@@ -6,15 +6,15 @@
  * File: OrderController.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-12 21:06:36
+ * Last Modified: 2026-06-12 23:28:00
  */
 
 package com.nthn.storevision.controller;
 
 import com.nthn.storevision.dto.OrderDTO;
 import com.nthn.storevision.dto.request.OrderCreationRequest;
+import com.nthn.storevision.dto.response.PageDTO;
 import jakarta.validation.Valid;
-import java.util.List;
 
 /**
  * API contract for order management endpoints.
@@ -25,17 +25,17 @@ public interface OrderController {
 
   /**
    * Cancels a PENDING order (PENDING → CANCELLED). No stock is deducted and no loyalty points are
-   * awarded; a COMPLETED order cannot be cancelled (BR-O02).
+   * awarded; a COMPLETED order cannot be canceled (BR-O02).
    *
    * @param id the ID of the order to cancel
-   * @return the cancelled order
+   * @return the canceled order
    */
   OrderDTO cancelOrder(Long id);
 
   /**
    * Confirms payment for a PENDING order (PENDING → COMPLETED). Re-checks and deducts stock,
-   * records ISSUE stock movements (BR-I05), awards loyalty points and increments the voucher
-   * usage count.
+   * records ISSUE stock movements (BR-I05), awards loyalty points and increments the voucher usage
+   * count.
    *
    * @param id the ID of the order to complete
    * @return the completed order
@@ -60,11 +60,13 @@ public interface OrderController {
   void deleteOrder(Long id);
 
   /**
-   * Retrieves all active orders.
+   * Retrieves one page of active orders, the most recent first.
    *
-   * @return list of all non-deleted orders
+   * @param page zero-based page index
+   * @param size page size
+   * @return the requested page of orders
    */
-  List<OrderDTO> getAllOrders();
+  PageDTO<OrderDTO> getAllOrders(int page, int size);
 
   /**
    * Retrieves an order by ID.

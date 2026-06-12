@@ -6,7 +6,7 @@
  * File: JpaOrderRepository.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-12 23:06:51
+ * Last Modified: 2026-06-12 23:21:28
  */
 
 package com.nthn.storevision.repository.jpa;
@@ -14,6 +14,8 @@ package com.nthn.storevision.repository.jpa;
 import com.nthn.storevision.constant.OrderStatus;
 import com.nthn.storevision.entity.OrderEntity;
 import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -33,8 +35,9 @@ public interface JpaOrderRepository extends JpaRepository<OrderEntity, Long> {
    *     {@code false} otherwise
    */
   @Query(
-      "SELECT (COUNT(o) > 0) FROM OrderEntity o"
-          + " WHERE o.customer.id = :customerId AND o.status = :status AND o.deletedDate IS NULL")
+      """
+          SELECT (COUNT(o) > 0) FROM OrderEntity o
+           WHERE o.customer.id = :customerId AND o.status = :status AND o.deletedDate IS NULL""")
   boolean existsByCustomerIdAndStatus(
       @Param("customerId") Long customerId, @Param("status") OrderStatus status);
 
@@ -48,8 +51,9 @@ public interface JpaOrderRepository extends JpaRepository<OrderEntity, Long> {
    *     product; {@code false} otherwise
    */
   @Query(
-      "SELECT (COUNT(o) > 0) FROM OrderEntity o JOIN o.orderItems oi"
-          + " WHERE oi.product.id = :productId AND o.status = :status AND o.deletedDate IS NULL")
+      """
+          SELECT (COUNT(o) > 0) FROM OrderEntity o JOIN o.orderItems oi
+           WHERE oi.product.id = :productId AND o.status = :status AND o.deletedDate IS NULL""")
   boolean existsByOrderItemsProductIdAndStatus(
       @Param("productId") Long productId, @Param("status") OrderStatus status);
 
@@ -68,4 +72,12 @@ public interface JpaOrderRepository extends JpaRepository<OrderEntity, Long> {
    * @return the list of active orders; never {@code null}
    */
   List<OrderEntity> findByDeletedDateIsNull();
+
+  /**
+   * Returns one page of active (non-soft-deleted) orders.
+   *
+   * @param pageable page request carrying index, size, and sort; must not be {@code null}
+   * @return the requested page of active orders; never {@code null}
+   */
+  Page<OrderEntity> findByDeletedDateIsNull(Pageable pageable);
 }

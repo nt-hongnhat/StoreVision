@@ -6,7 +6,7 @@
  * File: OrderControllerV1.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-12 21:33:02
+ * Last Modified: 2026-06-12 23:28:20
  */
 
 package com.nthn.storevision.controller.v1;
@@ -16,16 +16,17 @@ import com.nthn.storevision.constant.api.ResponseDescription;
 import com.nthn.storevision.controller.OrderController;
 import com.nthn.storevision.dto.OrderDTO;
 import com.nthn.storevision.dto.request.OrderCreationRequest;
+import com.nthn.storevision.dto.response.PageDTO;
 import com.nthn.storevision.service.order.OrderCreationService;
 import com.nthn.storevision.service.order.OrderDeletionService;
 import com.nthn.storevision.service.order.OrderRetrievalService;
 import com.nthn.storevision.service.order.OrderUpdateService;
+import com.nthn.storevision.util.PaginationUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -37,6 +38,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -48,28 +50,27 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class OrderControllerV1 implements OrderController {
 
+  private static final String CANCEL_ORDER_DESC =
+      "Cancels a PENDING order (PENDING → CANCELLED). No stock is deducted and no loyalty points"
+          + " are awarded. A COMPLETED order cannot be cancelled (BR-O02). CANCELLED is a final"
+          + " state.";
+  private static final String COMPLETE_ORDER_DESC =
+      "Confirms payment for a PENDING order (PENDING → COMPLETED). Re-checks stock availability"
+          + " (BR-O01), deducts stock and records ISSUE stock movements in the same transaction"
+          + " (BR-I05), awards loyalty points to the customer and increments the voucher usage"
+          + " count. COMPLETED is a final state.";
+  private static final String COMPLETE_STOCK_DESC =
+      "Stock quantity is insufficient for one or more order items at completion time (BR-O01)";
   private static final String CREATE_ORDER_DESC =
       "Creates a sales order in PENDING status. Validates the customer, the products and the stock"
           + " availability without deducting it (BR-O01), validates the optional voucher"
           + " (BR-V01–BR-V04), computes subtotal, discount, tax and total server-side (BR-O03) and"
           + " locks each item's unit price at creation time (BR-O04)."
           + " The order must contain at least one item (BR-O05).";
-  private static final String UNPROCESSABLE_DESC =
-      "Stock quantity is insufficient (BR-O01) or the voucher cannot be applied (BR-V01–BR-V04)";
-  private static final String COMPLETE_ORDER_DESC =
-      "Confirms payment for a PENDING order (PENDING → COMPLETED). Re-checks stock availability"
-          + " (BR-O01), deducts stock and records ISSUE stock movements in the same transaction"
-          + " (BR-I05), awards loyalty points to the customer and increments the voucher usage"
-          + " count. COMPLETED is a final state.";
-  private static final String CANCEL_ORDER_DESC =
-      "Cancels a PENDING order (PENDING → CANCELLED). No stock is deducted and no loyalty points"
-          + " are awarded. A COMPLETED order cannot be cancelled (BR-O02). CANCELLED is a final"
-          + " state.";
   private static final String INVALID_STATE_DESC =
       "Order is not in PENDING status — completed and cancelled orders are final (BR-O02)";
-  private static final String COMPLETE_STOCK_DESC =
-      "Stock quantity is insufficient for one or more order items at completion time (BR-O01)";
-
+  private static final String UNPROCESSABLE_DESC =
+      "Stock quantity is insufficient (BR-O01) or the voucher cannot be applied (BR-V01–BR-V04)";
   private final OrderCreationService creationService;
   private final OrderDeletionService deletionService;
   private final OrderRetrievalService retrievalService;
@@ -137,14 +138,20 @@ public class OrderControllerV1 implements OrderController {
   }
 
   @Operation(
-      summary = "Retrieve all orders",
-      description = "Returns a list of all active (non-deleted) order records.")
+      summary = "Retrieve orders (paginated)",
+      description = "Returns one page of active (non-deleted) order records, most recent first.")
   @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)
   @GetMapping
   @Override
-  public List<OrderDTO> getAllOrders() {
-    log.debug("GET /orders");
-    return retrievalService.findAllOrdersAsDTO();
+  public PageDTO<OrderDTO> getAllOrders(
+      @Parameter(description = ResponseDescription.PAGE_INDEX)
+          @RequestParam(defaultValue = PaginationUtil.DEFAULT_PAGE)
+          final int page,
+      @Parameter(description = ResponseDescription.PAGE_SIZE)
+          @RequestParam(defaultValue = PaginationUtil.DEFAULT_SIZE)
+          final int size) {
+    log.debug("GET /orders — page: {}, size: {}", page, size);
+    return retrievalService.findOrdersPage(page, size);
   }
 
   @Operation(

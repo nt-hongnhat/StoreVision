@@ -6,7 +6,7 @@
  * File: OrderRetrievalServiceImpl.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-12 22:00:59
+ * Last Modified: 2026-06-12 23:25:16
  */
 
 package com.nthn.storevision.service.order.impl;
@@ -14,13 +14,16 @@ package com.nthn.storevision.service.order.impl;
 import com.nthn.storevision.constant.message.LocalizedMessageCode;
 import com.nthn.storevision.constant.message.OrderMessageCode;
 import com.nthn.storevision.dto.OrderDTO;
+import com.nthn.storevision.dto.response.PageDTO;
 import com.nthn.storevision.entity.OrderEntity;
 import com.nthn.storevision.mapper.OrderMapper;
 import com.nthn.storevision.repository.OrderRepository;
 import com.nthn.storevision.service.common.AbstractReadable;
 import com.nthn.storevision.service.order.OrderRetrievalService;
+import com.nthn.storevision.util.PaginationUtil;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,6 +35,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class OrderRetrievalServiceImpl extends AbstractReadable<OrderEntity, Long, OrderRepository>
     implements OrderRetrievalService {
+
+  private static final Sort DEFAULT_SORT = Sort.by(Sort.Direction.DESC, "orderDate");
 
   private final OrderMapper orderMapper;
 
@@ -81,7 +86,7 @@ public class OrderRetrievalServiceImpl extends AbstractReadable<OrderEntity, Lon
    */
   @Override
   @Transactional(readOnly = true)
-  public OrderDTO findOrderDTOById(Long id) {
+  public OrderDTO findOrderDTOById(final Long id) {
     log.debug("Fetching order DTO by id: {}", id);
     return findById(id, orderMapper::toDTO);
   }
@@ -93,6 +98,16 @@ public class OrderRetrievalServiceImpl extends AbstractReadable<OrderEntity, Lon
     return getRepository().findAllByCustomerId(customerId).stream()
         .map(orderMapper::toDTO)
         .toList();
+  }
+
+  @Override
+  @Transactional(readOnly = true)
+  public PageDTO<OrderDTO> findOrdersPage(final int page, final int size) {
+    log.debug("Fetching orders page: page={}, size={}", page, size);
+    return PageDTO.from(
+        getRepository()
+            .findAllActive(PaginationUtil.toPageRequest(page, size, DEFAULT_SORT))
+            .map(orderMapper::toDTO));
   }
 
   @Override

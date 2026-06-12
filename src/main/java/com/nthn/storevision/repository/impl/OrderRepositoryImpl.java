@@ -6,7 +6,7 @@
  * File: OrderRepositoryImpl.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-12 23:07:55
+ * Last Modified: 2026-06-12 23:23:57
  */
 
 package com.nthn.storevision.repository.impl;
@@ -18,6 +18,8 @@ import com.nthn.storevision.repository.jpa.JpaOrderRepository;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -69,6 +71,11 @@ public class OrderRepositoryImpl implements OrderRepository {
   @Override
   public List<OrderEntity> findAllByCustomerId(final Long customerId) {
     return jpaRepository.findByCustomerIdAndDeletedDateIsNullOrderByOrderDateDesc(customerId);
+  }
+
+  @Override
+  public Page<OrderEntity> findAllActive(final Pageable pageable) {
+    return jpaRepository.findByDeletedDateIsNull(pageable);
   }
 
   @Override

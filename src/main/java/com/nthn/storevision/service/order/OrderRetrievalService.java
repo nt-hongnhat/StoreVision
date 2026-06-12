@@ -6,12 +6,13 @@
  * File: OrderRetrievalService.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-12 22:00:59
+ * Last Modified: 2026-06-12 23:25:02
  */
 
 package com.nthn.storevision.service.order;
 
 import com.nthn.storevision.dto.OrderDTO;
+import com.nthn.storevision.dto.response.PageDTO;
 import com.nthn.storevision.entity.OrderEntity;
 import com.nthn.storevision.service.generic.Readable;
 
@@ -66,4 +67,14 @@ public interface OrderRetrievalService extends Readable<OrderEntity, Long> {
    * @return list of the customer's orders; never {@code null}, may be empty
    */
   List<OrderDTO> findOrdersByCustomerId(Long customerId);
+
+  /**
+   * Retrieves one page of active orders ordered by the most recent first, mapped to {@link
+   * OrderDTO}. Out-of-range parameters are clamped instead of rejected.
+   *
+   * @param page zero-based page index; negative values are treated as 0
+   * @param size page size; clamped to a sane maximum
+   * @return the requested page of orders; never {@code null}
+   */
+  PageDTO<OrderDTO> findOrdersPage(int page, int size);
 }
