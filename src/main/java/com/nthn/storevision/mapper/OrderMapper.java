@@ -24,7 +24,10 @@ import org.mapstruct.MappingTarget;
  * Mapper interface for converting between {@link OrderEntity} and {@link OrderDTO}. This interface
  * uses MapStruct to generate the implementation.
  */
-@Mapper(componentModel = MappingConstants.ComponentModel.SPRING, config = EntityMapperConfig.class)
+@Mapper(
+    componentModel = MappingConstants.ComponentModel.SPRING,
+    config = EntityMapperConfig.class,
+    uses = OrderItemMapper.class)
 public interface OrderMapper extends EntityMapperConfig<OrderDTO, Long, OrderEntity> {
   /**
    * Maps a given customer ID to a {@link CustomerEntity}. If the provided customer ID is {@code
@@ -56,7 +59,8 @@ public interface OrderMapper extends EntityMapperConfig<OrderDTO, Long, OrderEnt
   OrderDTO toDTO(OrderEntity order);
 
   /**
-   * Converts an {@link OrderDTO} to an {@link OrderEntity}.
+   * Converts an {@link OrderDTO} to an {@link OrderEntity}. The {@code orderItems} field is ignored
+   * — order items are persisted through their own creation workflow.
    *
    * @param orderDTO The OrderDTO to convert.
    * @return The converted OrderEntity.
@@ -64,17 +68,19 @@ public interface OrderMapper extends EntityMapperConfig<OrderDTO, Long, OrderEnt
   @Mapping(
       target = "customer",
       expression = "java(mapCustomerIdToCustomerEntity(orderDTO.getCustomerId()))")
+  @Mapping(target = "orderItems", ignore = true)
   OrderEntity toEntity(OrderDTO orderDTO);
 
   /**
    * Updates an existing {@link OrderEntity} with values from the given {@link OrderDTO}. The {@code
-   * id} and {@code customer} fields are ignored — {@code customer} association must be changed via
-   * a dedicated workflow, not a regular update.
+   * id}, {@code customer}, and {@code orderItems} fields are ignored — these associations must be
+   * changed via dedicated workflows, not a regular update.
    *
    * @param dto the source DTO carrying updated field values
    * @param entity the target entity to be updated in place
    */
   @Mapping(target = "id", ignore = true)
   @Mapping(target = "customer", ignore = true)
+  @Mapping(target = "orderItems", ignore = true)
   void updateEntity(OrderDTO dto, @MappingTarget OrderEntity entity);
 }

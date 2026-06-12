@@ -21,6 +21,7 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * Data Transfer Object for Order.
@@ -45,4 +46,7 @@ public class OrderDTO {
 
     @NotNull(message = "{order.customerId.required}")
     private Long customerId;
+
+    /** Response-only: line items belonging to this order; may be {@code null} on requests. */
+    private List<OrderItemDTO> orderItems;
 }
