@@ -6,7 +6,7 @@
  * File: StockMovementRepositoryImpl.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-05 17:13:36
+ * Last Modified: 2026-06-12 23:24:30
  */
 
 package com.nthn.storevision.repository.impl;
@@ -18,6 +18,8 @@ import com.nthn.storevision.repository.jpa.JpaStockMovementRepository;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 /** Default implementation of {@link StockMovementRepository}. */
@@ -26,12 +28,6 @@ import org.springframework.stereotype.Repository;
 public class StockMovementRepositoryImpl implements StockMovementRepository {
 
   private final JpaStockMovementRepository jpaRepository;
-
-  /** {@inheritDoc} */
-  @Override
-  public StockMovementEntity save(final StockMovementEntity entity) {
-    return jpaRepository.save(entity);
-  }
 
   /** {@inheritDoc} */
   @Override
@@ -44,5 +40,19 @@ public class StockMovementRepositoryImpl implements StockMovementRepository {
   public List<StockMovementEntity> findReceiptsBetween(
       final LocalDateTime from, final LocalDateTime to) {
     return jpaRepository.findByTypeAndOptionalDateRange(StockMovementType.RECEIPT, from, to);
+  }
+
+  /** {@inheritDoc} */
+  @Override
+  public Page<StockMovementEntity> findReceiptsBetween(
+      final LocalDateTime from, final LocalDateTime to, final Pageable pageable) {
+    return jpaRepository.findPageByTypeAndOptionalDateRange(
+        StockMovementType.RECEIPT, from, to, pageable);
+  }
+
+  /** {@inheritDoc} */
+  @Override
+  public StockMovementEntity save(final StockMovementEntity entity) {
+    return jpaRepository.save(entity);
   }
 }

@@ -6,7 +6,7 @@
  * File: InventoryControllerV1.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-05 17:15:15
+ * Last Modified: 2026-06-12 23:28:47
  */
 
 package com.nthn.storevision.controller.v1;
@@ -18,8 +18,10 @@ import com.nthn.storevision.dto.InventoryDTO;
 import com.nthn.storevision.dto.StockMovementDTO;
 import com.nthn.storevision.dto.StockReceiptDTO;
 import com.nthn.storevision.dto.request.StockReceiptRequest;
+import com.nthn.storevision.dto.response.PageDTO;
 import com.nthn.storevision.service.inventory.InventoryCreationService;
 import com.nthn.storevision.service.inventory.InventoryRetrievalService;
+import com.nthn.storevision.util.PaginationUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -47,17 +49,35 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class InventoryControllerV1 implements InventoryController {
 
-  private static final String RECEIPT_CREATED = "Stock receipt recorded successfully";
   private static final String LOW_STOCK_DESC =
       "Products with stock quantity at or below the configured threshold (default 10, BR-I04)";
+  private static final String MOVEMENT_HISTORY_DESC =
+      "All stock movements (RECEIPT, ISSUE, ADJUSTMENT) for the product, ordered by most recent first.";
+  private static final String RECEIPT_CREATED = "Stock receipt recorded successfully";
   private static final String RECEIPT_HISTORY_DESC =
       "RECEIPT movements ordered by most recent first."
           + " Both date parameters are optional: omit to retrieve full history.";
-  private static final String MOVEMENT_HISTORY_DESC =
-      "All stock movements (RECEIPT, ISSUE, ADJUSTMENT) for the product, ordered by most recent first.";
-
   private final InventoryCreationService creationService;
   private final InventoryRetrievalService retrievalService;
+
+  /** {@inheritDoc} */
+  @Operation(
+      summary = "Record a stock receipt",
+      description =
+          "Creates a RECEIPT stock movement and increments the product's stock quantity."
+              + " Enforces BR-I01 (performed_by) and BR-I02 (quantity >= 1).")
+  @ApiResponse(responseCode = ResponseCode.CREATED, description = RECEIPT_CREATED)
+  @ApiResponse(
+      responseCode = ResponseCode.BAD_REQUEST,
+      description = ResponseDescription.INVALID_INPUT)
+  @ApiResponse(responseCode = ResponseCode.NOT_FOUND, description = ResponseDescription.NOT_FOUND)
+  @ResponseStatus(HttpStatus.CREATED)
+  @PostMapping("/receipts")
+  @Override
+  public StockReceiptDTO createReceipt(@Valid @RequestBody final StockReceiptRequest request) {
+    log.debug("POST /inventory/receipts — productId: {}", request.getProductId());
+    return creationService.receiveStock(request);
+  }
 
   /** {@inheritDoc} */
   @Operation(
@@ -89,43 +109,6 @@ public class InventoryControllerV1 implements InventoryController {
 
   /** {@inheritDoc} */
   @Operation(
-      summary = "Record a stock receipt",
-      description =
-          "Creates a RECEIPT stock movement and increments the product's stock quantity."
-              + " Enforces BR-I01 (performed_by) and BR-I02 (quantity >= 1).")
-  @ApiResponse(responseCode = ResponseCode.CREATED, description = RECEIPT_CREATED)
-  @ApiResponse(
-      responseCode = ResponseCode.BAD_REQUEST,
-      description = ResponseDescription.INVALID_INPUT)
-  @ApiResponse(responseCode = ResponseCode.NOT_FOUND, description = ResponseDescription.NOT_FOUND)
-  @ResponseStatus(HttpStatus.CREATED)
-  @PostMapping("/receipts")
-  @Override
-  public StockReceiptDTO createReceipt(@Valid @RequestBody final StockReceiptRequest request) {
-    log.debug("POST /inventory/receipts — productId: {}", request.getProductId());
-    return creationService.receiveStock(request);
-  }
-
-  /** {@inheritDoc} */
-  @Operation(
-      summary = "List stock receipt history",
-      description = RECEIPT_HISTORY_DESC)
-  @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)
-  @GetMapping("/receipts")
-  @Override
-  public List<StockReceiptDTO> getReceiptHistory(
-      @Parameter(description = "Start of date range (ISO-8601 datetime), inclusive")
-          @RequestParam(required = false)
-          final LocalDateTime from,
-      @Parameter(description = "End of date range (ISO-8601 datetime), inclusive")
-          @RequestParam(required = false)
-          final LocalDateTime to) {
-    log.debug("GET /inventory/receipts — from: {}, to: {}", from, to);
-    return retrievalService.findReceiptHistory(from, to);
-  }
-
-  /** {@inheritDoc} */
-  @Operation(
       summary = "List low-stock products",
       description = LOW_STOCK_DESC)
   @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)
@@ -150,5 +133,29 @@ public class InventoryControllerV1 implements InventoryController {
           final Long productId) {
     log.debug("GET /inventory/movements/{}", productId);
     return retrievalService.findMovementsByProductId(productId);
+  }
+
+  /** {@inheritDoc} */
+  @Operation(
+      summary = "List stock receipt history (paginated)",
+      description = RECEIPT_HISTORY_DESC)
+  @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)
+  @GetMapping("/receipts")
+  @Override
+  public PageDTO<StockReceiptDTO> getReceiptHistory(
+      @Parameter(description = "Start of date range (ISO-8601 datetime), inclusive")
+          @RequestParam(required = false)
+          final LocalDateTime from,
+      @Parameter(description = "End of date range (ISO-8601 datetime), inclusive")
+          @RequestParam(required = false)
+          final LocalDateTime to,
+      @Parameter(description = ResponseDescription.PAGE_INDEX)
+          @RequestParam(defaultValue = PaginationUtil.DEFAULT_PAGE)
+          final int page,
+      @Parameter(description = ResponseDescription.PAGE_SIZE)
+          @RequestParam(defaultValue = PaginationUtil.DEFAULT_SIZE)
+          final int size) {
+    log.debug("GET /inventory/receipts — from: {}, to: {}, page: {}, size: {}", from, to, page, size);
+    return retrievalService.findReceiptHistory(from, to, page, size);
   }
 }

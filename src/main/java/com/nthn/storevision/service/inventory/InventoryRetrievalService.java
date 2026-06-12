@@ -6,7 +6,7 @@
  * File: InventoryRetrievalService.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-12 17:28:11
+ * Last Modified: 2026-06-12 23:24:56
  */
 
 package com.nthn.storevision.service.inventory;
@@ -14,6 +14,7 @@ package com.nthn.storevision.service.inventory;
 import com.nthn.storevision.dto.InventoryDTO;
 import com.nthn.storevision.dto.StockMovementDTO;
 import com.nthn.storevision.dto.StockReceiptDTO;
+import com.nthn.storevision.dto.response.PageDTO;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -45,7 +46,7 @@ public interface InventoryRetrievalService {
   List<InventoryDTO> findLowStockProducts();
 
   /**
-   * Returns all stock movements for a given product, ordered by most recent first.
+   * Returns all stock movements for a given product, ordered by the most recent first.
    *
    * @param productId the product to query
    * @return movement history for that product
@@ -53,11 +54,15 @@ public interface InventoryRetrievalService {
   List<StockMovementDTO> findMovementsByProductId(Long productId);
 
   /**
-   * Returns RECEIPT movements within an optional date range. Null parameters mean open-ended.
+   * Returns one page of RECEIPT movements within an optional date range, the most recent first.
+   * Null date parameters mean open-ended; out-of-range page parameters are clamped.
    *
    * @param from start of date range (inclusive), or {@code null}
    * @param to end of date range (inclusive), or {@code null}
-   * @return matching receipts ordered by the most recent first
+   * @param page zero-based page index; negative values are treated as 0
+   * @param size page size; clamped to a sane maximum
+   * @return the requested page of matching receipts; never {@code null}
    */
-  List<StockReceiptDTO> findReceiptHistory(LocalDateTime from, LocalDateTime to);
+  PageDTO<StockReceiptDTO> findReceiptHistory(
+      LocalDateTime from, LocalDateTime to, int page, int size);
 }

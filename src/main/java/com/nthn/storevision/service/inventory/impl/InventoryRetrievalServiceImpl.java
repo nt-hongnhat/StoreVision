@@ -6,7 +6,7 @@
  * File: InventoryRetrievalServiceImpl.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-05 00:00:00
+ * Last Modified: 2026-06-12 23:24:56
  */
 
 package com.nthn.storevision.service.inventory.impl;
@@ -15,15 +15,19 @@ import com.nthn.storevision.dto.InventoryDTO;
 import com.nthn.storevision.dto.ProductDTO;
 import com.nthn.storevision.dto.StockMovementDTO;
 import com.nthn.storevision.dto.StockReceiptDTO;
+import com.nthn.storevision.dto.response.PageDTO;
 import com.nthn.storevision.mapper.StockMovementMapper;
 import com.nthn.storevision.repository.StockMovementRepository;
 import com.nthn.storevision.service.inventory.InventoryRetrievalService;
 import com.nthn.storevision.service.product.ProductRetrievalService;
+import com.nthn.storevision.util.PaginationUtil;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,13 +41,15 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class InventoryRetrievalServiceImpl implements InventoryRetrievalService {
 
-  /** BR-I04: configurable threshold; products at or below this quantity are considered low-stock. */
+  private final ProductRetrievalService productRetrievalService;
+  private final StockMovementMapper stockMovementMapper;
+  private final StockMovementRepository stockMovementRepository;
+
+  /**
+   * BR-I04: configurable threshold; products at or below this quantity are considered low-stock.
+   */
   @Value("${inventory.low-stock-threshold:10}")
   private int lowStockThreshold;
-
-  private final ProductRetrievalService productRetrievalService;
-  private final StockMovementRepository stockMovementRepository;
-  private final StockMovementMapper stockMovementMapper;
 
   /** {@inheritDoc} */
   @Override
@@ -51,7 +57,7 @@ public class InventoryRetrievalServiceImpl implements InventoryRetrievalService 
   public List<InventoryDTO> findAllInventory() {
     log.debug("Fetching all inventory");
     return productRetrievalService.findAllProductsAsDTO().stream()
-        .map(this::toInventoryDTO)
+        .map(InventoryRetrievalServiceImpl::toInventoryDTO)
         .toList();
   }
 
@@ -65,20 +71,10 @@ public class InventoryRetrievalServiceImpl implements InventoryRetrievalService 
 
   @Override
   @Transactional(readOnly = true)
-  public List<StockReceiptDTO> findReceiptHistory(
-      final LocalDateTime from, final LocalDateTime to) {
-    log.debug("Fetching receipt history — from: {}, to: {}", from, to);
-    return stockMovementRepository.findReceiptsBetween(from, to).stream()
-        .map(stockMovementMapper::toReceiptDTO)
-        .toList();
-  }
-
-  @Override
-  @Transactional(readOnly = true)
   public List<InventoryDTO> findLowStockProducts() {
     log.debug("Fetching low-stock products (threshold={})", lowStockThreshold);
     return productRetrievalService.findLowStockProducts(lowStockThreshold).stream()
-        .map(this::toInventoryDTO)
+        .map(InventoryRetrievalServiceImpl::toInventoryDTO)
         .toList();
   }
 
@@ -91,7 +87,21 @@ public class InventoryRetrievalServiceImpl implements InventoryRetrievalService 
         .toList();
   }
 
-  private InventoryDTO toInventoryDTO(final ProductDTO dto) {
+  @Override
+  @Transactional(readOnly = true)
+  public PageDTO<StockReceiptDTO> findReceiptHistory(
+      final LocalDateTime from, final LocalDateTime to, final int page, final int size) {
+    log.debug(
+        "Fetching receipt history — from: {}, to: {}, page: {}, size: {}", from, to, page, size);
+    // Ordering is fixed inside the repository query (movementDate DESC) — pass an unsorted page.
+    return PageDTO.from(
+        stockMovementRepository
+            .findReceiptsBetween(
+                from, to, PaginationUtil.toPageRequest(page, size, Sort.unsorted()))
+            .map(stockMovementMapper::toReceiptDTO));
+  }
+
+  private static InventoryDTO toInventoryDTO(final @NonNull ProductDTO dto) {
     return InventoryDTO.builder()
         .productId(dto.getId())
         .productName(dto.getName())

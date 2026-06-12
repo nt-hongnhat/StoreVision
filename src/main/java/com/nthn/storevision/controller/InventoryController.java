@@ -6,7 +6,7 @@
  * File: InventoryController.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-05 17:15:29
+ * Last Modified: 2026-06-12 23:27:27
  */
 
 package com.nthn.storevision.controller;
@@ -15,6 +15,7 @@ import com.nthn.storevision.dto.InventoryDTO;
 import com.nthn.storevision.dto.StockMovementDTO;
 import com.nthn.storevision.dto.StockReceiptDTO;
 import com.nthn.storevision.dto.request.StockReceiptRequest;
+import com.nthn.storevision.dto.response.PageDTO;
 import jakarta.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -70,12 +71,15 @@ public interface InventoryController {
   List<StockMovementDTO> getMovementsByProductId(Long productId);
 
   /**
-   * Returns RECEIPT movements within an optional date range.
+   * Returns one page of RECEIPT movements within an optional date range, the most recent first.
    *
    * @param from start of date range (inclusive), or {@code null} for no lower bound
    * @param to end of date range (inclusive), or {@code null} for no upper bound
-   * @return matching receipts ordered by most recent first
+   * @param page zero-based page index
+   * @param size page size
+   * @return the requested page of matching receipts
    * @see com.nthn.storevision.controller.v1.InventoryControllerV1#getReceiptHistory
    */
-  List<StockReceiptDTO> getReceiptHistory(LocalDateTime from, LocalDateTime to);
+  PageDTO<StockReceiptDTO> getReceiptHistory(
+      LocalDateTime from, LocalDateTime to, int page, int size);
 }
