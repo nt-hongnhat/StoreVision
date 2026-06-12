@@ -6,7 +6,7 @@
  * File: LocalizedMessageCode.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-12 17:15:09
+ * Last Modified: 2026-06-12 21:18:39
  */
 
 package com.nthn.storevision.constant.message;
@@ -37,6 +37,7 @@ package com.nthn.storevision.constant.message;
  *   <li>{@code OrderMessageCode}: Contains message codes specific to the order domain.
  *   <li>{@code ProductMessageCode}: Contains message codes specific to the product domain.
  *   <li>{@code UserMessageCode}: Contains message codes specific to the user domain.
+ *   <li>{@code VoucherMessageCode}: Contains message codes specific to the voucher domain.
  * </ul>
  *
  * Implementations of this interface are expected to be enums designed to encapsulate message codes
@@ -50,7 +51,8 @@ public sealed interface LocalizedMessageCode
         OrderItemMessageCode,
         OrderMessageCode,
         ProductMessageCode,
-        UserMessageCode {
+        UserMessageCode,
+        VoucherMessageCode {
 
   /**
    * Retrieves the message code string associated with this constant.

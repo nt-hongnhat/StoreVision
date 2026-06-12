@@ -290,6 +290,7 @@ All message keys in `/i18n/messages*.properties` must follow the
 | `EMM`  | Employee (`employee`)     | `EMM001` |
 | `ORM`  | Order (`order`)           | `ORM001` |
 | `OIM`  | Order item (`orderitem`)  | `OIM001` |
+| `VCM`  | Voucher (`voucher`)       | `VCM001` |
 
 > When adding a new domain, register its prefix in this table before writing any
 > message keys.
@@ -339,10 +340,16 @@ All message keys in `/i18n/messages*.properties` must follow the
 | `ORM002` | Customer ID required (OrderCreationRequest)           |
 | `ORM003` | Order must contain at least one item (BR-O05)         |
 | `ORM004` | Insufficient stock for order item (BR-O01)            |
+| `ORM005` | Order channel required (OrderCreationRequest)         |
 | `OIM001` | Order item not found                                  |
 | `OIM002` | Product ID required (OrderItemCreationRequest)        |
 | `OIM003` | Quantity required (OrderItemCreationRequest)          |
 | `OIM004` | Quantity must be >= 1                                 |
+| `VCM001` | Voucher not found                                     |
+| `VCM002` | Voucher expired (BR-V01)                              |
+| `VCM003` | Voucher inactive (BR-V02)                             |
+| `VCM004` | Voucher usage limit reached (BR-V03)                  |
+| `VCM005` | Order amount below voucher minimum (BR-V04)           |
 
 ### 7. Logging
 

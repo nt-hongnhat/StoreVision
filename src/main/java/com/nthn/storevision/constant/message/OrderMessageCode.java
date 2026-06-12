@@ -23,6 +23,12 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum OrderMessageCode implements LocalizedMessageCode {
   /**
+   * Represents the message code for a validation error where an order channel is required.
+   *
+   * <p>This code is used when the sales channel (POS or ONLINE) is missing from the request.
+   */
+  CHANNEL_REQUIRED("ORM005"),
+  /**
    * Represents the message code for a validation error where a customer ID is required.
    *
    * <p>This code is used when the customer placing the order is missing from the request.

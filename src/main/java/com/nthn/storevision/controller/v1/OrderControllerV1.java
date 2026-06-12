@@ -6,7 +6,7 @@
  * File: OrderControllerV1.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-12 20:57:41
+ * Last Modified: 2026-06-12 21:33:02
  */
 
 package com.nthn.storevision.controller.v1;
@@ -49,11 +49,25 @@ public class OrderControllerV1 implements OrderController {
 
   private static final String CREATE_ORDER_DESC =
       "Creates a sales order in PENDING status. Validates the customer, the products and the stock"
-          + " availability without deducting it (BR-O01), computes the total amount server-side"
-          + " (BR-O03) and locks each item's unit price at creation time (BR-O04)."
+          + " availability without deducting it (BR-O01), validates the optional voucher"
+          + " (BR-V01–BR-V04), computes subtotal, discount, tax and total server-side (BR-O03) and"
+          + " locks each item's unit price at creation time (BR-O04)."
           + " The order must contain at least one item (BR-O05).";
-  private static final String INSUFFICIENT_STOCK_DESC =
-      "Stock quantity is insufficient for one or more order items";
+  private static final String UNPROCESSABLE_DESC =
+      "Stock quantity is insufficient (BR-O01) or the voucher cannot be applied (BR-V01–BR-V04)";
+  private static final String COMPLETE_ORDER_DESC =
+      "Confirms payment for a PENDING order (PENDING → COMPLETED). Re-checks stock availability"
+          + " (BR-O01), deducts stock and records ISSUE stock movements in the same transaction"
+          + " (BR-I05), awards loyalty points to the customer and increments the voucher usage"
+          + " count. COMPLETED is a final state.";
+  private static final String CANCEL_ORDER_DESC =
+      "Cancels a PENDING order (PENDING → CANCELLED). No stock is deducted and no loyalty points"
+          + " are awarded. A COMPLETED order cannot be cancelled (BR-O02). CANCELLED is a final"
+          + " state.";
+  private static final String INVALID_STATE_DESC =
+      "Order is not in PENDING status — completed and cancelled orders are final (BR-O02)";
+  private static final String COMPLETE_STOCK_DESC =
+      "Stock quantity is insufficient for one or more order items at completion time (BR-O01)";
 
   private final OrderCreationService creationService;
   private final OrderDeletionService deletionService;
@@ -67,9 +81,7 @@ public class OrderControllerV1 implements OrderController {
       responseCode = ResponseCode.BAD_REQUEST,
       description = ResponseDescription.INVALID_INPUT)
   @ApiResponse(responseCode = ResponseCode.NOT_FOUND, description = ResponseDescription.NOT_FOUND)
-  @ApiResponse(
-      responseCode = ResponseCode.UNPROCESSABLE_ENTITY,
-      description = INSUFFICIENT_STOCK_DESC)
+  @ApiResponse(responseCode = ResponseCode.UNPROCESSABLE_ENTITY, description = UNPROCESSABLE_DESC)
   @ResponseStatus(HttpStatus.CREATED)
   @PostMapping
   @Override
