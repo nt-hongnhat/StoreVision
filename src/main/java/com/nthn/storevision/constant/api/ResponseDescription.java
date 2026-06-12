@@ -57,6 +57,13 @@ public enum ResponseDescription {
    */
   public static final String ORDER_ITEM_ID = "Order item ID";
 
+  /** Description for the zero-based page index request parameter of paginated endpoints. */
+  public static final String PAGE_INDEX =
+      "Zero-based page index (negative values are treated as 0)";
+
+  /** Description for the page size request parameter of paginated endpoints. */
+  public static final String PAGE_SIZE = "Page size, clamped to the range [1, 100]";
+
   /**
    * Represents the description for an identifier used to specify a product. Used in API response
    * descriptions to provide clarity on the meaning of the product ID field.
