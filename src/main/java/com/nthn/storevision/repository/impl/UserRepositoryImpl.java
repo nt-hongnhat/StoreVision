@@ -59,7 +59,7 @@ public class UserRepositoryImpl implements UserRepository {
 
   @Override
   public List<UserEntity> findAll() {
-    return jpaUserRepository.findAll();
+    return jpaUserRepository.findByDeletedDateIsNull();
   }
 
   @Override

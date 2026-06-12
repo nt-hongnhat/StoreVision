@@ -12,6 +12,7 @@
 package com.nthn.storevision.repository.jpa;
 
 import com.nthn.storevision.entity.VoucherEntity;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -30,6 +31,13 @@ public interface JpaVoucherRepository extends JpaRepository<VoucherEntity, Long>
    * @return an {@link Optional} containing the matching {@link VoucherEntity}, or empty if none
    */
   Optional<VoucherEntity> findByCode(String code);
+
+  /**
+   * Returns all active (non-soft-deleted) vouchers.
+   *
+   * @return the list of active vouchers; never {@code null}
+   */
+  List<VoucherEntity> findByDeletedDateIsNull();
 
   /**
    * BR-V03: atomically increments a voucher's usage count only while it is still below the usage

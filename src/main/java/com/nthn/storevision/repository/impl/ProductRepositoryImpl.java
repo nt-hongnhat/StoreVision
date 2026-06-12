@@ -35,6 +35,9 @@ public class ProductRepositoryImpl implements ProductRepository {
   }
 
   @Override
+  public List<ProductEntity> findAllActive() {
+    return jpaRepository.findByDeletedDateIsNull();
+  }
   @Override
   public boolean increaseStock(final Long id, final Integer quantity) {
     return 0 < jpaRepository.increaseStock(id, quantity);
@@ -69,7 +72,7 @@ public class ProductRepositoryImpl implements ProductRepository {
 
   @Override
   public List<ProductEntity> findAll() {
-    return jpaRepository.findAll();
+    return jpaRepository.findByDeletedDateIsNull();
   }
 
   @Override
@@ -80,32 +83,6 @@ public class ProductRepositoryImpl implements ProductRepository {
   @Override
   public boolean isExistsById(final Long id) {
     return jpaRepository.existsById(id);
-  }
-
-  @Override
-  public List<ProductEntity> findAllActive() {
-    return jpaRepository.findByDeletedDateIsNull();
-  }
-
-  @Override
-  public boolean isProductActiveAndInCategory(final String name, final String category) {
-    return jpaRepository.existsByNameAndCategoryAndDeletedDateIsNull(name, category);
-  }
-
-  @Override
-  public boolean isProductActiveInCategoryExcludingId(
-      final String name, final String category, final Long id) {
-    return jpaRepository.existsByNameAndCategoryAndDeletedDateIsNullAndIdNot(name, category, id);
-  }
-
-  @Override
-  public List<ProductEntity> searchActive(final String name, final String category) {
-    return jpaRepository.searchByNameAndCategory(name, category);
-  }
-
-  @Override
-  public List<ProductEntity> findLowStock(final int threshold) {
-    return jpaRepository.findByStockQuantityLessThanEqualAndDeletedDateIsNull(threshold);
   }
 
   @Override

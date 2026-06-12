@@ -37,25 +37,27 @@ public class EmployeeRepositoryImpl implements EmployeeRepository {
 
   @Override
   public void markDeletedById(final Long id) {
-    findById(id).ifPresent(entity -> {
-      entity.setDeleted(true);
-      save(entity);
-    });
+    findById(id)
+        .ifPresent(
+            entity -> {
+              entity.setDeleted(true);
+              save(entity);
+            });
   }
 
   @Override
   public void restoreById(final Long id) {
-    findById(id).ifPresent(entity -> {
-      entity.setDeletedBy(null);
-      entity.setDeletedDate(null);
-      entity.setDeleted(false);
-      save(entity);
-    });
+    findById(id)
+        .ifPresent(
+            entity -> {
+              entity.setDeletedBy(null).setDeletedDate(null);
+              save(entity);
+            });
   }
 
   @Override
   public List<EmployeeEntity> findAll() {
-    return jpaRepository.findAll();
+    return jpaRepository.findByDeletedDateIsNull();
   }
 
   @Override

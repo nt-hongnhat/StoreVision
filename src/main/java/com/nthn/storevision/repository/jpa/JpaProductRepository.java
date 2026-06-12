@@ -3,6 +3,7 @@ package com.nthn.storevision.repository.jpa;
 import com.nthn.storevision.entity.ProductEntity;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -40,11 +41,21 @@ public interface JpaProductRepository extends JpaRepository<ProductEntity, Long>
   /**
    * BR-P01 (update path): same check but excludes the record being updated to allow renaming to the
    * same value.
+   *
+   * @param category the category to check; must not be {@code null}
+   * @param id the product to exclude from the check; must not be {@code null}
+   * @param name the name to check; must not be {@code null}
+   * @return {@code true} if the name + category combination is unique among active products
+   *     excluding the product with the given ID
    */
   boolean existsByNameAndCategoryAndDeletedDateIsNullAndIdNot(
       String name, String category, Long id);
 
-  /** Returns all non-soft-deleted products. */
+  /**
+   * Returns all non-soft-deleted products.
+   *
+   * @return all non-soft-deleted products
+   */
   List<ProductEntity> findByDeletedDateIsNull();
 
   /**
@@ -73,6 +84,10 @@ public interface JpaProductRepository extends JpaRepository<ProductEntity, Long>
   /**
    * Full-text–style search over active products. Both parameters are optional: passing {@code null}
    * skips that filter entirely.
+   *
+   * @param category the category to search for; may be {@code null}
+   * @param name the name to search for; may be {@code null}
+   * @return active products matching the search criteria
    */
   @Query(
       "SELECT p FROM ProductEntity p WHERE p.deletedDate IS NULL"
@@ -80,7 +95,4 @@ public interface JpaProductRepository extends JpaRepository<ProductEntity, Long>
           + " AND (:category IS NULL OR p.category = :category)")
   List<ProductEntity> searchByNameAndCategory(
       @Param("name") String name, @Param("category") String category);
-
-  /** BR-I04: returns active products with stock at or below the threshold. */
-  List<ProductEntity> findByStockQuantityLessThanEqualAndDeletedDateIsNull(int threshold);
 }

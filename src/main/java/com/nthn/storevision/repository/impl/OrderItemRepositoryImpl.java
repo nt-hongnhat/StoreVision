@@ -37,25 +37,29 @@ public class OrderItemRepositoryImpl implements OrderItemRepository {
 
   @Override
   public void markDeletedById(final Long id) {
-    findById(id).ifPresent(entity -> {
-      entity.setDeleted(true);
-      save(entity);
-    });
+    findById(id)
+        .ifPresent(
+            entity -> {
+              entity.setDeleted(true);
+              save(entity);
+            });
   }
 
   @Override
   public void restoreById(final Long id) {
-    findById(id).ifPresent(entity -> {
-      entity.setDeletedBy(null);
-      entity.setDeletedDate(null);
-      entity.setDeleted(false);
-      save(entity);
-    });
+    findById(id)
+        .ifPresent(
+            entity -> {
+              entity.setDeletedBy(null);
+              entity.setDeletedDate(null);
+              entity.setDeleted(false);
+              save(entity);
+            });
   }
 
   @Override
   public List<OrderItemEntity> findAll() {
-    return jpaRepository.findAll();
+    return jpaRepository.findByDeletedDateIsNull();
   }
 
   @Override

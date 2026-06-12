@@ -61,4 +61,11 @@ public interface JpaOrderRepository extends JpaRepository<OrderEntity, Long> {
    * @return the list of orders; never {@code null}
    */
   List<OrderEntity> findByCustomerIdAndDeletedDateIsNullOrderByOrderDateDesc(Long customerId);
+
+  /**
+   * Returns all active (non-soft-deleted) orders.
+   *
+   * @return the list of active orders; never {@code null}
+   */
+  List<OrderEntity> findByDeletedDateIsNull();
 }

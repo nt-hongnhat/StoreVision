@@ -31,12 +31,7 @@ public class VoucherRepositoryImpl implements VoucherRepository {
 
   @Override
   public List<VoucherEntity> findAll() {
-    return jpaRepository.findAll();
-  }
-
-  @Override
-  public Optional<VoucherEntity> findByCode(final String code) {
-    return jpaRepository.findByCode(code);
+    return jpaRepository.findByDeletedDateIsNull();
   }
 
   @Override

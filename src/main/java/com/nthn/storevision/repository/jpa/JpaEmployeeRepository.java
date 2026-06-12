@@ -29,5 +29,5 @@ public interface JpaEmployeeRepository extends JpaRepository<EmployeeEntity, Lon
      * @param username The username of the employee.
      * @return An {@link Optional} containing the {@link EmployeeEntity} if found, or empty if not.
      */
-    Optional<EmployeeEntity> findByUsername(String username);
+  /**
 }

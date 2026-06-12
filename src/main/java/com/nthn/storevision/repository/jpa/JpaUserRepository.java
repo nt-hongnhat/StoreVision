@@ -13,6 +13,7 @@ package com.nthn.storevision.repository.jpa;
 
 import com.nthn.storevision.entity.UserEntity;
 import com.nthn.storevision.repository.generic.SaveRepository;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -28,6 +29,13 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface JpaUserRepository
     extends JpaRepository<UserEntity, Integer>, SaveRepository<UserEntity> {
+
+  /**
+   * Returns all active (non-soft-deleted) users.
+   *
+   * @return the list of active users; never {@code null}
+   */
+  List<UserEntity> findByDeletedDateIsNull();
 
   /**
    * Finds a {@link UserEntity} by its email.

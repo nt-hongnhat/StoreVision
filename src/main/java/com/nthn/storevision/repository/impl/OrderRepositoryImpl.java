@@ -37,20 +37,23 @@ public class OrderRepositoryImpl implements OrderRepository {
 
   @Override
   public void markDeletedById(final Long id) {
-    findById(id).ifPresent(entity -> {
-      entity.setDeleted(true);
-      save(entity);
-    });
+    findById(id)
+        .ifPresent(
+            entity -> {
+              entity.setDeleted(true);
+              save(entity);
+            });
   }
 
   @Override
   public void restoreById(final Long id) {
-    findById(id).ifPresent(entity -> {
-      entity.setDeletedBy(null);
-      entity.setDeletedDate(null);
-      entity.setDeleted(false);
-      save(entity);
-    });
+    findById(id)
+        .ifPresent(
+            entity -> {
+              entity.setDeletedBy(null).setDeletedDate(null);
+              entity.setDeleted(false);
+              save(entity);
+            });
   }
 
   @Override
@@ -70,7 +73,7 @@ public class OrderRepositoryImpl implements OrderRepository {
 
   @Override
   public List<OrderEntity> findAll() {
-    return jpaRepository.findAll();
+    return jpaRepository.findByDeletedDateIsNull();
   }
 
   @Override

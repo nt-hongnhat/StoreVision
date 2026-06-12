@@ -12,6 +12,7 @@
 package com.nthn.storevision.repository.jpa;
 
 import com.nthn.storevision.entity.CustomerEntity;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -24,6 +25,14 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface JpaCustomerRepository extends JpaRepository<CustomerEntity, Long> {
+
+  /**
+   * Returns all active (non-soft-deleted) customers.
+   *
+   * @return the list of active customers; never {@code null}
+   */
+  List<CustomerEntity> findByDeletedDateIsNull();
+
   /**
    * Finds a customer by their email address.
    *

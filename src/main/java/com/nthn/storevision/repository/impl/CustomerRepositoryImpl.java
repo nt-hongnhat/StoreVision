@@ -56,7 +56,7 @@ public class CustomerRepositoryImpl implements CustomerRepository {
 
   @Override
   public List<CustomerEntity> findAll() {
-    return jpaRepository.findAll();
+    return jpaRepository.findByDeletedDateIsNull();
   }
 
   @Override
