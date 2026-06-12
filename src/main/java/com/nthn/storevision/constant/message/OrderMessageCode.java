@@ -42,6 +42,13 @@ public enum OrderMessageCode implements LocalizedMessageCode {
    */
   INSUFFICIENT_STOCK("ORM004"),
   /**
+   * Represents the message code for an error where an order is not in the expected state.
+   *
+   * <p>This code is used when a state transition (complete or cancel) is attempted on an order
+   * that is not {@code PENDING} — completed and cancelled orders are final (BR-O02).
+   */
+  INVALID_STATE("ORM006"),
+  /**
    * Represents the message code for a validation error where an order has no items.
    *
    * <p>This code is used when an order is created without at least one order item (BR-O05).

@@ -341,6 +341,7 @@ All message keys in `/i18n/messages*.properties` must follow the
 | `ORM003` | Order must contain at least one item (BR-O05)         |
 | `ORM004` | Insufficient stock for order item (BR-O01)            |
 | `ORM005` | Order channel required (OrderCreationRequest)         |
+| `ORM006` | Order not in PENDING state for transition (BR-O02)    |
 | `OIM001` | Order item not found                                  |
 | `OIM002` | Product ID required (OrderItemCreationRequest)        |
 | `OIM003` | Quantity required (OrderItemCreationRequest)          |
