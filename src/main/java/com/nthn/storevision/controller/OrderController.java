@@ -1,6 +1,8 @@
+
 package com.nthn.storevision.controller;
 
 import com.nthn.storevision.dto.OrderDTO;
+import com.nthn.storevision.dto.request.OrderCreationRequest;
 import jakarta.validation.Valid;
 import java.util.List;
 
@@ -12,12 +14,14 @@ import java.util.List;
 public interface OrderController {
 
   /**
-   * Creates a new order.
+   * Creates a new sales order in PENDING status. Stock is only verified, not deducted (BR-O01); the
+   * total amount is computed server-side (BR-O03) and each item's unit price is locked at creation
+   * time (BR-O04).
    *
-   * @param dto the order data to persist
-   * @return the created order
+   * @param request the order details: customer and at least one item (BR-O05)
+   * @return the created order including its order items
    */
-  OrderDTO createOrder(@Valid OrderDTO dto);
+  OrderDTO createOrder(@Valid OrderCreationRequest request);
 
   /**
    * Soft-deletes an order by ID.
@@ -44,7 +48,7 @@ public interface OrderController {
   /**
    * Updates an existing order.
    *
-   * @param id  the ID of the order to update
+   * @param id the ID of the order to update
    * @param dto the updated order data
    * @return the updated order
    */

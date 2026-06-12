@@ -15,6 +15,7 @@ import com.nthn.storevision.constant.api.ResponseCode;
 import com.nthn.storevision.constant.api.ResponseDescription;
 import com.nthn.storevision.controller.OrderController;
 import com.nthn.storevision.dto.OrderDTO;
+import com.nthn.storevision.dto.request.OrderCreationRequest;
 import com.nthn.storevision.service.order.OrderCreationService;
 import com.nthn.storevision.service.order.OrderDeletionService;
 import com.nthn.storevision.service.order.OrderRetrievalService;
@@ -46,24 +47,35 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class OrderControllerV1 implements OrderController {
 
+  private static final String CREATE_ORDER_DESC =
+      "Creates a sales order in PENDING status. Validates the customer, the products and the stock"
+          + " availability without deducting it (BR-O01), computes the total amount server-side"
+          + " (BR-O03) and locks each item's unit price at creation time (BR-O04)."
+          + " The order must contain at least one item (BR-O05).";
+  private static final String INSUFFICIENT_STOCK_DESC =
+      "Stock quantity is insufficient for one or more order items";
+
   private final OrderCreationService creationService;
   private final OrderDeletionService deletionService;
   private final OrderRetrievalService retrievalService;
   private final OrderUpdateService updateService;
 
-  @Operation(
-      summary = "Create a new order",
-      description = "Creates a new order for a customer and persists it to the database.")
+  /** {@inheritDoc} */
+  @Operation(summary = "Create a new sales order", description = CREATE_ORDER_DESC)
   @ApiResponse(responseCode = ResponseCode.CREATED, description = ResponseDescription.CREATED)
   @ApiResponse(
       responseCode = ResponseCode.BAD_REQUEST,
       description = ResponseDescription.INVALID_INPUT)
+  @ApiResponse(responseCode = ResponseCode.NOT_FOUND, description = ResponseDescription.NOT_FOUND)
+  @ApiResponse(
+      responseCode = ResponseCode.UNPROCESSABLE_ENTITY,
+      description = INSUFFICIENT_STOCK_DESC)
   @ResponseStatus(HttpStatus.CREATED)
   @PostMapping
   @Override
-  public OrderDTO createOrder(@Valid @RequestBody final OrderDTO dto) {
-    log.debug("POST /orders");
-    return creationService.create(dto);
+  public OrderDTO createOrder(@Valid @RequestBody final OrderCreationRequest request) {
+    log.debug("POST /orders — customerId: {}", request.getCustomerId());
+    return creationService.createOrder(request);
   }
 
   @Operation(
