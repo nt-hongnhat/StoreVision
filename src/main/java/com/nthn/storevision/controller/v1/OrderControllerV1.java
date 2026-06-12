@@ -31,6 +31,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -73,6 +74,35 @@ public class OrderControllerV1 implements OrderController {
   private final OrderDeletionService deletionService;
   private final OrderRetrievalService retrievalService;
   private final OrderUpdateService updateService;
+
+  /** {@inheritDoc} */
+  @Operation(summary = "Cancel a pending order", description = CANCEL_ORDER_DESC)
+  @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)
+  @ApiResponse(responseCode = ResponseCode.NOT_FOUND, description = ResponseDescription.NOT_FOUND)
+  @ApiResponse(responseCode = ResponseCode.CONFLICT, description = INVALID_STATE_DESC)
+  @PatchMapping("/{id}/cancel")
+  @Override
+  public OrderDTO cancelOrder(
+      @Parameter(description = ResponseDescription.ORDER_ID) @PathVariable final Long id) {
+    log.debug("PATCH /orders/{}/cancel", id);
+    return updateService.cancel(id);
+  }
+
+  /** {@inheritDoc} */
+  @Operation(summary = "Confirm payment for a pending order", description = COMPLETE_ORDER_DESC)
+  @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)
+  @ApiResponse(responseCode = ResponseCode.NOT_FOUND, description = ResponseDescription.NOT_FOUND)
+  @ApiResponse(responseCode = ResponseCode.CONFLICT, description = INVALID_STATE_DESC)
+  @ApiResponse(
+      responseCode = ResponseCode.UNPROCESSABLE_ENTITY,
+      description = COMPLETE_STOCK_DESC)
+  @PatchMapping("/{id}/complete")
+  @Override
+  public OrderDTO completeOrder(
+      @Parameter(description = ResponseDescription.ORDER_ID) @PathVariable final Long id) {
+    log.debug("PATCH /orders/{}/complete", id);
+    return updateService.complete(id);
+  }
 
   /** {@inheritDoc} */
   @Operation(summary = "Create a new sales order", description = CREATE_ORDER_DESC)

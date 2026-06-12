@@ -24,6 +24,25 @@ import java.util.List;
 public interface OrderController {
 
   /**
+   * Cancels a PENDING order (PENDING → CANCELLED). No stock is deducted and no loyalty points are
+   * awarded; a COMPLETED order cannot be cancelled (BR-O02).
+   *
+   * @param id the ID of the order to cancel
+   * @return the cancelled order
+   */
+  OrderDTO cancelOrder(Long id);
+
+  /**
+   * Confirms payment for a PENDING order (PENDING → COMPLETED). Re-checks and deducts stock,
+   * records ISSUE stock movements (BR-I05), awards loyalty points and increments the voucher
+   * usage count.
+   *
+   * @param id the ID of the order to complete
+   * @return the completed order
+   */
+  OrderDTO completeOrder(Long id);
+
+  /**
    * Creates a new sales order in PENDING status. Stock is only verified, not deducted (BR-O01); the
    * total amount is computed server-side (BR-O03) and each item's unit price is locked at creation
    * time (BR-O04).
