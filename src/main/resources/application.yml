@@ -49,3 +49,5 @@ app:
     success-redirect-url: /
   audit:
     default-admin-email: ${AUDIT_DEFAULT_ADMIN_EMAIL:admin@storevision.local}
+  order:
+    tax-rate: ${ORDER_TAX_RATE:0.10}
