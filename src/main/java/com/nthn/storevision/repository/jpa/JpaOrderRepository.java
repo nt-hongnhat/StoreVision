@@ -7,6 +7,7 @@
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
  * Last Modified: 2026-06-05
+ * Last Modified: 2026-06-12 22:03:04
  */
 
 package com.nthn.storevision.repository.jpa;
@@ -23,6 +24,21 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface JpaOrderRepository extends JpaRepository<OrderEntity, Long> {
+
+  /**
+   * BR-C02: returns {@code true} if any non-deleted order of the given customer is in the given
+   * status. Used by the customer deletion flow to reject deleting customers with PENDING orders.
+   *
+   * @param customerId the customer ID to check; must not be {@code null}
+   * @param status the order status to check; must not be {@code null}
+   * @return {@code true} if any non-deleted order of the given customer is in the given status;
+   *     {@code false} otherwise
+   */
+  @Query(
+      "SELECT (COUNT(o) > 0) FROM OrderEntity o"
+          + " WHERE o.customer.id = :customerId AND o.status = :status AND o.deletedDate IS NULL")
+  boolean existsByCustomerIdAndStatus(
+      @Param("customerId") Long customerId, @Param("status") OrderStatus status);
 
   /**
    * BR-P04: returns {@code true} if any non-deleted order in the given status contains the

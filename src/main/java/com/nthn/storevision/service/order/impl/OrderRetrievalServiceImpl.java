@@ -6,7 +6,7 @@
  * File: OrderRetrievalServiceImpl.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-05 15:41:44
+ * Last Modified: 2026-06-12 22:00:59
  */
 
 package com.nthn.storevision.service.order.impl;
@@ -47,6 +47,20 @@ public class OrderRetrievalServiceImpl extends AbstractReadable<OrderEntity, Lon
     this.orderMapper = orderMapper;
   }
 
+  @Override
+  @Transactional(readOnly = true)
+  public boolean existsPendingOrderForCustomer(final Long customerId) {
+    log.debug("Checking pending orders for customer id: {}", customerId);
+    return getRepository().existsPendingOrderForCustomer(customerId);
+  }
+
+  @Override
+  @Transactional(readOnly = true)
+  public boolean existsPendingOrderForProduct(final Long productId) {
+    log.debug("Checking pending orders for product id: {}", productId);
+    return getRepository().existsPendingOrderForProduct(productId);
+  }
+
   /**
    * Retrieves all orders and maps them to {@link OrderDTO}.
    *
@@ -74,9 +88,6 @@ public class OrderRetrievalServiceImpl extends AbstractReadable<OrderEntity, Lon
 
   @Override
   @Transactional(readOnly = true)
-  public boolean existsPendingOrderForProduct(final Long productId) {
-    log.debug("Checking pending orders for product id: {}", productId);
-    return getRepository().existsPendingOrderForProduct(productId);
   }
 
   @Override

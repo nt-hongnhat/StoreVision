@@ -42,6 +42,13 @@ public enum CustomerMessageCode implements LocalizedMessageCode {
    */
   EMAIL_REQUIRED("CSM008"),
   /**
+   * Represents the message code for a conflict where a customer still has pending orders.
+   *
+   * <p>This code is used when a deletion is rejected because the customer has at least one {@code
+   * PENDING} order (BR-C02).
+   */
+  HAS_PENDING_ORDERS("CSM003"),
+  /**
    * Represents the message code for an error where the loyalty point balance is insufficient.
    *
    * <p>This code is used when a redemption requests more points than the customer owns (BR-C03).

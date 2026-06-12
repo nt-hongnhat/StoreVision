@@ -26,6 +26,14 @@ import java.util.List;
 public interface OrderRetrievalService extends Readable<OrderEntity, Long> {
 
   /**
+   * BR-C02: returns {@code true} if the given customer still has any active (non-deleted) PENDING
+   * order. Used by the customer deletion flow to reject the deletion.
+   *
+   * @param customerId the customer ID to check; must not be {@code null}
+   * @return {@code true} if at least one pending order belongs to this customer
+   */
+  boolean existsPendingOrderForCustomer(Long customerId);
+  /**
    * Retrieves all orders and maps them to {@link OrderDTO}.
    *
    * @return a list of all {@link OrderDTO}s.

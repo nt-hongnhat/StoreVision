@@ -6,7 +6,7 @@
  * File: OrderRepositoryImpl.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-05 15:41:44
+ * Last Modified: 2026-06-12 22:03:04
  */
 
 package com.nthn.storevision.repository.impl;
@@ -54,8 +54,15 @@ public class OrderRepositoryImpl implements OrderRepository {
   }
 
   @Override
+  public boolean existsPendingOrderForCustomer(final Long customerId) {
+    return jpaRepository.existsByCustomerIdAndStatus(customerId, OrderStatus.PENDING);
+  }
+
+  @Override
   public boolean existsPendingOrderForProduct(final Long productId) {
     return jpaRepository.existsByOrderItemsProductIdAndStatus(productId, OrderStatus.PENDING);
+  }
+
   }
 
   @Override

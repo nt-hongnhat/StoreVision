@@ -15,6 +15,7 @@ import com.nthn.storevision.entity.OrderEntity;
 import com.nthn.storevision.repository.generic.DeleteRepository;
 import com.nthn.storevision.repository.generic.ReadRepository;
 import com.nthn.storevision.repository.generic.SaveRepository;
+import java.util.List;
 
 /**
  * Repository interface for managing {@link OrderEntity} instances. Defines standard CRUD operations
@@ -23,6 +24,13 @@ import com.nthn.storevision.repository.generic.SaveRepository;
 public interface OrderRepository
     extends ReadRepository<OrderEntity, Long>, SaveRepository<OrderEntity>, DeleteRepository<Long> {
 
+  /**
+   * BR-C02: checks if the specified customer still has any pending orders.
+   *
+   * @param customerId the ID of the customer to check; must not be {@code null}
+   * @return {@code true} if there is at least one active pending order for the given customer
+   */
+  boolean existsPendingOrderForCustomer(Long customerId);
   /**
    * Checks if there are any pending orders for the specified product.
    *
