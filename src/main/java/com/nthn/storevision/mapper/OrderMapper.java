@@ -56,6 +56,7 @@ public interface OrderMapper extends EntityMapperConfig<OrderDTO, Long, OrderEnt
    * @return The converted OrderDTO.
    */
   @Mapping(source = "customer.id", target = "customerId")
+  @Mapping(source = "voucher.id", target = "voucherId")
   OrderDTO toDTO(OrderEntity order);
 
   /**
@@ -69,18 +70,27 @@ public interface OrderMapper extends EntityMapperConfig<OrderDTO, Long, OrderEnt
       target = "customer",
       expression = "java(mapCustomerIdToCustomerEntity(orderDTO.getCustomerId()))")
   @Mapping(target = "orderItems", ignore = true)
+  @Mapping(target = "voucher", ignore = true)
   OrderEntity toEntity(OrderDTO orderDTO);
 
   /**
    * Updates an existing {@link OrderEntity} with values from the given {@link OrderDTO}. The {@code
-   * id}, {@code customer}, and {@code orderItems} fields are ignored — these associations must be
-   * changed via dedicated workflows, not a regular update.
+   * id}, {@code customer}, {@code orderItems}, and {@code voucher} fields are ignored — these
+   * associations must be changed via dedicated workflows, not a regular update. The financial
+   * fields ({@code subtotal}, {@code discountAmount}, {@code taxAmount}) plus {@code channel} and
+   * {@code note} are also ignored: they are fixed server-side at creation time (BR-O03).
    *
    * @param dto the source DTO carrying updated field values
    * @param entity the target entity to be updated in place
    */
   @Mapping(target = "id", ignore = true)
+  @Mapping(target = "channel", ignore = true)
   @Mapping(target = "customer", ignore = true)
+  @Mapping(target = "discountAmount", ignore = true)
+  @Mapping(target = "note", ignore = true)
   @Mapping(target = "orderItems", ignore = true)
+  @Mapping(target = "subtotal", ignore = true)
+  @Mapping(target = "taxAmount", ignore = true)
+  @Mapping(target = "voucher", ignore = true)
   void updateEntity(OrderDTO dto, @MappingTarget OrderEntity entity);
 }
