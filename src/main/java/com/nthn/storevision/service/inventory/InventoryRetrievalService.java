@@ -6,7 +6,7 @@
  * File: InventoryRetrievalService.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-05 00:00:00
+ * Last Modified: 2026-06-12 17:28:11
  */
 
 package com.nthn.storevision.service.inventory;
@@ -16,15 +16,8 @@ import com.nthn.storevision.dto.StockMovementDTO;
 import com.nthn.storevision.dto.StockReceiptDTO;
 import java.time.LocalDateTime;
 import java.util.List;
-import org.springframework.modulith.NamedInterface;
 
-/**
- * Service interface for reading inventory state and movement history.
- *
- * <p>Annotated with {@link NamedInterface} so other modules (e.g., {@code order}) can depend on
- * this interface without coupling to the implementation.
- */
-@NamedInterface
+/** Service interface for reading inventory state and movement history. */
 public interface InventoryRetrievalService {
 
   /**
@@ -44,15 +37,6 @@ public interface InventoryRetrievalService {
   InventoryDTO findInventoryByProductId(Long productId);
 
   /**
-   * Returns RECEIPT movements within an optional date range. Null parameters mean open-ended.
-   *
-   * @param from start of date range (inclusive), or {@code null}
-   * @param to   end of date range (inclusive), or {@code null}
-   * @return matching receipts ordered by most recent first
-   */
-  List<StockReceiptDTO> findReceiptHistory(LocalDateTime from, LocalDateTime to);
-
-  /**
    * Returns active products whose stock quantity is at or below the configured low-stock threshold
    * (BR-I04, default 10).
    *
@@ -67,4 +51,13 @@ public interface InventoryRetrievalService {
    * @return movement history for that product
    */
   List<StockMovementDTO> findMovementsByProductId(Long productId);
+
+  /**
+   * Returns RECEIPT movements within an optional date range. Null parameters mean open-ended.
+   *
+   * @param from start of date range (inclusive), or {@code null}
+   * @param to end of date range (inclusive), or {@code null}
+   * @return matching receipts ordered by the most recent first
+   */
+  List<StockReceiptDTO> findReceiptHistory(LocalDateTime from, LocalDateTime to);
 }
