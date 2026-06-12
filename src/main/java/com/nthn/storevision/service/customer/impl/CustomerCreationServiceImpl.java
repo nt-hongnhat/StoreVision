@@ -18,11 +18,14 @@ import com.nthn.storevision.repository.CustomerRepository;
 import com.nthn.storevision.service.common.AbstractCreatable;
 import com.nthn.storevision.service.customer.CustomerCreationService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Default implementation of {@link CustomerCreationService} that extends {@link AbstractCreatable}
- * to persist {@link CustomerEntity} instances via {@link CustomerRepository}.
+ * to persist {@link CustomerEntity} instances via {@link CustomerRepository}. Enforces BR-C01
+ * (email uniqueness across the whole system, including soft-deleted records) before persisting.
  */
+@Slf4j
 @Service
 public class CustomerCreationServiceImpl
     extends AbstractCreatable<CustomerDTO, CustomerEntity, CustomerRepository>

@@ -6,7 +6,7 @@
  * File: CustomerRepositoryImpl.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-04 17:20:12
+ * Last Modified: 2026-06-12 22:02:36
  */
 
 package com.nthn.storevision.repository.impl;
@@ -74,6 +74,15 @@ public class CustomerRepositoryImpl implements CustomerRepository {
     return jpaRepository.findByEmail(email);
   }
 
+  @Override
+  public boolean isEmailTaken(final String email) {
+    return jpaRepository.isEmailRegistered(email);
+  }
+
+  @Override
+  public boolean isEmailTakenByOther(final String email, final Long excludedId) {
+    return jpaRepository.isEmailAlreadyRegistered(email, excludedId);
+  }
   @Override
   public CustomerEntity save(final CustomerEntity customer) {
     return jpaRepository.save(customer);

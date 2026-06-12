@@ -6,7 +6,7 @@
  * File: CustomerRepository.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-04 14:42:28
+ * Last Modified: 2026-06-12 22:03:04
  */
 
 package com.nthn.storevision.repository;
@@ -23,7 +23,9 @@ import java.util.Optional;
  * operations and custom queries for customers.
  */
 public interface CustomerRepository
-    extends ReadRepository<CustomerEntity, Long>, SaveRepository<CustomerEntity>, DeleteRepository<Long> {
+    extends ReadRepository<CustomerEntity, Long>,
+        SaveRepository<CustomerEntity>,
+        DeleteRepository<Long> {
 
   /**
    * Retrieves a customer by their email address.
@@ -33,4 +35,13 @@ public interface CustomerRepository
    *     Optional} if not found.
    */
   Optional<CustomerEntity> findByEmail(String email);
+  /**
+   * BR-C01: checks whether the given email is already registered to any customer, including
+   * soft-deleted records.
+   *
+   * @param email the email address to check; must not be {@code null}
+   * @return {@code true} if the email is already taken
+   */
+  boolean isEmailTaken(String email);
+
 }

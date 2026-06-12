@@ -19,6 +19,8 @@ import com.nthn.storevision.mapper.EntityMapperConfig;
 import com.nthn.storevision.repository.CustomerRepository;
 import com.nthn.storevision.service.common.AbstractUpdatable;
 import com.nthn.storevision.service.customer.CustomerUpdateService;
+import lombok.extern.slf4j.Slf4j;
+import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Service;
 
 /**
@@ -36,6 +38,16 @@ public class CustomerUpdateServiceImpl
     super(mapper, repository);
   }
 
+  @Override
+  @Transactional
+  public CustomerDTO update(final Long id, final @NonNull CustomerDTO dto) {
+    if (getRepository().isEmailTakenByOther(dto.getEmail(), id)) {
+      log.warn(
+          "BR-C01 violation on update: customer email '{}' already belongs to another customer",
+          dto.getEmail());
+      throw new CustomerEmailAlreadyExistsException(dto.getEmail());
+    }
+    return super.update(id, dto);
   @Override
   protected CustomerEntity getById(final Long id) {
     return getRepository()

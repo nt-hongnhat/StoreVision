@@ -37,8 +37,8 @@ public class CustomerDTO {
   /** Date of birth, used for birthday benefits; may be {@code null}. */
   private LocalDate dateOfBirth;
 
-  @NotBlank(message = "{customer.email.required}")
-  @Email(message = "{customer.email.invalid}")
+  @NotBlank(message = "{CSM008}")
+  @Email(message = "{CSM009}")
   private String email;
 
   private Long id;
@@ -49,7 +49,7 @@ public class CustomerDTO {
   /** Response-only: current loyalty tier, derived from total spending (BR-C04). */
   private LoyaltyTier loyaltyTier;
 
-  @NotBlank(message = "{customer.name.required}")
+  @NotBlank(message = "{CSM007}")
   private String name;
 
   private String phone;
