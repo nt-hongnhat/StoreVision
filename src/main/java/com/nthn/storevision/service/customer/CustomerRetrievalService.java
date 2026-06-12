@@ -6,12 +6,13 @@
  * File: CustomerRetrievalService.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-12 17:16:53
+ * Last Modified: 2026-06-12 22:00:59
  */
 
 package com.nthn.storevision.service.customer;
 
 import com.nthn.storevision.dto.CustomerDTO;
+import com.nthn.storevision.dto.OrderDTO;
 import com.nthn.storevision.entity.CustomerEntity;
 import com.nthn.storevision.service.generic.Readable;
 
@@ -35,7 +36,8 @@ public interface CustomerRetrievalService extends Readable<CustomerEntity, Long>
   List<CustomerDTO> findAllCustomersAsDTO();
 
   /**
-   * Finds a customer by their email address and maps the result using the provided mapping function.
+   * Finds a customer by their email address and maps the result using the provided mapping
+   * function.
    *
    * @param email the email address of the customer to retrieve
    * @param mapper a function to map the retrieved customer instance into the desired type
@@ -52,4 +54,14 @@ public interface CustomerRetrievalService extends Readable<CustomerEntity, Long>
    * @return the {@link CustomerDTO} with the specified identifier, or null if not found.
    */
   CustomerDTO findCustomerDTOById(Long id);
+
+  /**
+   * Retrieves the order history of a customer, most recent first. The customer must exist —
+   * otherwise an {@link com.nthn.storevision.exception.EntityNotFoundException} is thrown.
+   *
+   * @param customerId the customer whose orders are queried; must not be {@code null}
+   * @return list of the customer's active orders as {@link OrderDTO}s; never {@code null}, may be
+   *     empty
+   */
+  List<OrderDTO> findOrderHistory(Long customerId);
 }

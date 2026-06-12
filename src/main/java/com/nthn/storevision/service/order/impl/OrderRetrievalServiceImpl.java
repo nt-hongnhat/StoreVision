@@ -88,6 +88,11 @@ public class OrderRetrievalServiceImpl extends AbstractReadable<OrderEntity, Lon
 
   @Override
   @Transactional(readOnly = true)
+  public List<OrderDTO> findOrdersByCustomerId(final Long customerId) {
+    log.debug("Fetching orders for customer id: {}", customerId);
+    return getRepository().findAllByCustomerId(customerId).stream()
+        .map(orderMapper::toDTO)
+        .toList();
   }
 
   @Override

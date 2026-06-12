@@ -39,4 +39,11 @@ public interface OrderRepository
    *     false} otherwise.
    */
   boolean existsPendingOrderForProduct(Long productId);
+  /**
+   * Returns all active (non-deleted) orders of a customer, ordered by most recent first.
+   *
+   * @param customerId the ID of the customer; must not be {@code null}
+   * @return list of the customer's orders; never {@code null}
+   */
+  List<OrderEntity> findAllByCustomerId(Long customerId);
 }

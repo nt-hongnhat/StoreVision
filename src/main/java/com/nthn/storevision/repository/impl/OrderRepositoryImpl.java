@@ -63,6 +63,9 @@ public class OrderRepositoryImpl implements OrderRepository {
     return jpaRepository.existsByOrderItemsProductIdAndStatus(productId, OrderStatus.PENDING);
   }
 
+  @Override
+  public List<OrderEntity> findAllByCustomerId(final Long customerId) {
+    return jpaRepository.findByCustomerIdAndDeletedDateIsNullOrderByOrderDateDesc(customerId);
   }
 
   @Override

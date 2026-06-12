@@ -51,9 +51,11 @@ public interface OrderRetrievalService extends Readable<OrderEntity, Long> {
   /**
    * BR-P04: returns {@code true} if any active (non-deleted) PENDING order contains the given
    * product. Used by the product soft-delete flow to emit a warning before deletion.
+   * Retrieves all active (non-deleted) orders of a customer, most recent first, mapped to {@link
+   * OrderDTO}.
    *
-   * @param productId the product ID to check
-   * @return {@code true} if at least one pending order references this product
+   * @param customerId the customer ID to query; must not be {@code null}
+   * @return list of the customer's orders; never {@code null}, may be empty
    */
-  boolean existsPendingOrderForProduct(Long productId);
+  List<OrderDTO> findOrdersByCustomerId(Long customerId);
 }

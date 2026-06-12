@@ -37,17 +37,22 @@ public class CustomerRetrievalServiceImpl
     implements CustomerRetrievalService {
 
   private final CustomerMapper customerMapper;
+  private final OrderRetrievalService orderRetrievalService;
 
   /**
-   * Constructs a {@code CustomerRetrievalServiceImpl} with the specified repository and mapper.
+   * Constructs a {@code CustomerRetrievalServiceImpl} with the specified repository and mappers.
    *
    * @param repository the repository used for accessing {@link CustomerEntity} entities
    * @param customerMapper the mapper used for converting between entity and DTO
+   * @param orderRetrievalService the order domain service backing the order-history lookup
    */
   public CustomerRetrievalServiceImpl(
-      final CustomerRepository repository, final CustomerMapper customerMapper) {
+      final CustomerRepository repository,
+      final CustomerMapper customerMapper,
+      final OrderRetrievalService orderRetrievalService) {
     super(repository);
     this.customerMapper = customerMapper;
+    this.orderRetrievalService = orderRetrievalService;
   }
 
   /**
@@ -92,6 +97,15 @@ public class CustomerRetrievalServiceImpl
     return findById(id, customerMapper::toDTO);
   }
 
+  /** {@inheritDoc} */
+  @Override
+  @Transactional(readOnly = true)
+  public List<OrderDTO> findOrderHistory(final Long customerId) {
+    log.debug("Fetching order history for customer id: {}", customerId);
+    if (!getRepository().isExistsById(customerId)) {
+      throw new EntityNotFoundException(CustomerMessageCode.NOT_FOUND, customerId);
+    }
+    return orderRetrievalService.findOrdersByCustomerId(customerId);
   /**
    * Returns the message code for when a customer is not found.
    *
