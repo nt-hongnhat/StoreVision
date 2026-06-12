@@ -6,7 +6,7 @@
  * File: LocalizedMessageCode.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-12 21:18:39
+ * Last Modified: 2026-06-12 22:10:19
  */
 
 package com.nthn.storevision.constant.message;
@@ -29,6 +29,7 @@ package com.nthn.storevision.constant.message;
  * Subtypes:
  *
  * <ul>
+ *   <li>{@code AnalyticsMessageCode}: Contains message codes specific to the analytics domain.
  *   <li>{@code AuditMessageCode}: Contains message codes specific to the audit domain.
  *   <li>{@code CustomerMessageCode}: Contains message codes specific to the customer domain.
  *   <li>{@code EmployeeMessageCode}: Contains message codes specific to the employee domain.
@@ -44,7 +45,8 @@ package com.nthn.storevision.constant.message;
  * that map to i18n message keys in resource bundles.
  */
 public sealed interface LocalizedMessageCode
-    permits AuditMessageCode,
+    permits AnalyticsMessageCode,
+        AuditMessageCode,
         CustomerMessageCode,
         EmployeeMessageCode,
         InventoryMessageCode,
