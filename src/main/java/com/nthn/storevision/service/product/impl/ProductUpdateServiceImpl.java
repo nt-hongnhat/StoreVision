@@ -23,6 +23,7 @@ import com.nthn.storevision.service.product.ProductUpdateService;
 import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Default implementation of {@link ProductUpdateService}. Enforces BR-P01 (name + category
@@ -38,6 +39,16 @@ public class ProductUpdateServiceImpl
       final EntityMapperConfig<ProductDTO, Long, ProductEntity> mapper,
       final ProductRepository repository) {
     super(mapper, repository);
+  }
+
+  @Override
+  @Transactional
+  public void addStock(final Long id, final Integer quantity) {
+    log.debug("Adding {} units to product id: {}", quantity, id);
+    final ProductEntity entity = getById(id);
+    entity.setStockQuantity(entity.getStockQuantity() + quantity);
+    getRepository().save(entity);
+    log.debug("Product id: {} stock updated to {}", id, entity.getStockQuantity());
   }
 
   @Override

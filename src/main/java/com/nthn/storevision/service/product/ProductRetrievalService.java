@@ -32,6 +32,15 @@ public interface ProductRetrievalService extends Readable<ProductEntity, Long> {
   List<ProductDTO> findAllProductsAsDTO();
 
   /**
+   * Returns active products whose stock quantity is at or below {@code threshold}. Used by the
+   * inventory module for BR-I04 low-stock alerts (threshold typically {@code 10}).
+   *
+   * @param threshold inclusive upper bound for stock quantity
+   * @return list of low-stock active {@link ProductDTO}s
+   */
+  List<ProductDTO> findLowStockProducts(int threshold);
+
+  /**
    * Retrieves a product by its identifier and maps it to {@link ProductDTO}.
    *
    * @param id the identifier of the product to be retrieved.

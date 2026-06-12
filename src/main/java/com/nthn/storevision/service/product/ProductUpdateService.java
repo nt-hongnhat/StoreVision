@@ -19,5 +19,14 @@ import com.nthn.storevision.service.generic.Updatable;
  *
  * @see Updatable
  */
-@FunctionalInterface
-public interface ProductUpdateService extends Updatable<ProductDTO, Long> {}
+public interface ProductUpdateService extends Updatable<ProductDTO, Long> {
+
+  /**
+   * Increments the stock quantity of the given product by {@code quantity}. Used by the inventory
+   * module when recording a RECEIPT movement.
+   *
+   * @param id the product to update
+   * @param quantity units to add (must be &gt;= 1)
+   */
+  void addStock(Long id, Integer quantity);
+}

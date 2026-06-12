@@ -93,6 +93,11 @@ public class ProductRepositoryImpl implements ProductRepository {
   }
 
   @Override
+  public List<ProductEntity> findLowStock(final int threshold) {
+    return jpaRepository.findByStockQuantityLessThanEqualAndDeletedDateIsNull(threshold);
+  }
+
+  @Override
   public ProductEntity save(final ProductEntity product) {
     return jpaRepository.save(product);
   }

@@ -50,6 +50,13 @@ public class ProductRetrievalServiceImpl
 
   @Override
   @Transactional(readOnly = true)
+  public List<ProductDTO> findLowStockProducts(final int threshold) {
+    log.debug("Fetching active products with stockQuantity <= {}", threshold);
+    return getRepository().findLowStock(threshold).stream().map(productMapper::toDTO).toList();
+  }
+
+  @Override
+  @Transactional(readOnly = true)
   public ProductDTO findProductDTOById(final Long id) {
     log.debug("Fetching product DTO by id: {}", id);
     return findById(id, productMapper::toDTO);

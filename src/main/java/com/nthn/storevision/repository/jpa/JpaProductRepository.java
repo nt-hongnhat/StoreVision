@@ -34,4 +34,7 @@ public interface JpaProductRepository extends JpaRepository<ProductEntity, Long>
           + " AND (:category IS NULL OR p.category = :category)")
   List<ProductEntity> searchByNameAndCategory(
       @Param("name") String name, @Param("category") String category);
+
+  /** BR-I04: returns active products with stock at or below the threshold. */
+  List<ProductEntity> findByStockQuantityLessThanEqualAndDeletedDateIsNull(int threshold);
 }

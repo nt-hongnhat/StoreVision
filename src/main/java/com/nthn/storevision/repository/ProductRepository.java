@@ -63,4 +63,13 @@ public interface ProductRepository
    * @return a list of {@code ProductEntity} objects that match the search criteria and are active.
    */
   List<ProductEntity> searchActive(String name, String category);
+
+  /**
+   * Returns active (non-deleted) products whose stock quantity is at or below the given threshold.
+   * Used by the inventory module for BR-I04 low-stock alerts.
+   *
+   * @param threshold maximum stock quantity to include
+   * @return list of low-stock active products
+   */
+  List<ProductEntity> findLowStock(int threshold);
 }
