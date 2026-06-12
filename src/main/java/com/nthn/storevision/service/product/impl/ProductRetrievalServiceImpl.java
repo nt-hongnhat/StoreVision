@@ -6,7 +6,7 @@
  * File: ProductRetrievalServiceImpl.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-12 17:14:16
+ * Last Modified: 2026-06-12 23:25:29
  */
 
 package com.nthn.storevision.service.product.impl;
@@ -14,13 +14,16 @@ package com.nthn.storevision.service.product.impl;
 import com.nthn.storevision.constant.message.LocalizedMessageCode;
 import com.nthn.storevision.constant.message.ProductMessageCode;
 import com.nthn.storevision.dto.ProductDTO;
+import com.nthn.storevision.dto.response.PageDTO;
 import com.nthn.storevision.entity.ProductEntity;
 import com.nthn.storevision.mapper.ProductMapper;
 import com.nthn.storevision.repository.ProductRepository;
 import com.nthn.storevision.service.common.AbstractReadable;
 import com.nthn.storevision.service.product.ProductRetrievalService;
+import com.nthn.storevision.util.PaginationUtil;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,6 +36,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class ProductRetrievalServiceImpl
     extends AbstractReadable<ProductEntity, Long, ProductRepository>
     implements ProductRetrievalService {
+
+  private static final Sort DEFAULT_SORT = Sort.by(Sort.Direction.ASC, "name");
 
   private final ProductMapper productMapper;
 
@@ -61,6 +66,16 @@ public class ProductRetrievalServiceImpl
   public ProductDTO findProductDTOById(final Long id) {
     log.debug("Fetching product DTO by id: {}", id);
     return findById(id, productMapper::toDTO);
+  }
+
+  @Override
+  @Transactional(readOnly = true)
+  public PageDTO<ProductDTO> findProductsPage(final int page, final int size) {
+    log.debug("Fetching products page: page={}, size={}", page, size);
+    return PageDTO.from(
+        getRepository()
+            .findAllActive(PaginationUtil.toPageRequest(page, size, DEFAULT_SORT))
+            .map(productMapper::toDTO));
   }
 
   @Override

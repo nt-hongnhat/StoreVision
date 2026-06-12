@@ -6,13 +6,15 @@
  * File: JpaProductRepository.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-12 23:06:51
+ * Last Modified: 2026-06-12 23:21:05
  */
 
 package com.nthn.storevision.repository.jpa;
 
 import com.nthn.storevision.entity.ProductEntity;
 import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -36,31 +38,10 @@ public interface JpaProductRepository extends JpaRepository<ProductEntity, Long>
    */
   @Modifying
   @Query(
-      "UPDATE ProductEntity p SET p.stockQuantity = p.stockQuantity - :quantity"
-          + " WHERE p.id = :id AND p.stockQuantity >= :quantity")
+      """
+          UPDATE ProductEntity p SET p.stockQuantity = p.stockQuantity - :quantity
+           WHERE p.id = :id AND p.stockQuantity >= :quantity""")
   int decreaseStockIfAvailable(@Param("id") Long id, @Param("quantity") Integer quantity);
-
-  /**
-   * BR-P01: checks uniqueness of name + category among active (non-soft-deleted) records.
-   *
-   * @param category the category to check; must not be {@code null}
-   * @param name the name to check; must not be {@code null}
-   * @return {@code true} if the name + category combination is unique among active products
-   */
-  boolean existsByNameAndCategoryAndDeletedDateIsNull(String name, String category);
-
-  /**
-   * BR-P01 (update path): same check but excludes the record being updated to allow renaming to the
-   * same value.
-   *
-   * @param category the category to check; must not be {@code null}
-   * @param id the product to exclude from the check; must not be {@code null}
-   * @param name the name to check; must not be {@code null}
-   * @return {@code true} if the name + category combination is unique among active products
-   *     excluding the product with the given ID
-   */
-  boolean existsByNameAndCategoryAndDeletedDateIsNullAndIdNot(
-      String name, String category, Long id);
 
   /**
    * Returns all non-soft-deleted products.
@@ -68,6 +49,14 @@ public interface JpaProductRepository extends JpaRepository<ProductEntity, Long>
    * @return all non-soft-deleted products
    */
   List<ProductEntity> findByDeletedDateIsNull();
+
+  /**
+   * Returns one page of non-soft-deleted products.
+   *
+   * @param pageable page request carrying index, size, and sort; must not be {@code null}
+   * @return the requested page of active products; never {@code null}
+   */
+  Page<ProductEntity> findByDeletedDateIsNull(Pageable pageable);
 
   /**
    * BR-I04: returns active products with stock at or below the threshold.
@@ -88,9 +77,31 @@ public interface JpaProductRepository extends JpaRepository<ProductEntity, Long>
    */
   @Modifying
   @Query(
-      "UPDATE ProductEntity p SET p.stockQuantity = p.stockQuantity + :quantity"
-          + " WHERE p.id = :id")
+      """
+          UPDATE ProductEntity p SET p.stockQuantity = p.stockQuantity + :quantity
+           WHERE p.id = :id""")
   int increaseStock(@Param("id") Long id, @Param("quantity") Integer quantity);
+
+  /**
+   * BR-P01 (update path): same check but excludes the record being updated to allow renaming to the
+   * same value.
+   *
+   * @param category the category to check; must not be {@code null}
+   * @param id the product to exclude from the check; must not be {@code null}
+   * @param name the name to check; must not be {@code null}
+   * @return {@code true} if the name + category combination is unique among active products
+   *     excluding the product with the given ID
+   */
+  boolean isUniqueNameForCategoryExcludingId(String name, String category, Long id);
+
+  /**
+   * BR-P01: checks uniqueness of name + category among active (non-soft-deleted) records.
+   *
+   * @param category the category to check; must not be {@code null}
+   * @param name the name to check; must not be {@code null}
+   * @return {@code true} if the name + category combination is unique among active products
+   */
+  boolean isUniqueNameInCategory(String name, String category);
 
   /**
    * Full-text–style search over active products. Both parameters are optional: passing {@code null}
@@ -101,9 +112,10 @@ public interface JpaProductRepository extends JpaRepository<ProductEntity, Long>
    * @return active products matching the search criteria
    */
   @Query(
-      "SELECT p FROM ProductEntity p WHERE p.deletedDate IS NULL"
-          + " AND (:name IS NULL OR LOWER(p.name) LIKE LOWER(CONCAT('%', :name, '%')))"
-          + " AND (:category IS NULL OR p.category = :category)")
+      """
+          SELECT p FROM ProductEntity p WHERE p.deletedDate IS NULL
+           AND (:name IS NULL OR LOWER(p.name) LIKE LOWER(CONCAT('%', :name, '%')))
+           AND (:category IS NULL OR p.category = :category)""")
   List<ProductEntity> searchByNameAndCategory(
       @Param("name") String name, @Param("category") String category);
 }

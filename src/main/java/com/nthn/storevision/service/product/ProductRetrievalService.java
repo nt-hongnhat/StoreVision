@@ -6,12 +6,13 @@
  * File: ProductRetrievalService.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-05 17:19:41
+ * Last Modified: 2026-06-12 23:25:29
  */
 
 package com.nthn.storevision.service.product;
 
 import com.nthn.storevision.dto.ProductDTO;
+import com.nthn.storevision.dto.response.PageDTO;
 import com.nthn.storevision.entity.ProductEntity;
 import com.nthn.storevision.service.generic.Readable;
 import java.util.List;
@@ -49,10 +50,20 @@ public interface ProductRetrievalService extends Readable<ProductEntity, Long> {
   ProductDTO findProductDTOById(Long id);
 
   /**
+   * Retrieves one page of active products ordered by name, mapped to {@link ProductDTO}.
+   * Out-of-range parameters are clamped instead of rejected.
+   *
+   * @param page zero-based page index; negative values are treated as 0
+   * @param size page size; clamped to a sane maximum
+   * @return the requested page of products; never {@code null}
+   */
+  PageDTO<ProductDTO> findProductsPage(int page, int size);
+
+  /**
    * Searches active products by optional name (case-insensitive contains) and optional category
    * (exact match). Passing {@code null} for either parameter omits that filter.
    *
-   * @param name     partial product name to match (case-insensitive), or {@code null} to skip
+   * @param name partial product name to match (case-insensitive), or {@code null} to skip
    * @param category exact category to match, or {@code null} to skip
    * @return list of matching active {@link ProductDTO}s
    */

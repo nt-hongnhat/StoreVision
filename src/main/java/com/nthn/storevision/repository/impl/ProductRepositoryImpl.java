@@ -6,7 +6,7 @@
  * File: ProductRepositoryImpl.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-12 23:08:21
+ * Last Modified: 2026-06-12 23:23:57
  */
 
 package com.nthn.storevision.repository.impl;
@@ -15,6 +15,8 @@ import com.nthn.storevision.entity.ProductEntity;
 import com.nthn.storevision.repository.ProductRepository;
 import com.nthn.storevision.repository.jpa.JpaProductRepository;
 import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -40,6 +42,11 @@ public class ProductRepositoryImpl implements ProductRepository {
   }
 
   @Override
+  public Page<ProductEntity> findAllActive(final Pageable pageable) {
+    return jpaRepository.findByDeletedDateIsNull(pageable);
+  }
+
+  @Override
   public List<ProductEntity> findLowStock(final int threshold) {
     return jpaRepository.findByStockQuantityLessThanEqualAndDeletedDateIsNull(threshold);
   }
@@ -51,13 +58,13 @@ public class ProductRepositoryImpl implements ProductRepository {
 
   @Override
   public boolean isProductActiveAndInCategory(final String name, final String category) {
-    return jpaRepository.existsByNameAndCategoryAndDeletedDateIsNull(name, category);
+    return jpaRepository.isUniqueNameInCategory(name, category);
   }
 
   @Override
   public boolean isProductActiveInCategoryExcludingId(
       final String name, final String category, final Long id) {
-    return jpaRepository.existsByNameAndCategoryAndDeletedDateIsNullAndIdNot(name, category, id);
+    return jpaRepository.isUniqueNameForCategoryExcludingId(name, category, id);
   }
 
   @Override

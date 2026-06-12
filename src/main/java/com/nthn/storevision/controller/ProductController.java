@@ -6,12 +6,13 @@
  * File: ProductController.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-05 15:45:08
+ * Last Modified: 2026-06-12 23:28:06
  */
 
 package com.nthn.storevision.controller;
 
 import com.nthn.storevision.dto.ProductDTO;
+import com.nthn.storevision.dto.response.PageDTO;
 import jakarta.validation.Valid;
 import java.util.List;
 
@@ -38,11 +39,13 @@ public interface ProductController {
   void deleteProduct(Long id);
 
   /**
-   * Retrieves all active (non-deleted) products.
+   * Retrieves one page of active (non-deleted) products ordered by name.
    *
-   * @return list of all non-deleted products
+   * @param page zero-based page index
+   * @param size page size
+   * @return the requested page of products
    */
-  List<ProductDTO> getAllProducts();
+  PageDTO<ProductDTO> getAllProducts(int page, int size);
 
   /**
    * Retrieves a product by ID.
@@ -69,7 +72,7 @@ public interface ProductController {
   /**
    * Searches active products by optional name (case-insensitive contains) and optional category.
    *
-   * @param name     partial name filter, or {@code null} to skip
+   * @param name partial name filter, or {@code null} to skip
    * @param category exact category filter, or {@code null} to skip
    * @return matching active products
    */
@@ -79,7 +82,7 @@ public interface ProductController {
    * Updates an existing product (name, price, stockQuantity, category, description, sku,
    * attributes). Enforces BR-P01 (name + category uniqueness).
    *
-   * @param id  the ID of the product to update
+   * @param id the ID of the product to update
    * @param dto the updated product data
    * @return the updated product
    */

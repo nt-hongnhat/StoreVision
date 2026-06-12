@@ -6,7 +6,7 @@
  * File: ProductControllerV1.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-05 16:09:18
+ * Last Modified: 2026-06-12 23:28:13
  */
 
 package com.nthn.storevision.controller.v1;
@@ -15,10 +15,12 @@ import com.nthn.storevision.constant.api.ResponseCode;
 import com.nthn.storevision.constant.api.ResponseDescription;
 import com.nthn.storevision.controller.ProductController;
 import com.nthn.storevision.dto.ProductDTO;
+import com.nthn.storevision.dto.response.PageDTO;
 import com.nthn.storevision.service.product.ProductCreationService;
 import com.nthn.storevision.service.product.ProductDeletionService;
 import com.nthn.storevision.service.product.ProductRetrievalService;
 import com.nthn.storevision.service.product.ProductUpdateService;
+import com.nthn.storevision.util.PaginationUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -90,14 +92,20 @@ public class ProductControllerV1 implements ProductController {
   }
 
   @Operation(
-      summary = "Retrieve all active products",
-      description = "Returns a list of all non-deleted product records.")
+      summary = "Retrieve active products (paginated)",
+      description = "Returns one page of non-deleted product records ordered by name.")
   @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)
   @GetMapping
   @Override
-  public List<ProductDTO> getAllProducts() {
-    log.debug("GET /products");
-    return retrievalService.findAllProductsAsDTO();
+  public PageDTO<ProductDTO> getAllProducts(
+      @Parameter(description = ResponseDescription.PAGE_INDEX)
+          @RequestParam(defaultValue = PaginationUtil.DEFAULT_PAGE)
+          final int page,
+      @Parameter(description = ResponseDescription.PAGE_SIZE)
+          @RequestParam(defaultValue = PaginationUtil.DEFAULT_SIZE)
+          final int size) {
+    log.debug("GET /products — page: {}, size: {}", page, size);
+    return retrievalService.findProductsPage(page, size);
   }
 
   @Operation(
