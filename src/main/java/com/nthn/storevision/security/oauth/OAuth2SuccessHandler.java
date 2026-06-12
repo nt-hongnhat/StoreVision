@@ -6,21 +6,22 @@
  * File: OAuth2SuccessHandler.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-04 17:26:28
+ * Last Modified: 2026-06-12 22:38:15
  */
 
 package com.nthn.storevision.security.oauth;
 
+import com.nthn.storevision.component.audit.impl.UserAuditorAware;
 import com.nthn.storevision.entity.UserEntity;
 import com.nthn.storevision.factory.user.UserFactory;
 import com.nthn.storevision.model.User;
 import com.nthn.storevision.repository.jpa.JpaUserRepository;
+import com.nthn.storevision.security.user.EmployeeAuthorityResolver;
 import com.nthn.storevision.security.user.UserPrincipal;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,7 +30,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
@@ -38,15 +38,17 @@ import org.springframework.stereotype.Component;
 /**
  * Custom authentication success handler for OAuth2 logins. This handler is responsible for
  * processing successful OAuth2 authentications, creating or updating user information in the
- * database, and setting up the security context.
+ * database, and setting up the security context. RBAC authorities are resolved through {@link
+ * EmployeeAuthorityResolver}: employee accounts receive their {@code ROLE_<EmployeeRole>}, everyone
+ * else receives {@code ROLE_USER}.
  */
 @Component
 @RequiredArgsConstructor
 @Slf4j
 public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
-  private static final String EMAIL = "email";
-  private static final String ROLE_USER = "ROLE_USER";
+  private static final String EMAIL = UserAuditorAware.EMAIL;
+  private final EmployeeAuthorityResolver employeeAuthorityResolver;
   private final UserFactory googleAuthUserFactory;
   private final JpaUserRepository jpaRepository;
 
@@ -72,8 +74,6 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
     log.debug("Authentication success for user: {}", authentication.getName());
 
     User persistUser = null;
-    final Collection<? extends GrantedAuthority> authorities =
-        List.of(new SimpleGrantedAuthority(ROLE_USER));
 
     if (authentication instanceof final OAuth2AuthenticationToken token) {
       if (null != token.getPrincipal()) {
@@ -94,7 +94,8 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
     }
 
     if (null != persistUser) {
-      configureUserAuthentication(authorities, persistUser);
+      configureUserAuthentication(
+          employeeAuthorityResolver.resolveAuthorities(persistUser.getUsername()), persistUser);
     }
 
     log.debug("Redirecting after successful authentication to: {}", successRedirectUrl);
