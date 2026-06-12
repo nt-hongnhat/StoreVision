@@ -12,7 +12,6 @@
 package com.nthn.storevision.repository;
 
 import com.nthn.storevision.entity.CustomerEntity;
-import com.nthn.storevision.model.Customer;
 import com.nthn.storevision.repository.generic.DeleteRepository;
 import com.nthn.storevision.repository.generic.ReadRepository;
 import com.nthn.storevision.repository.generic.SaveRepository;
