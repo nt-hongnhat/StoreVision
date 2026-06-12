@@ -51,3 +51,6 @@ app:
     default-admin-email: ${AUDIT_DEFAULT_ADMIN_EMAIL:admin@storevision.local}
   order:
     tax-rate: ${ORDER_TAX_RATE:0.10}
+  loyalty:
+    point-value: ${LOYALTY_POINT_VALUE:1000}
+    redeem-voucher-validity-days: ${LOYALTY_REDEEM_VOUCHER_VALIDITY_DAYS:30}
