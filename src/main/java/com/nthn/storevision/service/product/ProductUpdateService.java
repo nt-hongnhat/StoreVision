@@ -29,4 +29,15 @@ public interface ProductUpdateService extends Updatable<ProductDTO, Long> {
    * @param quantity units to add (must be &gt;= 1)
    */
   void addStock(Long id, Integer quantity);
+
+  /**
+   * Decrements the stock quantity of the given product by {@code quantity}. Used by the order
+   * module when completing an order (BR-O01 stock deduction).
+   *
+   * @param id the product to update
+   * @param quantity units to deduct (must be &gt;= 1)
+   * @throws com.nthn.storevision.exception.InsufficientStockException if the current stock is
+   *     lower than {@code quantity}
+   */
+  void deductStock(Long id, Integer quantity);
 }

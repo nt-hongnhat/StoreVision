@@ -15,6 +15,7 @@ import com.nthn.storevision.constant.message.ProductMessageCode;
 import com.nthn.storevision.dto.ProductDTO;
 import com.nthn.storevision.entity.ProductEntity;
 import com.nthn.storevision.exception.EntityNotFoundException;
+import com.nthn.storevision.exception.InsufficientStockException;
 import com.nthn.storevision.exception.ProductNameAlreadyExistsException;
 import com.nthn.storevision.mapper.EntityMapperConfig;
 import com.nthn.storevision.repository.ProductRepository;
@@ -47,6 +48,19 @@ public class ProductUpdateServiceImpl
     log.debug("Adding {} units to product id: {}", quantity, id);
     final ProductEntity entity = getById(id);
     entity.setStockQuantity(entity.getStockQuantity() + quantity);
+    getRepository().save(entity);
+    log.debug("Product id: {} stock updated to {}", id, entity.getStockQuantity());
+  }
+
+  @Override
+  @Transactional
+  public void deductStock(final Long id, final Integer quantity) {
+    log.debug("Deducting {} units from product id: {}", quantity, id);
+    final ProductEntity entity = getById(id);
+    if (entity.getStockQuantity() < quantity) {
+      throw new InsufficientStockException(entity.getName(), entity.getStockQuantity(), quantity);
+    }
+    entity.setStockQuantity(entity.getStockQuantity() - quantity);
     getRepository().save(entity);
     log.debug("Product id: {} stock updated to {}", id, entity.getStockQuantity());
   }
