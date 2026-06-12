@@ -11,6 +11,7 @@
 
 package com.nthn.storevision.dto.request;
 
+import com.nthn.storevision.constant.OrderChannel;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -32,6 +33,10 @@ import lombok.Setter;
 @Builder
 public class OrderCreationRequest {
 
+  /** Sales channel the order originates from (POS or ONLINE). */
+  @NotNull(message = "{ORM005}")
+  private OrderChannel channel;
+
   /** The customer placing the order. */
   @NotNull(message = "{ORM002}")
   private Long customerId;
@@ -40,4 +45,10 @@ public class OrderCreationRequest {
   @Valid
   @NotEmpty(message = "{ORM003}")
   private List<OrderItemCreationRequest> items;
+
+  /** Optional note attached to the order; may be {@code null}. */
+  private String note;
+
+  /** Optional voucher code to apply; validated server-side (BR-V01–BR-V04) when present. */
+  private String voucherCode;
 }
