@@ -6,7 +6,7 @@
  * File: OrderItemMessageCode.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-12 17:12:30
+ * Last Modified: 2026-06-12 20:54:55
  */
 
 package com.nthn.storevision.constant.message;
