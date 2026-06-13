@@ -97,9 +97,7 @@ public class OrderControllerV1 implements OrderController {
   @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)
   @ApiResponse(responseCode = ResponseCode.NOT_FOUND, description = ResponseDescription.NOT_FOUND)
   @ApiResponse(responseCode = ResponseCode.CONFLICT, description = INVALID_STATE_DESC)
-  @ApiResponse(
-      responseCode = ResponseCode.UNPROCESSABLE_ENTITY,
-      description = COMPLETE_STOCK_DESC)
+  @ApiResponse(responseCode = ResponseCode.UNPROCESSABLE_ENTITY, description = COMPLETE_STOCK_DESC)
   @PatchMapping("/{id}/complete")
   @Override
   public OrderDTO completeOrder(
@@ -150,7 +148,7 @@ public class OrderControllerV1 implements OrderController {
       @Parameter(description = ResponseDescription.PAGE_INDEX)
           @RequestParam(defaultValue = PaginationUtil.DEFAULT_PAGE)
           final int page,
-      @Parameter(description = ResponseDescription.PAGE_SIZE)
+      @Parameter(description = PaginationUtil.DEFAULT_SIZE)
           @RequestParam(defaultValue = PaginationUtil.DEFAULT_SIZE)
           final int size) {
     log.debug("GET /orders — page: {}, size: {}", page, size);
