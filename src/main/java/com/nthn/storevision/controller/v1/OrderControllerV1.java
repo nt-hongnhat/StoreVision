@@ -17,6 +17,7 @@ import com.nthn.storevision.controller.OrderController;
 import com.nthn.storevision.dto.OrderDTO;
 import com.nthn.storevision.dto.request.OrderCreationRequest;
 import com.nthn.storevision.dto.response.PageDTO;
+import com.nthn.storevision.service.customer.CustomerRetrievalService;
 import com.nthn.storevision.service.order.OrderCreationService;
 import com.nthn.storevision.service.order.OrderDeletionService;
 import com.nthn.storevision.service.order.OrderRetrievalService;
@@ -27,6 +28,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -72,6 +74,7 @@ public class OrderControllerV1 implements OrderController {
   private static final String UNPROCESSABLE_DESC =
       "Stock quantity is insufficient (BR-O01) or the voucher cannot be applied (BR-V01–BR-V04)";
   private final OrderCreationService creationService;
+  private final CustomerRetrievalService customerRetrievalService;
   private final OrderDeletionService deletionService;
   private final OrderRetrievalService retrievalService;
   private final OrderUpdateService updateService;
@@ -184,5 +187,18 @@ public class OrderControllerV1 implements OrderController {
       @Valid @RequestBody final OrderDTO dto) {
     log.debug("PUT /orders/{}", id);
     return updateService.update(id, dto);
+  }
+
+  @Operation(
+      summary = "Retrieve a customer's order history",
+      description = "Returns all active orders of the customer, most recent first.")
+  @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)
+  @ApiResponse(responseCode = ResponseCode.NOT_FOUND, description = ResponseDescription.NOT_FOUND)
+  @GetMapping("/customer/{customerId}")
+  public List<OrderDTO> getCustomerOrdersByCustomerId(
+      @Parameter(description = ResponseDescription.CUSTOMER_ID) @PathVariable
+          final Long customerId) {
+    log.debug("GET /orders/customer/{}", customerId);
+    return customerRetrievalService.findOrderHistory(customerId);
   }
 }
