@@ -75,6 +75,7 @@ public class OrderCreationServiceImpl
   private final ProductRetrievalService productRetrievalService;
   private final VoucherValidationService voucherValidationService;
   private final BigDecimal taxRate;
+  private final VoucherValidationService voucherValidationService;
 
   protected OrderCreationServiceImpl(
       final EntityMapperConfig<OrderDTO, ?, OrderEntity> mapper,
@@ -109,11 +110,16 @@ public class OrderCreationServiceImpl
 
     final BigDecimal subtotal = calculateSubtotal(request.getItems(), products);
     final VoucherDTO voucher = validateVoucherIfPresent(request.getVoucherCode(), subtotal);
-    final BigDecimal discountAmount = calculateDiscount(voucher, subtotal);
-    final BigDecimal taxAmount = subtotal.multiply(taxRate).setScale(MONEY_SCALE, RoundingMode.HALF_UP);
-    final BigDecimal totalAmount = subtotal.subtract(discountAmount).add(taxAmount);
+
+    final BigDecimal voucherDiscountAmount = calculateVoucherDiscount(voucher, subtotal);
     final BigDecimal birthdayDiscountAmount = calculateBirthdayDiscount(customer, subtotal);
 
+    // Apply the maximum of the two discounts
+    final BigDecimal finalDiscountAmount = voucherDiscountAmount.max(birthdayDiscountAmount);
+
+    final BigDecimal taxAmount =
+        subtotal.multiply(taxRate).setScale(MONEY_SCALE, RoundingMode.HALF_UP);
+    final BigDecimal totalAmount = subtotal.subtract(finalDiscountAmount).add(taxAmount);
 
     final OrderEntity saved =
         getRepository()
@@ -125,7 +131,7 @@ public class OrderCreationServiceImpl
                     .channel(request.getChannel())
                     .note(request.getNote())
                     .subtotal(subtotal)
-                    .discountAmount(discountAmount)
+                    .discountAmount(finalDiscountAmount)
                     .taxAmount(taxAmount)
                     .totalAmount(totalAmount)
                     .voucher(toVoucherReference(voucher))
@@ -142,7 +148,7 @@ public class OrderCreationServiceImpl
         customer.getId(),
         items.size(),
         subtotal,
-        discountAmount,
+        finalDiscountAmount,
         taxAmount,
         totalAmount);
     return result;
@@ -172,6 +178,31 @@ public class OrderCreationServiceImpl
           .min(subtotal); // Ensure discount doesn't exceed subtotal
     }
     return BigDecimal.ZERO;
+  }
+
+  /**
+   * Computes the discount granted by the validated voucher: a percentage of the subtotal capped at
+   * the voucher's maximum (PERCENTAGE), or a fixed amount (FIXED_AMOUNT). The result never exceeds
+   * the subtotal so the total amount cannot become negative.
+   */
+  private BigDecimal calculateVoucherDiscount(
+      final @Nullable VoucherDTO voucher, final BigDecimal subtotal) {
+    if (null == voucher) {
+      return BigDecimal.ZERO;
+    }
+    BigDecimal discount;
+    if (DiscountType.PERCENTAGE == voucher.getDiscountType()) {
+      discount =
+          subtotal
+              .multiply(voucher.getDiscountValue())
+              .divide(PERCENT_DIVISOR, MONEY_SCALE, RoundingMode.HALF_UP);
+      if (null != voucher.getMaxDiscountAmount()) {
+        discount = discount.min(voucher.getMaxDiscountAmount());
+      }
+    } else {
+      discount = voucher.getDiscountValue();
+    }
+    return discount.min(subtotal);
   }
 
   private CustomerEntity findActiveCustomer(final Long customerId) {
