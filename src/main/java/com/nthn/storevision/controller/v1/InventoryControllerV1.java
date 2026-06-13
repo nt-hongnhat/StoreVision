@@ -6,7 +6,7 @@
  * File: InventoryControllerV1.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-12 23:28:47
+ * Last Modified: 2026-06-13 17:42:34
  */
 
 package com.nthn.storevision.controller.v1;
@@ -58,8 +58,7 @@ public class InventoryControllerV1 implements InventoryController {
       "All stock movements (RECEIPT, ISSUE, ADJUSTMENT) for the product, ordered by most recent first.";
   private static final String RECEIPT_CREATED = "Stock receipt recorded successfully";
   private static final String RECEIPT_HISTORY_DESC =
-      "RECEIPT movements ordered by most recent first."
-          + " Both date parameters are optional: omit to retrieve full history.";
+      "RECEIPT movements ordered by most recent first. Both date parameters are optional: omit to retrieve full history.";
   private final InventoryAdjustmentService adjustmentService;
   private final InventoryCreationService creationService;
   private final InventoryRetrievalService retrievalService;
@@ -125,17 +124,13 @@ public class InventoryControllerV1 implements InventoryController {
   @GetMapping("/{productId}")
   @Override
   public InventoryDTO getInventoryByProductId(
-      @Parameter(description = ResponseDescription.PRODUCT_ID)
-          @PathVariable
-          final Long productId) {
+      @Parameter(description = ResponseDescription.PRODUCT_ID) @PathVariable final Long productId) {
     log.debug("GET /inventory/{}", productId);
     return retrievalService.findInventoryByProductId(productId);
   }
 
   /** {@inheritDoc} */
-  @Operation(
-      summary = "List low-stock products",
-      description = LOW_STOCK_DESC)
+  @Operation(summary = "List low-stock products", description = LOW_STOCK_DESC)
   @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)
   @GetMapping("/low-stock")
   @Override
@@ -145,26 +140,19 @@ public class InventoryControllerV1 implements InventoryController {
   }
 
   /** {@inheritDoc} */
-  @Operation(
-      summary = "List stock movements for a product",
-      description = MOVEMENT_HISTORY_DESC)
+  @Operation(summary = "List stock movements for a product", description = MOVEMENT_HISTORY_DESC)
   @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)
   @ApiResponse(responseCode = ResponseCode.NOT_FOUND, description = ResponseDescription.NOT_FOUND)
   @GetMapping("/movements/{productId}")
   @Override
   public List<StockMovementDTO> getMovementsByProductId(
-      @Parameter(description = ResponseDescription.PRODUCT_ID)
-          @PathVariable
-          final Long productId) {
+      @Parameter(description = ResponseDescription.PRODUCT_ID) @PathVariable final Long productId) {
     log.debug("GET /inventory/movements/{}", productId);
     return retrievalService.findMovementsByProductId(productId);
   }
 
   /** {@inheritDoc} */
-  @Operation(
-      summary = "List stock receipt history (paginated)",
-      description = RECEIPT_HISTORY_DESC)
-  @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)
+  @Operation(summary = "List stock receipt history (paginated)", description = RECEIPT_HISTORY_DESC)
   @GetMapping("/receipts")
   @Override
   public PageDTO<StockReceiptDTO> getReceiptHistory(
@@ -180,7 +168,8 @@ public class InventoryControllerV1 implements InventoryController {
       @Parameter(description = ResponseDescription.PAGE_SIZE)
           @RequestParam(defaultValue = PaginationUtil.DEFAULT_SIZE)
           final int size) {
-    log.debug("GET /inventory/receipts — from: {}, to: {}, page: {}, size: {}", from, to, page, size);
+    log.debug(
+        "GET /inventory/receipts — from: {}, to: {}, page: {}, size: {}", from, to, page, size);
     return retrievalService.findReceiptHistory(from, to, page, size);
   }
 }

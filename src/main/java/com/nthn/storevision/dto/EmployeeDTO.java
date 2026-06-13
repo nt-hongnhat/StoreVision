@@ -22,8 +22,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
- * Data Transfer Object for Employee.
- * Used to transfer employee data between layers, often for API requests and responses.
+ * Data Transfer Object for Employee. Used to transfer employee data between layers, often for API
+ * requests and responses.
  */
 @Getter
 @Setter
