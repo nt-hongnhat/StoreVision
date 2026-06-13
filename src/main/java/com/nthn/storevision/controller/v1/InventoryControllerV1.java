@@ -17,8 +17,10 @@ import com.nthn.storevision.controller.InventoryController;
 import com.nthn.storevision.dto.InventoryDTO;
 import com.nthn.storevision.dto.StockMovementDTO;
 import com.nthn.storevision.dto.StockReceiptDTO;
+import com.nthn.storevision.dto.request.InventoryAdjustmentRequest;
 import com.nthn.storevision.dto.request.StockReceiptRequest;
 import com.nthn.storevision.dto.response.PageDTO;
+import com.nthn.storevision.service.inventory.InventoryAdjustmentService;
 import com.nthn.storevision.service.inventory.InventoryCreationService;
 import com.nthn.storevision.service.inventory.InventoryRetrievalService;
 import com.nthn.storevision.util.PaginationUtil;
@@ -49,6 +51,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class InventoryControllerV1 implements InventoryController {
 
+  private static final String ADJUSTMENT_RECORDED = "Stock adjustment recorded successfully";
   private static final String LOW_STOCK_DESC =
       "Products with stock quantity at or below the configured threshold (default 10, BR-I04)";
   private static final String MOVEMENT_HISTORY_DESC =
@@ -57,8 +60,30 @@ public class InventoryControllerV1 implements InventoryController {
   private static final String RECEIPT_HISTORY_DESC =
       "RECEIPT movements ordered by most recent first."
           + " Both date parameters are optional: omit to retrieve full history.";
+  private final InventoryAdjustmentService adjustmentService;
   private final InventoryCreationService creationService;
   private final InventoryRetrievalService retrievalService;
+
+  /** {@inheritDoc} */
+  @Operation(
+      summary = "Adjust stock quantity for a product",
+      description =
+          "Records an ADJUSTMENT stock movement and updates the product's stock quantity."
+              + " Quantity can be positive (increase) or negative (decrease).")
+  @ApiResponse(responseCode = ResponseCode.OK, description = ADJUSTMENT_RECORDED)
+  @ApiResponse(
+      responseCode = ResponseCode.BAD_REQUEST,
+      description = ResponseDescription.INVALID_INPUT)
+  @ApiResponse(responseCode = ResponseCode.NOT_FOUND, description = ResponseDescription.NOT_FOUND)
+  @PostMapping("/adjustments")
+  @Override
+  public InventoryDTO adjustStock(@Valid @RequestBody final InventoryAdjustmentRequest request) {
+    log.debug(
+        "POST /inventory/adjustments — productId: {}, quantity: {}",
+        request.productId(),
+        request.quantity());
+    return adjustmentService.adjustStock(request);
+  }
 
   /** {@inheritDoc} */
   @Operation(

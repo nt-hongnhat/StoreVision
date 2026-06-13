@@ -6,7 +6,7 @@
  * File: InventoryController.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-12 23:27:27
+ * Last Modified: 2026-06-13 17:09:34
  */
 
 package com.nthn.storevision.controller;
@@ -14,6 +14,7 @@ package com.nthn.storevision.controller;
 import com.nthn.storevision.dto.InventoryDTO;
 import com.nthn.storevision.dto.StockMovementDTO;
 import com.nthn.storevision.dto.StockReceiptDTO;
+import com.nthn.storevision.dto.request.InventoryAdjustmentRequest; 
 import com.nthn.storevision.dto.request.StockReceiptRequest;
 import com.nthn.storevision.dto.response.PageDTO;
 import jakarta.validation.Valid;
@@ -26,6 +27,14 @@ import java.util.List;
  * @see com.nthn.storevision.controller.v1.InventoryControllerV1
  */
 public interface InventoryController {
+
+  /**
+   * Adjusts the stock quantity for a product.
+   *
+   * @param request the adjustment details; must not be {@code null}
+   * @return the updated inventory details for the product
+   */
+  InventoryDTO adjustStock(@Valid InventoryAdjustmentRequest request);
 
   /**
    * Records a stock receipt and increments the product's stock quantity (BR-I01, BR-I02).

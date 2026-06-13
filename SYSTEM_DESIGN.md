@@ -98,7 +98,8 @@ com.nthn.storevision
 │   ├── context/               ← UserContext
 │   ├── filter/                ← UserInfoFilter
 │   ├── oauth/                 ← OAuth2SuccessHandler
-│   └── user/                  ← CustomUserDetailsService, UserPrincipal
+│   └── user/
+│       └── impl/              ← CustomUserDetailsService, UserPrincipal
 ├── service/
 │   ├── common/                ← AbstractCreatable, AbstractReadable
 │   ├── generic/               ← Creatable, Readable, Updatable, SoftDeletable, HardDeletable
@@ -294,6 +295,7 @@ public record ProductDTO(
 | `GET`       | `/store-vision/api/v1/inventory`                       | Lấy danh sách tồn kho tất cả sản phẩm         | ADMIN, MANAGER        |
 | `GET`       | `/store-vision/api/v1/inventory/{productId}`           | Tồn kho chi tiết một sản phẩm                 | ADMIN, MANAGER, STAFF |
 | `POST`      | `/store-vision/api/v1/inventory/receipts`              | Tạo phiếu nhập hàng                           | ADMIN, MANAGER        |
+| `POST`      | `/store-vision/api/v1/inventory/adjustments`           | Điều chỉnh số lượng tồn kho sản phẩm          | ADMIN, MANAGER        |
 | `GET`       | `/store-vision/api/v1/inventory/receipts`              | Lịch sử nhập hàng (phân trang, lọc theo ngày) | ADMIN, MANAGER        |
 | `GET`       | `/store-vision/api/v1/inventory/low-stock`             | Danh sách sản phẩm sắp hết hàng               | ADMIN, MANAGER        |
 | `GET`       | `/store-vision/api/v1/inventory/movements/{productId}` | Lịch sử xuất/nhập kho theo sản phẩm           | ADMIN, MANAGER        |
@@ -670,6 +672,7 @@ erDiagram
         VARCHAR username UK
         VARCHAR password
         VARCHAR role
+        BIGINT user_id FK
         TIMESTAMP created_at
         BIGINT created_by FK
         BIGINT last_modified_by FK
@@ -823,6 +826,7 @@ erDiagram
 | `username`         | `VARCHAR(100)` |    |            | ✓        | ✓      | Tên đăng nhập               |
 | `password`         | `VARCHAR(255)` |    |            | ✓        |        | Mật khẩu đã hash (BCrypt)   |
 | `role`             | `VARCHAR(20)`  |    |            | ✓        |        | `ADMIN`, `MANAGER`, `STAFF` |
+| `user_id`          | `BIGINT`       |    | `users.id` |          | ✓      | FK tới bảng users           |
 | `created_at`       | `TIMESTAMP`    |    |            | ✓        |        | Auto: Spring Auditing       |
 | `last_modified_at` | `TIMESTAMP`    |    |            | ✓        |        | Auto: Spring Auditing       |
 | `created_by`       | `BIGINT`       |    | `users.id` | ✓        |        | Auto: Spring Auditing       |
@@ -1017,17 +1021,17 @@ db/changelog/
 
 ### 5.4 Mapping Entity — Bảng tổng hợp
 
-| Entity class                        | Bảng DB                   | Kế thừa BaseEntity       | Ghi chú                                    |
-|-------------------------------------|---------------------------|--------------------------|--------------------------------------------|
-| `UserEntity`                        | `users`                   | Không (tự quản lý audit) | Dùng làm `createdBy/modifiedBy` cho tất cả |
-| `EmployeeEntity`                    | `employees`               | ✓                        | Role: ADMIN/MANAGER/STAFF                  |
-| `CustomerEntity`                    | `customers`               | ✓                        | Thêm loyalty fields                        |
-| `ProductEntity`                     | `products`                | ✓                        | Thêm `attributes JSONB`                    |
-| `OrderEntity`                       | `orders`                  | ✓                        | State machine: PENDING→COMPLETED/CANCELLED |
-| `OrderItemEntity`                   | `order_items`             | ✓                        | `unitPrice` chốt tại lúc tạo               |
-| `StockMovementEntity` _(mới)_       | `stock_movements`         | Không (immutable)        | Audit trail kho hàng                       |
-| `VoucherEntity` _(mới)_             | `vouchers`                | ✓                        | Có soft delete                             |
-| `LoyaltyPointHistoryEntity` _(mới)_ | `loyalty_point_histories` | Không (immutable)        | Lịch sử điểm                               |
+| Entity class                        | Bảng DB                   | Kế thừa BaseEntity       | Ghi chú                                                            |
+|-------------------------------------|---------------------------|--------------------------|--------------------------------------------------------------------|
+| `UserEntity`                        | `users`                   | Không (tự quản lý audit) | Dùng làm `createdBy/modifiedBy` cho tất cả                         |
+| `EmployeeEntity`                    | `employees`               | ✓                        | Role: ADMIN/MANAGER/STAFF; Liên kết với `UserEntity` qua `user_id` |
+| `CustomerEntity`                    | `customers`               | ✓                        | Thêm loyalty fields                                                |
+| `ProductEntity`                     | `products`                | ✓                        | Thêm `attributes JSONB`                                            |
+| `OrderEntity`                       | `orders`                  | ✓                        | State machine: PENDING→COMPLETED/CANCELLED                         |
+| `OrderItemEntity`                   | `order_items`             | ✓                        | `unitPrice` chốt tại lúc tạo                                       |
+| `StockMovementEntity` _(mới)_       | `stock_movements`         | Không (immutable)        | Audit trail kho hàng                                               |
+| `VoucherEntity`                     | `vouchers`                | ✓                        | Có soft delete; Đã triển khai quản lý voucher                      |
+| `LoyaltyPointHistoryEntity` _(mới)_ | `loyalty_point_histories` | Không (immutable)        | Lịch sử điểm                                                       |
 
 ---
 
