@@ -39,6 +39,12 @@ public enum ResponseDescription {
   /** Request body failed validation. */
   public static final String INVALID_INPUT = "Invalid input data";
 
+  /**
+   * Represents the description for an identifier used to specify a notification. Used in API
+   * response descriptions to provide clarity on the meaning of the notification ID field.
+   */
+  public static final String NOTIFICATION_ID = "Notification ID";
+
   /** The requested resource does not exist. */
   public static final String NOT_FOUND = "Resource not found";
 

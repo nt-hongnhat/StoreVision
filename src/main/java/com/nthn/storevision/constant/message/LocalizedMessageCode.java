@@ -34,6 +34,8 @@ package com.nthn.storevision.constant.message;
  *   <li>{@code CustomerMessageCode}: Contains message codes specific to the customer domain.
  *   <li>{@code EmployeeMessageCode}: Contains message codes specific to the employee domain.
  *   <li>{@code InventoryMessageCode}: Contains message codes specific to the inventory domain.
+ *   <li>{@code NotificationMessageCode}: Contains message codes specific to the notification
+ *       domain.
  *   <li>{@code OrderItemMessageCode}: Contains message codes specific to the order item domain.
  *   <li>{@code OrderMessageCode}: Contains message codes specific to the order domain.
  *   <li>{@code ProductMessageCode}: Contains message codes specific to the product domain.
@@ -50,6 +52,7 @@ public sealed interface LocalizedMessageCode
         CustomerMessageCode,
         EmployeeMessageCode,
         InventoryMessageCode,
+        NotificationMessageCode,
         OrderItemMessageCode,
         OrderMessageCode,
         ProductMessageCode,
