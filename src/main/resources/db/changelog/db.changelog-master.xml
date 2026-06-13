@@ -166,4 +166,19 @@
     </rollback>
   </changeSet>
 
+  <changeSet id="011-create-notifications-table" author="hongnhat1121@gmail.com"
+             labels="v1.0.2">
+    <sqlFile path="classpath:db/changeset/v1.0.2/001-create-notifications-table.sql"
+             relativeToChangelogFile="false"
+             splitStatements="true"
+             stripComments="true"/>
+    <rollback>
+      <sqlFile
+          path="classpath:db/rollback/v1.0.2/001-create-notifications-table-rollback.sql"
+          relativeToChangelogFile="false"
+          splitStatements="true"
+          stripComments="true"/>
+    </rollback>
+  </changeSet>
+
 </databaseChangeLog>
