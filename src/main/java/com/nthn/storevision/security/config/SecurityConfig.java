@@ -6,7 +6,7 @@
  * File: SecurityConfig.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-12 22:29:43
+ * Last Modified: 2026-06-13 15:07:04
  */
 
 package com.nthn.storevision.security.config;

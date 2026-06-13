@@ -6,7 +6,7 @@
  * File: LocalizedMessageCode.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-12 22:10:19
+ * Last Modified: 2026-06-13 14:53:02
  */
 
 package com.nthn.storevision.constant.message;

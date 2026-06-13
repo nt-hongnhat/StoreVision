@@ -1,3 +1,14 @@
+/*
+ * Copyright (c) 2026 Hong Nhat. All rights reserved.
+ *
+ * Project: Store Vision
+ * Module: Store Vision Main
+ * File: StoreVisionApplication.java
+ * Author: Nguyen Thi Hong Nhat
+ * Contact: hongnhat1121@gmail.com
+ * Last Modified: 2026-06-13 15:15:33
+ */
+
 package com.nthn.storevision;
 
 import lombok.extern.slf4j.Slf4j;
