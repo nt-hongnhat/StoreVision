@@ -6,7 +6,7 @@
  * File: UserDTO.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-04 16:07:29
+ * Last Modified: 2026-06-13 17:25:32
  */
 
 package com.nthn.storevision.dto;
@@ -40,7 +40,7 @@ public class UserDTO {
   @Size(max = 45, message = "{user.firstName.size}")
   private String firstName;
 
-  private Integer id;
+  private Long id;
 
   @NotBlank(message = "{user.lastName.required}")
   @Size(max = 45, message = "{user.lastName.size}")

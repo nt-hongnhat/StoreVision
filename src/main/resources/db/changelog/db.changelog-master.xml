@@ -8,7 +8,7 @@
   ~ File: db.changelog-master.xml
   ~ Author: Nguyen Thi Hong Nhat
   ~ Contact: hongnhat1121@gmail.com
-  ~ Last Modified: 2026-06-03 17:47:19
+  ~ Last Modified: 2026-06-13 16:59:33
   -->
 
 <databaseChangeLog
@@ -178,6 +178,18 @@
           relativeToChangelogFile="false"
           splitStatements="true"
           stripComments="true"/>
+    </rollback>
+  </changeSet>
+
+  <changeSet id="012-add-user-id-to-employees-table" author="hongnhat" labels="v1.0.2">
+    <comment>Add user_id column to employees table and create foreign key constraint.</comment>
+    <sqlFile path="db/changeset/v1.0.2/012-add-user-id-to-employees-table.sql"
+             relativeToChangelogFile="false"
+             stripComments="true"/>
+    <rollback>
+      <sqlFile path="db/rollback/v1.0.2/012-add-user-id-to-employees-table-rollback.sql"
+               relativeToChangelogFile="false"
+               stripComments="true"/>
     </rollback>
   </changeSet>
 

@@ -6,7 +6,7 @@
  * File: EmployeeEntity.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-04 15:11:52
+ * Last Modified: 2026-06-13 17:03:48
  */
 
 package com.nthn.storevision.entity;
@@ -44,6 +44,13 @@ public class EmployeeEntity extends BaseEntity<Long> implements Employee {
   @Enumerated(EnumType.STRING)
   @Column(nullable = false, length = 20)
   private EmployeeRole role;
+
+  @OneToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "user_id", insertable = false, updatable = false)
+  private UserEntity user;
+
+  @Column(name = "user_id")
+  private Long userId;
 
   @Column(nullable = false, unique = true)
   private String username;

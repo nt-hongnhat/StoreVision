@@ -6,12 +6,13 @@
  * File: EmployeeDTO.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-05-17 14:25:05
+ * Last Modified: 2026-06-13 17:09:35
  */
 
 package com.nthn.storevision.dto;
 
 import com.nthn.storevision.constant.EmployeeRole;
+import jakarta.validation.constraints.Email; 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -30,14 +31,21 @@ import lombok.Setter;
 @AllArgsConstructor
 @Builder
 public class EmployeeDTO {
-    private Long id;
+  @NotBlank(message = "{employee.email.required}")
+  @Email(message = "{employee.email.invalid}")
+  private String email;
 
-    @NotBlank(message = "{employee.username.required}")
-    private String username;
+  private Long id;
 
-    @NotBlank(message = "{employee.password.required}")
-    private String password; // Note: In a real app, password should not be returned in DTO for security.
+  @NotBlank(message = "{employee.name.required}")
+  private String name;
 
-    @NotNull(message = "{employee.role.required}")
-    private EmployeeRole role;
+  @NotBlank(message = "{employee.password.required}")
+  private String password;
+
+  @NotNull(message = "{employee.role.required}")
+  private EmployeeRole role;
+
+  @NotBlank(message = "{employee.username.required}")
+  private String username;
 }
