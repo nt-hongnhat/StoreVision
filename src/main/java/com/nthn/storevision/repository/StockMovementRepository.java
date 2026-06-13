@@ -33,15 +33,6 @@ public interface StockMovementRepository extends SaveRepository<StockMovementEnt
   List<StockMovementEntity> findByProductId(Long productId);
 
   /**
-   * Returns RECEIPT movements within an optional date range. Null bounds are treated as open-ended.
-   *
-   * @param from start of date range (inclusive), or {@code null} for no lower bound
-   * @param to end of date range (inclusive), or {@code null} for no upper bound
-   * @return matching RECEIPT movements ordered by the most recent first
-   */
-  List<StockMovementEntity> findReceiptsBetween(LocalDateTime from, LocalDateTime to);
-
-  /**
    * Returns one page of RECEIPT movements within an optional date range, the most recent first.
    * Null bounds are treated as open-ended.
    *

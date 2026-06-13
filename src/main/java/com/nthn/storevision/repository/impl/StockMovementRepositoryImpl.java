@@ -11,8 +11,8 @@
 
 package com.nthn.storevision.repository.impl;
 
-import com.nthn.storevision.entity.StockMovementEntity;
 import com.nthn.storevision.constant.StockMovementType;
+import com.nthn.storevision.entity.StockMovementEntity;
 import com.nthn.storevision.repository.StockMovementRepository;
 import com.nthn.storevision.repository.jpa.JpaStockMovementRepository;
 import java.time.LocalDateTime;
@@ -33,13 +33,6 @@ public class StockMovementRepositoryImpl implements StockMovementRepository {
   @Override
   public List<StockMovementEntity> findByProductId(final Long productId) {
     return jpaRepository.findByProductIdOrderByMovementDateDesc(productId);
-  }
-
-  /** {@inheritDoc} */
-  @Override
-  public List<StockMovementEntity> findReceiptsBetween(
-      final LocalDateTime from, final LocalDateTime to) {
-    return jpaRepository.findByTypeAndOptionalDateRange(StockMovementType.RECEIPT, from, to);
   }
 
   /** {@inheritDoc} */

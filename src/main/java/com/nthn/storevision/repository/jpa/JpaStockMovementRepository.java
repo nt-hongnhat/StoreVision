@@ -35,27 +35,6 @@ public interface JpaStockMovementRepository extends JpaRepository<StockMovementE
   List<StockMovementEntity> findByProductIdOrderByMovementDateDesc(Long productId);
 
   /**
-   * Returns movements of the given type within an optional date range. {@code null} bounds are
-   * treated as open-ended (no lower or upper limit applied).
-   *
-   * @param type the movement type to filter by; must not be {@code null}
-   * @param from start of date range (inclusive), or {@code null}
-   * @param to end of date range (inclusive), or {@code null}
-   * @return matching movements ordered by the most recent first
-   */
-  @Query(
-      """
-          SELECT s FROM StockMovementEntity s
-           WHERE s.type = :type
-           AND (:from IS NULL OR s.movementDate >= :from)
-           AND (:to   IS NULL OR s.movementDate <= :to)
-           ORDER BY s.movementDate DESC""")
-  List<StockMovementEntity> findByTypeAndOptionalDateRange(
-      @Param("type") StockMovementType type,
-      @Param("from") LocalDateTime from,
-      @Param("to") LocalDateTime to);
-
-  /**
    * Returns one page of movements of the given type within an optional date range, the most recent
    * first. {@code null} bounds are treated as open-ended.
    *
