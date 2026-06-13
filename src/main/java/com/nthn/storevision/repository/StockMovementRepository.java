@@ -6,7 +6,7 @@
  * File: StockMovementRepository.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-12 23:23:57
+ * Last Modified: 2026-06-13 14:06:07
  */
 
 package com.nthn.storevision.repository;
