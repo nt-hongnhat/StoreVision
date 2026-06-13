@@ -12,6 +12,7 @@
 package com.nthn.storevision.service.order.impl;
 
 import com.nthn.storevision.constant.DiscountType;
+import com.nthn.storevision.constant.LoyaltyTier;
 import com.nthn.storevision.constant.OrderStatus;
 import com.nthn.storevision.constant.message.CustomerMessageCode;
 import com.nthn.storevision.constant.message.ProductMessageCode;
@@ -27,6 +28,7 @@ import com.nthn.storevision.entity.VoucherEntity;
 import com.nthn.storevision.exception.EntityNotFoundException;
 import com.nthn.storevision.exception.InsufficientStockException;
 import com.nthn.storevision.mapper.EntityMapperConfig;
+import com.nthn.storevision.model.Product;
 import com.nthn.storevision.repository.OrderRepository;
 import com.nthn.storevision.service.common.AbstractCreatable;
 import com.nthn.storevision.service.customer.CustomerRetrievalService;
@@ -36,6 +38,7 @@ import com.nthn.storevision.service.product.ProductRetrievalService;
 import com.nthn.storevision.service.voucher.VoucherValidationService;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -64,7 +67,7 @@ public class OrderCreationServiceImpl
     extends AbstractCreatable<OrderDTO, OrderEntity, OrderRepository>
     implements OrderCreationService {
 
-  private static final BigDecimal PERCENT_DIVISOR = BigDecimal.valueOf(100);
+  private static final BigDecimal GOLD_BIRTHDAY_DISCOUNT_PERCENTAGE = BigDecimal.valueOf(10);
   private static final int MONEY_SCALE = 2;
 
   private final CustomerRetrievalService customerRetrievalService;
@@ -109,6 +112,8 @@ public class OrderCreationServiceImpl
     final BigDecimal discountAmount = calculateDiscount(voucher, subtotal);
     final BigDecimal taxAmount = subtotal.multiply(taxRate).setScale(MONEY_SCALE, RoundingMode.HALF_UP);
     final BigDecimal totalAmount = subtotal.subtract(discountAmount).add(taxAmount);
+    final BigDecimal birthdayDiscountAmount = calculateBirthdayDiscount(customer, subtotal);
+
 
     final OrderEntity saved =
         getRepository()
@@ -143,6 +148,32 @@ public class OrderCreationServiceImpl
     return result;
   }
 
+  /**
+   * Calculates birthday discount for eligible customers based on their loyalty tier. Silver members
+   * get 5% off, Gold members get 10% off.
+   */
+  private BigDecimal calculateBirthdayDiscount(
+      final @NonNull CustomerEntity customer, final BigDecimal subtotal) {
+    if (null == customer.getDateOfBirth() || !isBirthday(customer.getDateOfBirth())) {
+      return BigDecimal.ZERO;
+    }
+
+    BigDecimal discountPercentage = BigDecimal.ZERO;
+    if (LoyaltyTier.SILVER == customer.getLoyaltyTier()) {
+      discountPercentage = SILVER_BIRTHDAY_DISCOUNT_PERCENTAGE;
+    } else if (LoyaltyTier.GOLD == customer.getLoyaltyTier()) {
+      discountPercentage = GOLD_BIRTHDAY_DISCOUNT_PERCENTAGE;
+    }
+
+    if (0 < discountPercentage.compareTo(BigDecimal.ZERO)) {
+      return subtotal
+          .multiply(discountPercentage)
+          .divide(PERCENT_DIVISOR, MONEY_SCALE, RoundingMode.HALF_UP)
+          .min(subtotal); // Ensure discount doesn't exceed subtotal
+    }
+    return BigDecimal.ZERO;
+  }
+
   private CustomerEntity findActiveCustomer(final Long customerId) {
     final CustomerEntity customer =
         customerRetrievalService.findById(customerId, Function.identity());
@@ -165,6 +196,19 @@ public class OrderCreationServiceImpl
       throw new EntityNotFoundException(ProductMessageCode.NOT_FOUND, productId);
     }
     return product;
+  }
+
+  private Map<Long, ProductEntity> findActiveProducts(final List<OrderItemCreationRequest> items) {
+    final Map<Long, ProductEntity> products = new LinkedHashMap<>();
+    items.forEach(item -> products.computeIfAbsent(item.getProductId(), this::findActiveProduct));
+    return products;
+  }
+
+  /** Checks if the given date of birth matches the current month and day. */
+  private boolean isBirthday(final LocalDate dateOfBirth) {
+    final LocalDate today = LocalDate.now();
+    return dateOfBirth.getMonth() == today.getMonth()
+        && dateOfBirth.getDayOfMonth() == today.getDayOfMonth();
   }
 
   /**
