@@ -156,6 +156,9 @@ public class SecurityConfig {
                     .requestMatchers("/analytics/**")
                     .hasAnyRole(ADMIN, MANAGER)
 
+                    // Notifications (3.2.3): low-stock alerts are visible to ADMIN/MANAGER only
+                    .requestMatchers("/notifications/**")
+                    .hasAnyRole(ADMIN, MANAGER)
                     .anyRequest()
                     .authenticated())
         .oauth2Login(
