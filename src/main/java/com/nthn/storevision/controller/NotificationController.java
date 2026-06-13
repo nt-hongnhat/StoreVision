@@ -6,13 +6,14 @@
  * File: NotificationController.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-13 15:00:00
+ * Last Modified: 2026-06-13 17:35:32
  */
 
 package com.nthn.storevision.controller;
 
 import com.nthn.storevision.dto.NotificationDTO;
 import com.nthn.storevision.dto.response.PageDTO;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 /**
  * Version-agnostic contract for internal notification endpoints.
@@ -39,4 +40,11 @@ public interface NotificationController {
    * @see com.nthn.storevision.controller.v1.NotificationControllerV1#markNotificationAsRead
    */
   NotificationDTO markNotificationAsRead(Long id);
+
+  /**
+   * Establishes an SSE connection for real-time notification updates.
+   *
+   * @return An SseEmitter instance.
+   */
+  SseEmitter streamNotifications();
 }

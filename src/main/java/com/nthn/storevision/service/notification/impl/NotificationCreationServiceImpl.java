@@ -6,16 +6,19 @@
  * File: NotificationCreationServiceImpl.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-13 15:06:01
+ * Last Modified: 2026-06-13 16:26:01
  */
 
 package com.nthn.storevision.service.notification.impl;
 
 import com.nthn.storevision.constant.NotificationType;
 import com.nthn.storevision.dto.InventoryDTO;
+import com.nthn.storevision.dto.NotificationDTO; 
 import com.nthn.storevision.entity.NotificationEntity;
+import com.nthn.storevision.mapper.EntityMapperConfig; 
 import com.nthn.storevision.repository.NotificationRepository;
 import com.nthn.storevision.service.notification.NotificationCreationService;
+import com.nthn.storevision.service.notification.SseEmitterService; 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.NonNull;
@@ -34,7 +37,9 @@ public class NotificationCreationServiceImpl implements NotificationCreationServ
   private static final String LOW_STOCK_MESSAGE_FORMAT =
       "Product '%s' (SKU %s) has %d unit(s) remaining, at or below the configured low-stock threshold (BR-I04).";
   private static final String LOW_STOCK_TITLE = "Low stock alert";
+  private final EntityMapperConfig<NotificationDTO, Long, NotificationEntity> notificationMapper; // Injected mapper
   private final NotificationRepository notificationRepository;
+  private final SseEmitterService sseEmitterService;
 
   /** {@inheritDoc} */
   @Override
@@ -59,6 +64,9 @@ public class NotificationCreationServiceImpl implements NotificationCreationServ
             .read(false)
             .build();
 
-    notificationRepository.save(notification);
+    final NotificationEntity savedNotification = notificationRepository.save(notification);
+    
+    // Send the new notification via SSE
+    sseEmitterService.sendNotification(notificationMapper.toDTO(savedNotification));
   }
 }

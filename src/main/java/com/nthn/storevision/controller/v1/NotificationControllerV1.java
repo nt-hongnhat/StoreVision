@@ -6,7 +6,7 @@
  * File: NotificationControllerV1.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-13 15:00:00
+ * Last Modified: 2026-06-13 17:36:04
  */
 
 package com.nthn.storevision.controller.v1;
@@ -18,6 +18,7 @@ import com.nthn.storevision.dto.NotificationDTO;
 import com.nthn.storevision.dto.response.PageDTO;
 import com.nthn.storevision.service.notification.NotificationRetrievalService;
 import com.nthn.storevision.service.notification.NotificationUpdateService;
+import com.nthn.storevision.service.notification.SseEmitterService;
 import com.nthn.storevision.util.PaginationUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -31,6 +32,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 /** Version 1 implementation of {@link NotificationController}. */
 @Tag(name = "Notification", description = "Internal notification endpoints")
@@ -45,6 +47,7 @@ public class NotificationControllerV1 implements NotificationController {
           + " ordered by most recently created first.";
 
   private final NotificationRetrievalService retrievalService;
+  private final SseEmitterService sseEmitterService; // Injected SseEmitterService
   private final NotificationUpdateService updateService;
 
   /** {@inheritDoc} */
@@ -75,5 +78,19 @@ public class NotificationControllerV1 implements NotificationController {
       @Parameter(description = ResponseDescription.NOTIFICATION_ID) @PathVariable final Long id) {
     log.debug("PATCH /notifications/{}/read", id);
     return updateService.markAsRead(id);
+  }
+
+  @Operation(
+      summary = "Stream real-time notifications",
+      description = "Establishes an SSE connection to receive real-time notification updates.")
+  @ApiResponse(responseCode = ResponseCode.OK, description = "SSE connection established")
+  @GetMapping("/stream")
+  @Override
+  public SseEmitter streamNotifications() {
+    log.info("Client connected for SSE notification stream.");
+    final SseEmitter emitter =
+        new SseEmitter(Long.MAX_VALUE); // Long timeout to keep connection open
+    sseEmitterService.addEmitter(emitter);
+    return emitter;
   }
 }
