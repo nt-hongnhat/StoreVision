@@ -6,20 +6,18 @@
  * File: VoucherCreationService.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-12 21:56:59
+ * Last Modified: 2026-06-13 17:06:35
  */
 
 package com.nthn.storevision.service.voucher;
 
 import com.nthn.storevision.dto.VoucherDTO;
+import com.nthn.storevision.entity.VoucherEntity;
 import com.nthn.storevision.service.generic.Creatable;
 
 /**
- * Service interface for creating and persisting vouchers. Used by the loyalty redemption flow to
- * mint single-use discount vouchers from redeemed points.
- *
- * @see com.nthn.storevision.service.common.AbstractCreatable
- * @see Creatable
+ * Service interface for creating {@link VoucherEntity} instances.
  */
 @FunctionalInterface
-public interface VoucherCreationService extends Creatable<VoucherDTO> {}
+public interface VoucherCreationService extends Creatable<VoucherDTO> {
+}

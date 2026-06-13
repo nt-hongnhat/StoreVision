@@ -16,9 +16,6 @@ import com.nthn.storevision.entity.VoucherEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;
 
-/**
- * Mapper interface for converting between {@link VoucherEntity} and {@link VoucherDTO}. This
- * interface uses MapStruct to generate the implementation.
- */
+/** MapStruct mapper for converting between {@link VoucherDTO} and {@link VoucherEntity}. */
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING, config = EntityMapperConfig.class)
 public interface VoucherMapper extends EntityMapperConfig<VoucherDTO, Long, VoucherEntity> {}

@@ -6,45 +6,31 @@
  * File: VoucherUpdateServiceImpl.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-12 23:09:34
+ * Last Modified: 2026-06-13
  */
 
 package com.nthn.storevision.service.voucher.impl;
 
-import com.nthn.storevision.constant.message.VoucherMessageCode;
+import com.nthn.storevision.dto.VoucherDTO;
 import com.nthn.storevision.entity.VoucherEntity;
-import com.nthn.storevision.exception.EntityNotFoundException;
-import com.nthn.storevision.exception.VoucherUsageLimitReachedException;
+import com.nthn.storevision.mapper.EntityMapperConfig;
 import com.nthn.storevision.repository.VoucherRepository;
+import com.nthn.storevision.service.common.AbstractUpdatable;
 import com.nthn.storevision.service.voucher.VoucherUpdateService;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-/** Default implementation of {@link VoucherUpdateService}. */
-@Slf4j
+/**
+ * Default implementation of {@link VoucherUpdateService} that extends {@link AbstractUpdatable}
+ * to update {@link VoucherEntity} instances via {@link VoucherRepository}.
+ */
 @Service
-@RequiredArgsConstructor
-public class VoucherUpdateServiceImpl implements VoucherUpdateService {
+public class VoucherUpdateServiceImpl
+    extends AbstractUpdatable<VoucherDTO, VoucherEntity, VoucherRepository>
+    implements VoucherUpdateService {
 
-  private final VoucherRepository voucherRepository;
-
-  /** {@inheritDoc} */
-  @Override
-  @Transactional
-  public void incrementUsage(final @NonNull Long voucherId) {
-    final VoucherEntity voucher =
-        voucherRepository
-            .findById(voucherId)
-            .orElseThrow(
-                () -> new EntityNotFoundException(VoucherMessageCode.NOT_FOUND, voucherId));
-    // BR-V03: a single guarded UPDATE — concurrent completions can never push the
-    // usage count past maxUsage.
-    if (!voucherRepository.incrementUsageIfBelowLimit(voucherId)) {
-      throw new VoucherUsageLimitReachedException(voucher.getCode());
-    }
-    log.debug("Voucher usage incremented: id={}", voucherId);
+  protected VoucherUpdateServiceImpl(
+      final EntityMapperConfig<VoucherDTO, ?, VoucherEntity> mapper,
+      final VoucherRepository repository) {
+    super(mapper, repository);
   }
 }

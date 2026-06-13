@@ -6,23 +6,17 @@
  * File: VoucherUpdateService.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-12
+ * Last Modified: 2026-06-13
  */
 
 package com.nthn.storevision.service.voucher;
 
-import org.jspecify.annotations.NonNull;
+import com.nthn.storevision.dto.VoucherDTO;
+import com.nthn.storevision.entity.VoucherEntity;
+import com.nthn.storevision.service.generic.Updatable;
 
-/** Service interface for updating voucher state. */
-@FunctionalInterface
-public interface VoucherUpdateService {
-
-  /**
-   * Increments the usage count of a voucher by one. Called when an order using the voucher is
-   * completed (step S7 of the completion flow) — never at order creation time.
-   *
-   * @param voucherId the voucher to update; must not be {@code null}
-   * @throws com.nthn.storevision.exception.EntityNotFoundException if the voucher does not exist
-   */
-  void incrementUsage(@NonNull Long voucherId);
+/**
+ * Service interface for updating {@link VoucherEntity} instances.
+ */
+public interface VoucherUpdateService extends Updatable<VoucherDTO, VoucherEntity> {
 }

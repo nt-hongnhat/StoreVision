@@ -22,8 +22,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 /**
- * Implementation of the {@link VoucherRepository} interface. This class acts as an adapter,
- * delegating calls to the underlying {@link JpaVoucherRepository}.
+ * Default implementation of {@link VoucherRepository} that delegates to {@link
+ * JpaVoucherRepository}.
  */
 @Repository
 @RequiredArgsConstructor
@@ -33,12 +33,12 @@ public class VoucherRepositoryImpl implements VoucherRepository {
 
   @Override
   public List<VoucherEntity> findAll() {
-    return jpaRepository.findByDeletedDateIsNull();
+    return jpaRepository.findAll();
   }
 
   @Override
   public Page<VoucherEntity> findAllActive(final Pageable pageable) {
-    return jpaRepository.findByDeletedDateIsNull(pageable);
+    return jpaRepository.findAllByDeletedDateIsNull(pageable);
   }
 
   @Override
@@ -53,7 +53,7 @@ public class VoucherRepositoryImpl implements VoucherRepository {
 
   @Override
   public Optional<VoucherEntity> findByCode(final String code) {
-    return jpaRepository.findByCode(code);
+    return jpaRepository.findByCodeAndDeletedDateIsNull(code);
   }
 
   @Override
@@ -62,7 +62,7 @@ public class VoucherRepositoryImpl implements VoucherRepository {
   }
 
   @Override
-  public VoucherEntity save(final VoucherEntity voucher) {
-    return jpaRepository.save(voucher);
+  public VoucherEntity save(final VoucherEntity entity) {
+    return jpaRepository.save(entity);
   }
 }
