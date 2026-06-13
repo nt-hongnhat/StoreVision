@@ -44,6 +44,10 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-logging'
+    implementation 'org.springframework.boot:spring-boot-starter-cache'
+    // Caffeine for local caching with TTL
+    implementation 'com.github.ben-manes.caffeine:caffeine:3.1.8'
+
     // Thymeleaf security extras (version managed by Spring Boot BOM)
     implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
 

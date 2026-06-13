@@ -43,6 +43,10 @@ spring:
         header: X-API-Version
       default: v1
     log-request-details: true
+  cache:
+    type: caffeine
+    caffeine:
+      spec: expireAfterWrite=5m # 5 minutes TTL
 
 app:
   oauth2:
