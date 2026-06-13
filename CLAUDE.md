@@ -280,18 +280,19 @@ All message keys in `/i18n/messages*.properties` must follow the
 
 #### Prefix registry
 
-| Prefix | Domain                    | Example  |
-|--------|---------------------------|----------|
-| `USM`  | User (`user`)             | `USM001` |
-| `PRM`  | Product (`product`)       | `PRM001` |
-| `INM`  | Inventory (`inventory`)   | `INM001` |
-| `AUM`  | Audit (`component/audit`) | `AUM001` |
-| `CSM`  | Customer (`customer`)     | `CSM001` |
-| `EMM`  | Employee (`employee`)     | `EMM001` |
-| `ORM`  | Order (`order`)           | `ORM001` |
-| `OIM`  | Order item (`orderitem`)  | `OIM001` |
-| `VCM`  | Voucher (`voucher`)       | `VCM001` |
-| `ANM`  | Analytics (`analytics`)   | `ANM001` |
+| Prefix | Domain                        | Example  |
+|--------|-------------------------------|----------|
+| `USM`  | User (`user`)                 | `USM001` |
+| `PRM`  | Product (`product`)           | `PRM001` |
+| `INM`  | Inventory (`inventory`)       | `INM001` |
+| `AUM`  | Audit (`component/audit`)     | `AUM001` |
+| `CSM`  | Customer (`customer`)         | `CSM001` |
+| `EMM`  | Employee (`employee`)         | `EMM001` |
+| `ORM`  | Order (`order`)               | `ORM001` |
+| `OIM`  | Order item (`orderitem`)      | `OIM001` |
+| `VCM`  | Voucher (`voucher`)           | `VCM001` |
+| `ANM`  | Analytics (`analytics`)       | `ANM001` |
+| `NOM`  | Notification (`notification`) | `NOM001` |
 
 > When adding a new domain, register its prefix in this table before writing any
 > message keys.
@@ -361,6 +362,7 @@ All message keys in `/i18n/messages*.properties` must follow the
 | `VCM004` | Voucher usage limit reached (BR-V03)                  |
 | `VCM005` | Order amount below voucher minimum (BR-V04)           |
 | `ANM001` | Invalid reporting date range (BR-A02)                 |
+| `NOM001` | Notification not found                                |
 
 ### 7. Logging
 
