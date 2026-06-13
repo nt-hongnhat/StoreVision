@@ -6,12 +6,11 @@
  * File: LowStockAlertScheduler.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-13 15:06:01
+ * Last Modified: 2026-06-13 15:27:49
  */
 
 package com.nthn.storevision.scheduler;
 
-import com.nthn.storevision.dto.InventoryDTO;
 import com.nthn.storevision.service.inventory.InventoryRetrievalService;
 import com.nthn.storevision.service.notification.NotificationCreationService;
 import lombok.RequiredArgsConstructor;
