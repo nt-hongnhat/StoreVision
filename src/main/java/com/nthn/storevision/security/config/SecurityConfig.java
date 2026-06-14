@@ -19,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
@@ -36,10 +37,15 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
  * <p>RBAC rules follow the permission matrix of the system design (section 3): ADMIN has full
  * access, MANAGER manages catalog/inventory/orders/customers, STAFF creates orders and looks up
  * data, and plain authenticated users (customers, {@code ROLE_USER}) may only search products and
- * view loyalty details. BR-A04: STAFF cannot reach any {@code /analytics} endpoint.
+ * view loyalty details. BR-A04: STAFF cannot reach any {@code /analytics} endpoint. Products
+ * (3.1) and Inventory (3.2) only require authentication at the path-matcher level; their
+ * fine-grained per-role rules are enforced via {@code @PreAuthorize} on the controller methods
+ * (see {@link com.nthn.storevision.controller.v1.ProductControllerV1} and {@link
+ * com.nthn.storevision.controller.v1.InventoryControllerV1}).
  */
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
 
@@ -83,34 +89,13 @@ public class SecurityConfig {
                         ApiPathConstants.ACTUATOR.getValue())
                     .permitAll()
 
-                    // Products (3.1): search is open to every authenticated account,
-                    // reads to all employees, writes to ADMIN/MANAGER, permanent delete to ADMIN
-                    .requestMatchers(HttpMethod.GET, "/products/search")
-                    .authenticated()
-                    .requestMatchers(HttpMethod.DELETE, "/products/*/permanent")
-                    .hasRole(ADMIN)
-                    .requestMatchers(HttpMethod.PATCH, "/products/*/restore")
-                    .hasAnyRole(ADMIN, MANAGER)
-                    .requestMatchers(HttpMethod.GET, "/products/**")
-                    .hasAnyRole(ADMIN, MANAGER, STAFF)
+                    // Products (3.1) and Inventory (3.2): every endpoint requires
+                    // authentication; fine-grained role checks are enforced via
+                    // @PreAuthorize on the individual controller methods
                     .requestMatchers("/products/**")
-                    .hasAnyRole(ADMIN, MANAGER)
-
-                    // Inventory (3.2): per-product stock view includes STAFF,
-                    // everything else is ADMIN/MANAGER
-                    .requestMatchers(HttpMethod.POST, "/inventory/receipts")
-                    .hasAnyRole(ADMIN, MANAGER)
-                    .requestMatchers(
-                        HttpMethod.GET,
-                        "/inventory",
-                        "/inventory/receipts",
-                        "/inventory/low-stock",
-                        "/inventory/movements/**")
-                    .hasAnyRole(ADMIN, MANAGER)
-                    .requestMatchers(HttpMethod.GET, "/inventory/*")
-                    .hasAnyRole(ADMIN, MANAGER, STAFF)
+                    .authenticated()
                     .requestMatchers("/inventory/**")
-                    .hasAnyRole(ADMIN, MANAGER)
+                    .authenticated()
 
                     // Orders (3.3): STAFF creates, views by id and completes;
                     // listing and cancelling are ADMIN/MANAGER
