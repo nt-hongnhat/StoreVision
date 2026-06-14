@@ -21,7 +21,7 @@ import lombok.Setter;
 
 /**
  * Data Transfer Object for an internal {@link com.nthn.storevision.entity.NotificationEntity}.
- * Returned by {@code GET /notifications} and {@code PATCH /notifications/{id}/read}.
+ * Returned by {@code GET /notifications} and {@code PATCH /notifications/{id}}.
  */
 @Getter
 @Setter

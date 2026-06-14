@@ -12,7 +12,9 @@
 package com.nthn.storevision.controller;
 
 import com.nthn.storevision.dto.NotificationDTO;
+import com.nthn.storevision.dto.request.NotificationReadRequest;
 import com.nthn.storevision.dto.response.PageDTO;
+import jakarta.validation.Valid;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 /**
@@ -36,10 +38,12 @@ public interface NotificationController {
    * Marks a notification as read.
    *
    * @param id the notification id to update; must not be {@code null}
+   * @param request the update request; {@code read} must be {@code true} — this endpoint does not
+   *     support marking a notification as unread
    * @return the updated notification
    * @see com.nthn.storevision.controller.v1.NotificationControllerV1#markNotificationAsRead
    */
-  NotificationDTO markNotificationAsRead(Long id);
+  NotificationDTO markNotificationAsRead(Long id, @Valid NotificationReadRequest request);
 
   /**
    * Establishes an SSE connection for real-time notification updates.

@@ -12,6 +12,7 @@
 package com.nthn.storevision.controller;
 
 import com.nthn.storevision.dto.VoucherDTO;
+import com.nthn.storevision.dto.request.VoucherRestoreRequest;
 import com.nthn.storevision.dto.response.PageDTO;
 import jakarta.validation.Valid;
 
@@ -64,10 +65,12 @@ public interface VoucherController {
   void deleteVoucher(Long id);
 
   /**
-   * Restores a soft-deleted voucher by ID.
+   * Restores a previously soft-deleted voucher by clearing its soft-delete markers.
    *
    * @param id the ID of the voucher to restore
+   * @param request the restore request; {@code deleted} must be {@code false} — use {@code DELETE
+   *     /vouchers/{id}} to soft-delete a voucher instead
    * @return the restored voucher
    */
-  VoucherDTO restoreVoucher(Long id);
+  VoucherDTO restoreVoucher(Long id, @Valid VoucherRestoreRequest request);
 }
