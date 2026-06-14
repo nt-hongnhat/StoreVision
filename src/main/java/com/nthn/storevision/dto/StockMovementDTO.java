@@ -6,7 +6,7 @@
  * File: StockMovementDTO.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-05 17:15:15
+ * Last Modified: 2026-06-14 11:04:51
  */
 
 package com.nthn.storevision.dto;
@@ -20,7 +20,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-/** Full movement record returned by GET /inventory/movements/{productId}. */
+/** Full movement record returned by GET /inventory/{productId}/movements. */
 @Getter
 @Setter
 @NoArgsConstructor

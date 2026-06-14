@@ -144,12 +144,12 @@ public class InventoryControllerV1 implements InventoryController {
   @Operation(summary = "List stock movements for a product", description = MOVEMENT_HISTORY_DESC)
   @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)
   @ApiResponse(responseCode = ResponseCode.NOT_FOUND, description = ResponseDescription.NOT_FOUND)
-  @GetMapping("/movements/{productId}")
   @PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
+  @GetMapping("/{productId}/movements")
   @Override
   public List<StockMovementDTO> getMovementsByProductId(
       @Parameter(description = ResponseDescription.PRODUCT_ID) @PathVariable final Long productId) {
-    log.debug("GET /inventory/movements/{}", productId);
+    log.debug("GET /inventory/{}/movements", productId);
     return retrievalService.findMovementsByProductId(productId);
   }
 

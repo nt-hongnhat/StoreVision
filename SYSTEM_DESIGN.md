@@ -301,8 +301,6 @@ public record ProductDTO(
 | `POST`      | `/store-vision/api/v1/inventory/receipts`              | Tạo phiếu nhập hàng                           | ADMIN, MANAGER        |
 | `POST`      | `/store-vision/api/v1/inventory/adjustments`           | Điều chỉnh số lượng tồn kho sản phẩm          | ADMIN, MANAGER        |
 | `GET`       | `/store-vision/api/v1/inventory/receipts`              | Lịch sử nhập hàng (phân trang, lọc theo ngày) | ADMIN, MANAGER        |
-| `GET`       | `/store-vision/api/v1/inventory/low-stock`             | Danh sách sản phẩm sắp hết hàng               | ADMIN, MANAGER        |
-| `GET`       | `/store-vision/api/v1/inventory/movements/{productId}` | Lịch sử xuất/nhập kho theo sản phẩm           | ADMIN, MANAGER        |
 | `GET`       | `/store-vision/api/v1/inventory/{productId}/movements` | Lịch sử xuất/nhập kho theo sản phẩm           | ADMIN, MANAGER        |
 
 > Danh sách sản phẩm sắp hết hàng đã được gộp vào `GET /inventory` thông qua
