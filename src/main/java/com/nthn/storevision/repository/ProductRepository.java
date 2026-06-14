@@ -6,7 +6,7 @@
  * File: ProductRepository.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-12 23:23:57
+ * Last Modified: 2026-06-14 11:22:11
  */
 
 package com.nthn.storevision.repository;
@@ -88,11 +88,13 @@ public interface ProductRepository
   boolean isProductActiveInCategoryExcludingId(String name, String category, Long id);
 
   /**
-   * Searches for active (non-deleted) products based on the specified name and category.
+   * Searches for one page of active (non-deleted) products matching the specified optional name and
+   * category filters.
    *
-   * @param name the name of the product to search for; can be a partial or complete match.
-   * @param category the category of the product to search for.
-   * @return a list of {@code ProductEntity} objects that match the search criteria and are active.
+   * @param name partial or complete product name to match; {@code null} skips this filter
+   * @param category exact category to match; {@code null} skips this filter
+   * @param pageable page request carrying index, size, and sort; must not be {@code null}
+   * @return the requested page of matching active {@code ProductEntity} objects
    */
-  List<ProductEntity> searchActive(String name, String category);
+  Page<ProductEntity> searchActive(String name, String category, Pageable pageable);
 }

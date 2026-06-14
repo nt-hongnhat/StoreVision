@@ -6,7 +6,7 @@
  * File: JpaProductRepository.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-12 23:21:05
+ * Last Modified: 2026-06-14 10:57:20
  */
 
 package com.nthn.storevision.repository.jpa;
@@ -104,18 +104,19 @@ public interface JpaProductRepository extends JpaRepository<ProductEntity, Long>
   boolean isUniqueNameInCategory(String name, String category);
 
   /**
-   * Full-text–style search over active products. Both parameters are optional: passing {@code null}
-   * skips that filter entirely.
+   * Full-text–style search over active products. Both filter parameters are optional: passing
+   * {@code null} skips that filter entirely.
    *
    * @param category the category to search for; may be {@code null}
    * @param name the name to search for; may be {@code null}
-   * @return active products matching the search criteria
+   * @param pageable page request carrying index, size, and sort; must not be {@code null}
+   * @return the requested page of active products matching the search criteria
    */
   @Query(
       """
           SELECT p FROM ProductEntity p WHERE p.deletedDate IS NULL
            AND (:name IS NULL OR LOWER(p.name) LIKE LOWER(CONCAT('%', :name, '%')))
            AND (:category IS NULL OR p.category = :category)""")
-  List<ProductEntity> searchByNameAndCategory(
-      @Param("name") String name, @Param("category") String category);
+  Page<ProductEntity> searchByNameAndCategory(
+      @Param("name") String name, @Param("category") String category, Pageable pageable);
 }

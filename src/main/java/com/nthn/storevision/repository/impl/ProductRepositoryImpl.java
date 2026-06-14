@@ -6,7 +6,7 @@
  * File: ProductRepositoryImpl.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-12 23:23:57
+ * Last Modified: 2026-06-14 11:22:11
  */
 
 package com.nthn.storevision.repository.impl;
@@ -42,11 +42,6 @@ public class ProductRepositoryImpl implements ProductRepository {
   }
 
   @Override
-  public Page<ProductEntity> findAllActive(final Pageable pageable) {
-    return jpaRepository.findByDeletedDateIsNull(pageable);
-  }
-
-  @Override
   public List<ProductEntity> findLowStock(final int threshold) {
     return jpaRepository.findByStockQuantityLessThanEqualAndDeletedDateIsNull(threshold);
   }
@@ -68,8 +63,9 @@ public class ProductRepositoryImpl implements ProductRepository {
   }
 
   @Override
-  public List<ProductEntity> searchActive(final String name, final String category) {
-    return jpaRepository.searchByNameAndCategory(name, category);
+  public Page<ProductEntity> searchActive(
+      final String name, final String category, final Pageable pageable) {
+    return jpaRepository.searchByNameAndCategory(name, category, pageable);
   }
 
   @Override
@@ -99,8 +95,18 @@ public class ProductRepositoryImpl implements ProductRepository {
   }
 
   @Override
+  public ProductEntity save(final ProductEntity product) {
+    return jpaRepository.save(product);
+  }
+
+  @Override
   public List<ProductEntity> findAll() {
     return jpaRepository.findByDeletedDateIsNull();
+  }
+
+  @Override
+  public Page<ProductEntity> findAllActive(final Pageable pageable) {
+    return jpaRepository.findByDeletedDateIsNull(pageable);
   }
 
   @Override
@@ -111,10 +117,5 @@ public class ProductRepositoryImpl implements ProductRepository {
   @Override
   public boolean isExistsById(final Long id) {
     return jpaRepository.existsById(id);
-  }
-
-  @Override
-  public ProductEntity save(final ProductEntity product) {
-    return jpaRepository.save(product);
   }
 }
