@@ -470,6 +470,15 @@ skip the soft-delete block (because `isDeleted == false`) and only update
 - API base path: `/` (at the root)
 - Swagger config: `application-swagger.yml` — do not duplicate configuration
   elsewhere.
+- **Base request-mapping paths** (`@RequestMapping(value = ..., version = "v1")`)
+  must reference a `public static final String` constant from
+  `ApiPathConstants.Constants` (e.g., `ApiPathConstants.Constants.CUSTOMERS =
+  "/customers"`) — never hardcode the path literal. The same literal is reused
+  by the corresponding `ApiPathConstants` enum value (e.g.,
+  `ApiPathConstants.CUSTOMERS.getValue()`) for `SecurityConfig` request
+  matchers, so the controller's base path and its security matcher can never
+  drift apart. When adding a new domain, register both the `Constants` field
+  and the enum value in `ApiPathConstants` before writing any controller code.
 
 #### Controller Interface-Implementation pattern
 
@@ -477,7 +486,7 @@ skip the soft-delete block (because `isDeleted == false`) and only update
 controller/
     XxxController.java          ← version-agnostic interface (contract only)
     v1/
-        XxxControllerV1.java    ← @RestController, @RequestMapping(value = "/xxx", version = "1")
+        XxxControllerV1.java    ← @RestController, @RequestMapping(value = ApiPathConstants.Constants.XXX, version = "1")
 ```
 
 **Controller interface rules (`XxxController.java`):**
@@ -527,17 +536,23 @@ public CustomerDTO createCustomer(@Valid @RequestBody final CustomerDTO dto) {
 #### String constants for annotation values
 
 All string literals used in OpenAPI annotations must be defined as compile-time
-constants — never inline strings:
+constants — never inline strings, and never as `private static final String`
+fields in a controller class:
 
-- **HTTP response codes and generic descriptions** (e.g., `"200"`,
-  `"Resource not found"`) → `constant/api/ResponseCode` and
-  `constant/api/ResponseDescription`
-- **Domain-specific ID descriptions** (e.g., `"Product ID"`, `"Order ID"`) →
-  `static final String` in `constant/api/ResponseDescription` — **not** as
-  private constants in the controller class
-- **Operation-specific descriptions unique to one controller** (e.g., a conflict
-  message for a specific business rule) → `private static final String` in that
-  controller class
+- **HTTP response codes** (e.g., `"200"`, `"409"`) → `constant/api/ResponseCode`
+- **Every `@ApiResponse`/`@Parameter` description string** →
+  `public static final String` in `constant/api/ResponseDescription`. This
+  includes generic descriptions (e.g., `"Resource not found"`), domain-specific
+  ID descriptions (e.g., `"Product ID"`, `"Order ID"`), **and**
+  operation-/business-rule-specific descriptions unique to a single controller
+  (e.g., a conflict message for BR-P01). There is no "controller-local"
+  exception — all of these live in `ResponseDescription`, in alphabetical order.
+- **Every `@Operation(description = ...)` string** → `public static final
+  String` in `constant/api/OperationDescription`. Each constant carries its own
+  Javadoc block that documents the operation's behavior and the business rules
+  it enforces in prose; the constant's string value itself stays terse and
+  Swagger-facing. `@Operation(summary = ...)` is a short one-liner and stays
+  inline as a string literal — it is not extracted to either constants class.
 
 ```java
 // correct — domain ID uses ResponseDescription constant
@@ -545,21 +560,38 @@ constants — never inline strings:
 @PathVariable
 final Long id
 
-// correct — controller-unique string stays private
-private static final String CONFLICT_DESC = "Product name already exists in the same category";
-@ApiResponse(responseCode = ResponseCode.CONFLICT, description = CONFLICT_DESC)
+// correct — operation-/business-rule-specific description also lives in ResponseDescription
+@ApiResponse(
+    responseCode = ResponseCode.CONFLICT,
+    description = ResponseDescription.PRODUCT_NAME_EXISTS_IN_CATEGORY)
+
+// correct — long-form @Operation description lives in OperationDescription,
+// summary stays inline as a short literal
+@Operation(
+    summary = "Soft-delete a customer by ID",
+    description = OperationDescription.CUSTOMER_DELETION)
 
 // wrong — inline strings flagged by linter as duplicates
 @Parameter(description = "Product ID")
 @PathVariable
 final Long id   // ❌
 @ApiResponse(responseCode = "409", description = "Conflict")          // ❌
+
+// wrong — no private constants in controllers, not even for one-off descriptions
+private static final String CONFLICT_DESC = "Product name already exists in the same category"; // ❌
 ```
 
-**Registering a new domain ID constant in `ResponseDescription`**: when adding a
-new domain (e.g., `Supplier`), add
-`public static final String SUPPLIER_ID = "Supplier ID"` to
-`ResponseDescription` before writing any controller code.
+**Registering a new constant**:
+
+- `ResponseDescription` — when adding a new domain (e.g., `Supplier`) or a new
+  endpoint that needs its own `@ApiResponse`/`@Parameter` description, add the
+  corresponding `public static final String` constant (e.g.,
+  `SUPPLIER_ID = "Supplier ID"`), in alphabetical order, before writing any
+  controller code.
+- `OperationDescription` — when an endpoint's `@Operation(description = ...)`
+  documents non-trivial behavior or business rules, add a new
+  `public static final String` constant with a Javadoc block describing the
+  operation, in alphabetical order, before writing any controller code.
 
 ### 12. Modulith Boundaries
 
