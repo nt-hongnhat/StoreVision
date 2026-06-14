@@ -6,12 +6,11 @@
  * File: ProductRetrievalService.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-13 17:09:34
+ * Last Modified: 2026-06-13 19:43:56
  */
 
 package com.nthn.storevision.service.product;
 
-import com.nthn.storevision.dto.InventoryDTO; 
 import com.nthn.storevision.dto.ProductDTO;
 import com.nthn.storevision.dto.response.PageDTO;
 import com.nthn.storevision.entity.ProductEntity;
@@ -32,14 +31,6 @@ public interface ProductRetrievalService extends Readable<ProductEntity, Long> {
    * @return a list of all {@link ProductDTO}s.
    */
   List<ProductDTO> findAllProductsAsDTO();
-
-  /**
-   * Retrieves a product's inventory details by its identifier and maps it to {@link InventoryDTO}.
-   *
-   * @param id the identifier of the product to be retrieved.
-   * @return the {@link InventoryDTO} with the specified identifier.
-   */
-  InventoryDTO findInventoryByProductId(Long id);
 
   /**
    * Returns active products whose stock quantity is at or below {@code threshold}. Used by the

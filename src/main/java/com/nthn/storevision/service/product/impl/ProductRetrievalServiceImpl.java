@@ -6,14 +6,13 @@
  * File: ProductRetrievalServiceImpl.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-13 17:09:51
+ * Last Modified: 2026-06-13 19:44:15
  */
 
 package com.nthn.storevision.service.product.impl;
 
 import com.nthn.storevision.constant.message.LocalizedMessageCode;
 import com.nthn.storevision.constant.message.ProductMessageCode;
-import com.nthn.storevision.dto.InventoryDTO;
 import com.nthn.storevision.dto.ProductDTO;
 import com.nthn.storevision.dto.response.PageDTO;
 import com.nthn.storevision.entity.ProductEntity;
@@ -53,20 +52,6 @@ public class ProductRetrievalServiceImpl
   public List<ProductDTO> findAllProductsAsDTO() {
     log.debug("Fetching all active products as DTO");
     return getRepository().findAllActive().stream().map(productMapper::toDTO).toList();
-  }
-
-  @Override
-  @Transactional(readOnly = true)
-  public InventoryDTO findInventoryByProductId(final Long id) {
-    log.debug("Fetching inventory details for product id: {}", id);
-    final ProductEntity product = findById(id, productEntity -> productEntity); // Get the entity
-    return InventoryDTO.builder()
-        .productId(product.getId())
-        .productName(product.getName())
-        .sku(product.getSku())
-        .stockQuantity(product.getStockQuantity())
-        .price(product.getPrice())
-        .build();
   }
 
   @Override
