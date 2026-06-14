@@ -6,13 +6,12 @@
  * File: VoucherControllerV1.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-14 12:35:11
+ * Last Modified: 2026-06-14 15:47:14
  */
 
 package com.nthn.storevision.controller.v1;
 
-import com.nthn.storevision.constant.api.ResponseCode;
-import com.nthn.storevision.constant.api.ResponseDescription;
+import com.nthn.storevision.constant.api.*;
 import com.nthn.storevision.controller.VoucherController;
 import com.nthn.storevision.dto.VoucherDTO;
 import com.nthn.storevision.dto.request.VoucherRestoreRequest;
@@ -46,7 +45,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "Voucher", description = "Voucher management endpoints")
 @Slf4j
 @RestController
-@RequestMapping(value = "/vouchers", version = "v1")
+@RequestMapping(value = EndpointDefinitions.VOUCHERS, version = "v1")
 @RequiredArgsConstructor
 public class VoucherControllerV1 implements VoucherController {
 
@@ -56,7 +55,7 @@ public class VoucherControllerV1 implements VoucherController {
   private final VoucherUpdateService updateService;
 
   /** {@inheritDoc} */
-  @Operation(summary = "Create a new voucher", description = "Creates a new promotional voucher.")
+  @Operation(summary = "Create a new voucher", description = OperationDescription.VOUCHER_CREATION)
   @ApiResponse(responseCode = ResponseCode.CREATED, description = ResponseDescription.CREATED)
   @ApiResponse(
       responseCode = ResponseCode.BAD_REQUEST,
@@ -72,16 +71,16 @@ public class VoucherControllerV1 implements VoucherController {
   /** {@inheritDoc} */
   @Operation(
       summary = "Retrieve vouchers (paginated)",
-      description = "Returns one page of active (non-deleted) voucher records, most recent first.")
+      description = OperationDescription.VOUCHER_LIST)
   @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)
   @GetMapping
   @Override
   public PageDTO<VoucherDTO> getAllVouchers(
-      @Parameter(description = ResponseDescription.PAGE_INDEX)
-          @RequestParam(defaultValue = PaginationUtil.DEFAULT_PAGE)
+      @Parameter(description = ParameterDescription.PAGE_INDEX)
+          @RequestParam(defaultValue = DefaultRequestParam.DEFAULT_PAGE)
           final int page,
-      @Parameter(description = ResponseDescription.PAGE_SIZE)
-          @RequestParam(defaultValue = PaginationUtil.DEFAULT_SIZE)
+      @Parameter(description = ParameterDescription.PAGE_SIZE)
+          @RequestParam(defaultValue = DefaultRequestParam.DEFAULT_SIZE)
           final int size) {
     log.debug("GET /vouchers — page: {}, size: {}", page, size);
     return retrievalService.findVouchersPage(PaginationUtil.toPageRequest(page, size));
@@ -90,19 +89,19 @@ public class VoucherControllerV1 implements VoucherController {
   /** {@inheritDoc} */
   @Operation(
       summary = "Retrieve a voucher by ID",
-      description = "Returns the voucher record with the specified ID.")
+      description = OperationDescription.VOUCHER_GET_BY_ID)
   @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)
   @ApiResponse(responseCode = ResponseCode.NOT_FOUND, description = ResponseDescription.NOT_FOUND)
   @GetMapping("/{id}")
   @Override
   public VoucherDTO getVoucherById(
-      @Parameter(description = ResponseDescription.VOUCHER_ID) @PathVariable final Long id) {
+      @Parameter(description = ParameterDescription.VOUCHER_ID) @PathVariable final Long id) {
     log.debug("GET /vouchers/{}", id);
     return retrievalService.findById(id);
   }
 
   /** {@inheritDoc} */
-  @Operation(summary = "Update a voucher by ID", description = "Updates an existing voucher.")
+  @Operation(summary = "Update a voucher by ID", description = OperationDescription.VOUCHER_UPDATE)
   @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)
   @ApiResponse(
       responseCode = ResponseCode.BAD_REQUEST,
@@ -111,7 +110,7 @@ public class VoucherControllerV1 implements VoucherController {
   @PutMapping("/{id}")
   @Override
   public VoucherDTO updateVoucher(
-      @Parameter(description = ResponseDescription.VOUCHER_ID) @PathVariable final Long id,
+      @Parameter(description = ParameterDescription.VOUCHER_ID) @PathVariable final Long id,
       @Valid @RequestBody final VoucherDTO dto) {
     log.debug("PUT /vouchers/{}", id);
     return updateService.update(id, dto);
@@ -120,16 +119,14 @@ public class VoucherControllerV1 implements VoucherController {
   /** {@inheritDoc} */
   @Operation(
       summary = "Soft-delete a voucher by ID",
-      description =
-          "Marks the voucher as deleted without physically removing the record."
-              + " The record can be restored later.")
+      description = OperationDescription.VOUCHER_DELETION)
   @ApiResponse(responseCode = ResponseCode.NO_CONTENT, description = ResponseDescription.DELETED)
   @ApiResponse(responseCode = ResponseCode.NOT_FOUND, description = ResponseDescription.NOT_FOUND)
   @ResponseStatus(HttpStatus.NO_CONTENT)
   @DeleteMapping("/{id}")
   @Override
   public void deleteVoucher(
-      @Parameter(description = ResponseDescription.VOUCHER_ID) @PathVariable final Long id) {
+      @Parameter(description = ParameterDescription.VOUCHER_ID) @PathVariable final Long id) {
     log.debug("DELETE /vouchers/{}", id);
     deletionService.markAsDeleted(id);
   }
@@ -137,9 +134,7 @@ public class VoucherControllerV1 implements VoucherController {
   /** {@inheritDoc} */
   @Operation(
       summary = "Restore a soft-deleted voucher by ID",
-      description =
-          "Clears the soft-delete markers, making the voucher active again. The request body's"
-              + " `deleted` field must be `false`.")
+      description = OperationDescription.VOUCHER_RESTORE)
   @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.RESTORED)
   @ApiResponse(
       responseCode = ResponseCode.BAD_REQUEST,
@@ -148,9 +143,10 @@ public class VoucherControllerV1 implements VoucherController {
   @PatchMapping("/{id}")
   @Override
   public VoucherDTO restoreVoucher(
-      @Parameter(description = ResponseDescription.VOUCHER_ID) @PathVariable final Long id,
+      @Parameter(description = ParameterDescription.VOUCHER_ID) @PathVariable final Long id,
       @Valid @RequestBody final VoucherRestoreRequest request) {
     log.debug("PATCH /vouchers/{}", id);
-    return deletionService.restore(id);
+    deletionService.restore(id);
+    return retrievalService.findById(id);
   }
 }

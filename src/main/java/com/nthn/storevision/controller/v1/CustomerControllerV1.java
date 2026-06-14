@@ -6,15 +6,12 @@
  * File: CustomerControllerV1.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-14 12:27:10
+ * Last Modified: 2026-06-14 15:47:14
  */
 
 package com.nthn.storevision.controller.v1;
 
-import com.nthn.storevision.constant.ApiPathConstants;
-import com.nthn.storevision.constant.api.OperationDescription;
-import com.nthn.storevision.constant.api.ResponseCode;
-import com.nthn.storevision.constant.api.ResponseDescription;
+import com.nthn.storevision.constant.api.*;
 import com.nthn.storevision.controller.CustomerController;
 import com.nthn.storevision.dto.CustomerDTO;
 import com.nthn.storevision.dto.LoyaltyDetailsDTO;
@@ -27,7 +24,6 @@ import com.nthn.storevision.service.customer.CustomerDeletionService;
 import com.nthn.storevision.service.customer.CustomerRetrievalService;
 import com.nthn.storevision.service.customer.CustomerUpdateService;
 import com.nthn.storevision.service.customer.LoyaltyService;
-import com.nthn.storevision.util.PaginationUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -52,7 +48,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "Customer", description = "Customer management endpoints")
 @Slf4j
 @RestController
-@RequestMapping(value = ApiPathConstants.Constants.CUSTOMERS, version = "v1")
+@RequestMapping(value = EndpointDefinitions.CUSTOMERS, version = "v1")
 @RequiredArgsConstructor
 public class CustomerControllerV1 implements CustomerController {
 
@@ -65,10 +61,7 @@ public class CustomerControllerV1 implements CustomerController {
   /** {@inheritDoc} */
   @Operation(
       summary = "Create a new customer",
-      description =
-          "Creates a new customer record. The email must be unique across the whole system,"
-              + " including soft-deleted records (BR-C01). New customers start at BRONZE tier"
-              + " with zero points.")
+      description = OperationDescription.CUSTOMER_CREATION)
   @ApiResponse(responseCode = ResponseCode.CREATED, description = ResponseDescription.CREATED)
   @ApiResponse(
       responseCode = ResponseCode.BAD_REQUEST,
@@ -95,23 +88,23 @@ public class CustomerControllerV1 implements CustomerController {
   @DeleteMapping("/{id}")
   @Override
   public void deleteCustomer(
-      @Parameter(description = ResponseDescription.CUSTOMER_ID) @PathVariable final Long id) {
+      @Parameter(description = ParameterDescription.CUSTOMER_ID) @PathVariable final Long id) {
     log.debug("DELETE /customers/{}", id);
     deletionService.markAsDeleted(id);
   }
 
   @Operation(
       summary = "Retrieve customers (paginated)",
-      description = "Returns one page of active (non-deleted) customer records ordered by name.")
+      description = OperationDescription.CUSTOMER_LIST)
   @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)
   @GetMapping
   @Override
   public PageDTO<CustomerDTO> getAllCustomers(
-      @Parameter(description = ResponseDescription.PAGE_INDEX)
-          @RequestParam(defaultValue = PaginationUtil.DEFAULT_PAGE)
+      @Parameter(description = ParameterDescription.PAGE_INDEX)
+          @RequestParam(defaultValue = DefaultRequestParam.DEFAULT_PAGE)
           final int page,
-      @Parameter(description = ResponseDescription.PAGE_SIZE)
-          @RequestParam(defaultValue = PaginationUtil.DEFAULT_SIZE)
+      @Parameter(description = ParameterDescription.PAGE_SIZE)
+          @RequestParam(defaultValue = DefaultRequestParam.DEFAULT_SIZE)
           final int size) {
     log.debug("GET /customers — page: {}, size: {}", page, size);
     return retrievalService.findCustomersPage(page, size);
@@ -119,13 +112,13 @@ public class CustomerControllerV1 implements CustomerController {
 
   @Operation(
       summary = "Retrieve a customer by ID",
-      description = "Returns the customer record with the specified ID.")
+      description = OperationDescription.CUSTOMER_GET_BY_ID)
   @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)
   @ApiResponse(responseCode = ResponseCode.NOT_FOUND, description = ResponseDescription.NOT_FOUND)
   @GetMapping("/{id}")
   @Override
   public CustomerDTO getCustomerById(
-      @Parameter(description = ResponseDescription.CUSTOMER_ID) @PathVariable final Long id) {
+      @Parameter(description = ParameterDescription.CUSTOMER_ID) @PathVariable final Long id) {
     log.debug("GET /customers/{}", id);
     return retrievalService.findCustomerDTOById(id);
   }
@@ -133,13 +126,13 @@ public class CustomerControllerV1 implements CustomerController {
   /** {@inheritDoc} */
   @Operation(
       summary = "Retrieve a customer's order history",
-      description = "Returns all active orders of the customer, most recent first.")
+      description = OperationDescription.CUSTOMER_ORDER_HISTORY)
   @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)
   @ApiResponse(responseCode = ResponseCode.NOT_FOUND, description = ResponseDescription.NOT_FOUND)
   @GetMapping("/{id}/orders")
   @Override
   public List<OrderDTO> getCustomerOrders(
-      @Parameter(description = ResponseDescription.CUSTOMER_ID) @PathVariable final Long id) {
+      @Parameter(description = ParameterDescription.CUSTOMER_ID) @PathVariable final Long id) {
     log.debug("GET /customers/{}/orders", id);
     return retrievalService.findOrderHistory(id);
   }
@@ -153,7 +146,7 @@ public class CustomerControllerV1 implements CustomerController {
   @GetMapping("/{id}/loyalty")
   @Override
   public LoyaltyDetailsDTO getLoyaltyDetails(
-      @Parameter(description = ResponseDescription.CUSTOMER_ID) @PathVariable final Long id) {
+      @Parameter(description = ParameterDescription.CUSTOMER_ID) @PathVariable final Long id) {
     log.debug("GET /customers/{}/loyalty", id);
     return loyaltyService.getLoyaltyDetails(id);
   }
@@ -169,12 +162,12 @@ public class CustomerControllerV1 implements CustomerController {
   @ApiResponse(responseCode = ResponseCode.NOT_FOUND, description = ResponseDescription.NOT_FOUND)
   @ApiResponse(
       responseCode = ResponseCode.UNPROCESSABLE_ENTITY,
-      description = ResponseDescription.INSUFFICIENT_POINTS)
+      description = ParameterDescription.INSUFFICIENT_POINTS)
   @ResponseStatus(HttpStatus.CREATED)
   @PostMapping("/{id}/loyalty/redeem")
   @Override
   public VoucherDTO redeemPoints(
-      @Parameter(description = ResponseDescription.CUSTOMER_ID) @PathVariable final Long id,
+      @Parameter(description = ParameterDescription.CUSTOMER_ID) @PathVariable final Long id,
       @Valid @RequestBody final RedeemPointsRequest request) {
     log.debug("POST /customers/{}/loyalty/redeem — points: {}", id, request.getPoints());
     return loyaltyService.redeemPoints(id, request.getPoints());
@@ -182,8 +175,7 @@ public class CustomerControllerV1 implements CustomerController {
 
   @Operation(
       summary = "Update a customer by ID",
-      description =
-          "Updates the mutable fields (name, email, phone, address) of an existing customer.")
+      description = OperationDescription.CUSTOMER_UPDATE)
   @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)
   @ApiResponse(
       responseCode = ResponseCode.BAD_REQUEST,
@@ -192,7 +184,7 @@ public class CustomerControllerV1 implements CustomerController {
   @PutMapping("/{id}")
   @Override
   public CustomerDTO updateCustomer(
-      @Parameter(description = ResponseDescription.CUSTOMER_ID) @PathVariable final Long id,
+      @Parameter(description = ParameterDescription.CUSTOMER_ID) @PathVariable final Long id,
       @Valid @RequestBody final CustomerDTO dto) {
     log.debug("PUT /customers/{}", id);
     return updateService.update(id, dto);

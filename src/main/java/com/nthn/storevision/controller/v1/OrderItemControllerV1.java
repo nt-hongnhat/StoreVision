@@ -6,14 +6,12 @@
  * File: OrderItemControllerV1.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-14 12:04:32
+ * Last Modified: 2026-06-14 15:47:14
  */
 
 package com.nthn.storevision.controller.v1;
 
-import com.nthn.storevision.constant.ApiPathConstants;
-import com.nthn.storevision.constant.api.ResponseCode;
-import com.nthn.storevision.constant.api.ResponseDescription;
+import com.nthn.storevision.constant.api.*;
 import com.nthn.storevision.controller.OrderItemController;
 import com.nthn.storevision.dto.OrderItemDTO;
 import com.nthn.storevision.dto.response.PageDTO;
@@ -21,7 +19,6 @@ import com.nthn.storevision.service.orderitem.OrderItemCreationService;
 import com.nthn.storevision.service.orderitem.OrderItemDeletionService;
 import com.nthn.storevision.service.orderitem.OrderItemRetrievalService;
 import com.nthn.storevision.service.orderitem.OrderItemUpdateService;
-import com.nthn.storevision.util.PaginationUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -45,7 +42,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "Order Item", description = "Order item management endpoints")
 @Slf4j
 @RestController
-@RequestMapping(value = ApiPathConstants.Constants.ORDER_ITEMS, version = "v1")
+@RequestMapping(value = EndpointDefinitions.ORDER_ITEMS, version = "v1")
 @RequiredArgsConstructor
 public class OrderItemControllerV1 implements OrderItemController {
 
@@ -56,7 +53,7 @@ public class OrderItemControllerV1 implements OrderItemController {
 
   @Operation(
       summary = "Create a new order item",
-      description = "Adds a new line item to an existing order and persists it to the database.")
+      description = OperationDescription.ORDER_ITEM_CREATION)
   @ApiResponse(responseCode = ResponseCode.CREATED, description = ResponseDescription.CREATED)
   @ApiResponse(
       responseCode = ResponseCode.BAD_REQUEST,
@@ -71,36 +68,32 @@ public class OrderItemControllerV1 implements OrderItemController {
 
   @Operation(
       summary = "Soft-delete an order item by ID",
-      description =
-          "Marks the order item as deleted without physically removing the record."
-              + " The record can be restored later.")
+      description = OperationDescription.ORDER_ITEM_DELETION)
   @ApiResponse(responseCode = ResponseCode.NO_CONTENT, description = ResponseDescription.DELETED)
   @ApiResponse(responseCode = ResponseCode.NOT_FOUND, description = ResponseDescription.NOT_FOUND)
   @ResponseStatus(HttpStatus.NO_CONTENT)
   @DeleteMapping("/{id}")
   @Override
   public void deleteOrderItem(
-      @Parameter(description = ResponseDescription.ORDER_ITEM_ID) @PathVariable final Long id) {
+      @Parameter(description = ParameterDescription.ORDER_ITEM_ID) @PathVariable final Long id) {
     log.debug("DELETE /order-items/{}", id);
     deletionService.markAsDeleted(id);
   }
 
   @Operation(
       summary = "Retrieve order items (paginated)",
-      description =
-          "Returns one page of active (non-deleted) order item records, optionally filtered to"
-              + " a single parent order via the orderId query parameter.")
+      description = OperationDescription.ORDER_ITEM_LIST)
   @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)
   @GetMapping
   @Override
   public PageDTO<OrderItemDTO> getAllOrderItems(
-      @Parameter(description = ResponseDescription.PAGE_INDEX)
-          @RequestParam(defaultValue = PaginationUtil.DEFAULT_PAGE)
+      @Parameter(description = ParameterDescription.PAGE_INDEX)
+          @RequestParam(defaultValue = DefaultRequestParam.DEFAULT_PAGE)
           final int page,
-      @Parameter(description = ResponseDescription.PAGE_SIZE)
-          @RequestParam(defaultValue = PaginationUtil.DEFAULT_SIZE)
+      @Parameter(description = ParameterDescription.PAGE_SIZE)
+          @RequestParam(defaultValue = DefaultRequestParam.DEFAULT_SIZE)
           final int size,
-      @Parameter(description = ResponseDescription.ORDER_ID) @RequestParam(required = false)
+      @Parameter(description = ParameterDescription.ORDER_ID) @RequestParam(required = false)
           final Long orderId) {
     log.debug("GET /order-items — page: {}, size: {}, orderId: {}", page, size, orderId);
     return retrievalService.findOrderItemsPage(page, size, orderId);
@@ -108,22 +101,20 @@ public class OrderItemControllerV1 implements OrderItemController {
 
   @Operation(
       summary = "Retrieve an order item by ID",
-      description = "Returns the order item record with the specified ID.")
+      description = OperationDescription.ORDER_ITEM_GET_BY_ID)
   @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)
   @ApiResponse(responseCode = ResponseCode.NOT_FOUND, description = ResponseDescription.NOT_FOUND)
   @GetMapping("/{id}")
   @Override
   public OrderItemDTO getOrderItemById(
-      @Parameter(description = ResponseDescription.ORDER_ITEM_ID) @PathVariable final Long id) {
+      @Parameter(description = ParameterDescription.ORDER_ITEM_ID) @PathVariable final Long id) {
     log.debug("GET /order-items/{}", id);
     return retrievalService.findOrderItemDTOById(id);
   }
 
   @Operation(
       summary = "Update an order item by ID",
-      description =
-          "Updates the mutable fields (quantity, unitPrice) of an existing order item."
-              + " Order and product associations cannot be changed via this endpoint.")
+      description = OperationDescription.ORDER_ITEM_UPDATE)
   @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)
   @ApiResponse(
       responseCode = ResponseCode.BAD_REQUEST,
@@ -132,7 +123,7 @@ public class OrderItemControllerV1 implements OrderItemController {
   @PutMapping("/{id}")
   @Override
   public OrderItemDTO updateOrderItem(
-      @Parameter(description = ResponseDescription.ORDER_ITEM_ID) @PathVariable final Long id,
+      @Parameter(description = ParameterDescription.ORDER_ITEM_ID) @PathVariable final Long id,
       @Valid @RequestBody final OrderItemDTO dto) {
     log.debug("PUT /order-items/{}", id);
     return updateService.update(id, dto);

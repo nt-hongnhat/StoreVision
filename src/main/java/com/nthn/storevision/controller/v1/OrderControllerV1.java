@@ -6,16 +6,13 @@
  * File: OrderControllerV1.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-14 12:27:40
+ * Last Modified: 2026-06-14 15:47:14
  */
 
 package com.nthn.storevision.controller.v1;
 
-import com.nthn.storevision.constant.ApiPathConstants;
+import com.nthn.storevision.constant.api.*;
 import com.nthn.storevision.constant.OrderStatus;
-import com.nthn.storevision.constant.api.OperationDescription;
-import com.nthn.storevision.constant.api.ResponseCode;
-import com.nthn.storevision.constant.api.ResponseDescription;
 import com.nthn.storevision.controller.OrderController;
 import com.nthn.storevision.dto.OrderDTO;
 import com.nthn.storevision.dto.request.OrderCreationRequest;
@@ -26,7 +23,6 @@ import com.nthn.storevision.service.order.OrderCreationService;
 import com.nthn.storevision.service.order.OrderDeletionService;
 import com.nthn.storevision.service.order.OrderRetrievalService;
 import com.nthn.storevision.service.order.OrderUpdateService;
-import com.nthn.storevision.util.PaginationUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -52,7 +48,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "Order", description = "Order management endpoints")
 @Slf4j
 @RestController
-@RequestMapping(value = ApiPathConstants.Constants.ORDERS, version = "v1")
+@RequestMapping(value = EndpointDefinitions.ORDERS, version = "v1")
 @RequiredArgsConstructor
 public class OrderControllerV1 implements OrderController {
 
@@ -62,9 +58,7 @@ public class OrderControllerV1 implements OrderController {
   private final OrderUpdateService updateService;
 
   /** {@inheritDoc} */
-  @Operation(
-      summary = "Create a new sales order",
-      description = OperationDescription.CREATE_ORDER)
+  @Operation(summary = "Create a new sales order", description = OperationDescription.CREATE_ORDER)
   @ApiResponse(responseCode = ResponseCode.CREATED, description = ResponseDescription.CREATED)
   @ApiResponse(
       responseCode = ResponseCode.BAD_REQUEST,
@@ -83,32 +77,28 @@ public class OrderControllerV1 implements OrderController {
 
   @Operation(
       summary = "Soft-delete an order by ID",
-      description =
-          "Marks the order as deleted without physically removing the record."
-              + " The record can be restored later.")
+      description = OperationDescription.ORDER_DELETION)
   @ApiResponse(responseCode = ResponseCode.NO_CONTENT, description = ResponseDescription.DELETED)
   @ApiResponse(responseCode = ResponseCode.NOT_FOUND, description = ResponseDescription.NOT_FOUND)
   @ResponseStatus(HttpStatus.NO_CONTENT)
   @DeleteMapping("/{id}")
   @Override
   public void deleteOrder(
-      @Parameter(description = ResponseDescription.ORDER_ID) @PathVariable final Long id) {
+      @Parameter(description = ParameterDescription.ORDER_ID) @PathVariable final Long id) {
     log.debug("DELETE /orders/{}", id);
     deletionService.markAsDeleted(id);
   }
 
-  @Operation(
-      summary = "Retrieve orders (paginated)",
-      description = "Returns one page of active (non-deleted) order records, most recent first.")
+  @Operation(summary = "Retrieve orders (paginated)", description = OperationDescription.ORDER_LIST)
   @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)
   @GetMapping
   @Override
   public PageDTO<OrderDTO> getAllOrders(
-      @Parameter(description = ResponseDescription.PAGE_INDEX)
-          @RequestParam(defaultValue = PaginationUtil.DEFAULT_PAGE)
+      @Parameter(description = ParameterDescription.PAGE_INDEX)
+          @RequestParam(defaultValue = DefaultRequestParam.DEFAULT_PAGE)
           final int page,
-      @Parameter(description = PaginationUtil.DEFAULT_SIZE)
-          @RequestParam(defaultValue = PaginationUtil.DEFAULT_SIZE)
+      @Parameter(description = DefaultRequestParam.DEFAULT_SIZE)
+          @RequestParam(defaultValue = DefaultRequestParam.DEFAULT_SIZE)
           final int size) {
     log.debug("GET /orders — page: {}, size: {}", page, size);
     return retrievalService.findOrdersPage(page, size);
@@ -116,22 +106,18 @@ public class OrderControllerV1 implements OrderController {
 
   @Operation(
       summary = "Retrieve an order by ID",
-      description = "Returns the order record with the specified ID.")
+      description = OperationDescription.ORDER_GET_BY_ID)
   @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)
   @ApiResponse(responseCode = ResponseCode.NOT_FOUND, description = ResponseDescription.NOT_FOUND)
   @GetMapping("/{id}")
   @Override
   public OrderDTO getOrderById(
-      @Parameter(description = ResponseDescription.ORDER_ID) @PathVariable final Long id) {
+      @Parameter(description = ParameterDescription.ORDER_ID) @PathVariable final Long id) {
     log.debug("GET /orders/{}", id);
     return retrievalService.findOrderDTOById(id);
   }
 
-  @Operation(
-      summary = "Update an order by ID",
-      description =
-          "Updates the mutable fields (orderDate, totalAmount, status) of an existing order."
-              + " Customer association cannot be changed via this endpoint.")
+  @Operation(summary = "Update an order by ID", description = OperationDescription.ORDER_UPDATE)
   @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)
   @ApiResponse(
       responseCode = ResponseCode.BAD_REQUEST,
@@ -140,7 +126,7 @@ public class OrderControllerV1 implements OrderController {
   @PutMapping("/{id}")
   @Override
   public OrderDTO updateOrder(
-      @Parameter(description = ResponseDescription.ORDER_ID) @PathVariable final Long id,
+      @Parameter(description = ParameterDescription.ORDER_ID) @PathVariable final Long id,
       @Valid @RequestBody final OrderDTO dto) {
     log.debug("PUT /orders/{}", id);
     return updateService.update(id, dto);
@@ -168,7 +154,7 @@ public class OrderControllerV1 implements OrderController {
   @PatchMapping("/{id}")
   @Override
   public OrderDTO updateOrderStatus(
-      @Parameter(description = ResponseDescription.ORDER_ID) @PathVariable final Long id,
+      @Parameter(description = ParameterDescription.ORDER_ID) @PathVariable final Long id,
       @Valid @RequestBody final OrderStatusUpdateRequest request) {
     log.debug("PATCH /orders/{} — status: {}", id, request.getStatus());
     return switch (request.getStatus()) {

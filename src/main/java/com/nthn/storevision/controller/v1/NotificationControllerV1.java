@@ -6,14 +6,12 @@
  * File: NotificationControllerV1.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-14 12:29:07
+ * Last Modified: 2026-06-14 15:47:14
  */
 
 package com.nthn.storevision.controller.v1;
 
-import com.nthn.storevision.constant.api.OperationDescription;
-import com.nthn.storevision.constant.api.ResponseCode;
-import com.nthn.storevision.constant.api.ResponseDescription;
+import com.nthn.storevision.constant.api.*;
 import com.nthn.storevision.controller.NotificationController;
 import com.nthn.storevision.dto.NotificationDTO;
 import com.nthn.storevision.dto.request.NotificationReadRequest;
@@ -21,7 +19,6 @@ import com.nthn.storevision.dto.response.PageDTO;
 import com.nthn.storevision.service.notification.NotificationRetrievalService;
 import com.nthn.storevision.service.notification.NotificationUpdateService;
 import com.nthn.storevision.service.notification.SseEmitterService;
-import com.nthn.storevision.util.PaginationUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -42,7 +39,7 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 @Tag(name = "Notification", description = "Internal notification endpoints")
 @Slf4j
 @RestController
-@RequestMapping(value = "/notifications", version = "v1")
+@RequestMapping(value = EndpointDefinitions.NOTIFICATIONS, version = "v1")
 @RequiredArgsConstructor
 public class NotificationControllerV1 implements NotificationController {
 
@@ -58,11 +55,11 @@ public class NotificationControllerV1 implements NotificationController {
   @GetMapping
   @Override
   public PageDTO<NotificationDTO> getNotifications(
-      @Parameter(description = ResponseDescription.PAGE_INDEX)
-          @RequestParam(defaultValue = PaginationUtil.DEFAULT_PAGE)
+      @Parameter(description = ParameterDescription.PAGE_INDEX)
+          @RequestParam(defaultValue = DefaultRequestParam.DEFAULT_PAGE)
           final int page,
-      @Parameter(description = ResponseDescription.PAGE_SIZE)
-          @RequestParam(defaultValue = PaginationUtil.DEFAULT_SIZE)
+      @Parameter(description = ParameterDescription.PAGE_SIZE)
+          @RequestParam(defaultValue = DefaultRequestParam.DEFAULT_SIZE)
           final int size) {
     log.debug("GET /notifications — page: {}, size: {}", page, size);
     return retrievalService.findNotifications(page, size);
@@ -71,7 +68,7 @@ public class NotificationControllerV1 implements NotificationController {
   /** {@inheritDoc} */
   @Operation(
       summary = "Mark a notification as read",
-      description = OperationDescription.READ_NOTIFICATION_DESCRIPTION)
+      description = OperationDescription.READ_NOTIFICATION)
   @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)
   @ApiResponse(
       responseCode = ResponseCode.BAD_REQUEST,
@@ -80,7 +77,7 @@ public class NotificationControllerV1 implements NotificationController {
   @PatchMapping("/{id}")
   @Override
   public NotificationDTO markNotificationAsRead(
-      @Parameter(description = ResponseDescription.NOTIFICATION_ID) @PathVariable final Long id,
+      @Parameter(description = ParameterDescription.NOTIFICATION_ID) @PathVariable final Long id,
       @Valid @RequestBody final NotificationReadRequest request) {
     log.debug("PATCH /notifications/{}", id);
     return updateService.markAsRead(id);
@@ -88,14 +85,15 @@ public class NotificationControllerV1 implements NotificationController {
 
   @Operation(
       summary = "Stream real-time notifications",
-      description = OperationDescription.SSE_CONNECTION_DESCRIPTION)
-  @ApiResponse(responseCode = ResponseCode.OK, description = "SSE connection established")
+      description = OperationDescription.SSE_CONNECTION)
+  @ApiResponse(
+      responseCode = ResponseCode.OK,
+      description = ResponseDescription.SSE_CONNECTION_ESTABLISHED)
   @GetMapping("/stream")
   @Override
   public SseEmitter streamNotifications() {
     log.info("Client connected for SSE notification stream.");
-    final SseEmitter emitter =
-        new SseEmitter(Long.MAX_VALUE); // Long timeout to keep connection open
+    final SseEmitter emitter = new SseEmitter(Long.MAX_VALUE);
     sseEmitterService.addEmitter(emitter);
     return emitter;
   }

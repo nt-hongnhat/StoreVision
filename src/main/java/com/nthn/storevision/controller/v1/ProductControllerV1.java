@@ -6,13 +6,12 @@
  * File: ProductControllerV1.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-14 11:53:04
+ * Last Modified: 2026-06-14 15:47:14
  */
 
 package com.nthn.storevision.controller.v1;
 
-import com.nthn.storevision.constant.api.ResponseCode;
-import com.nthn.storevision.constant.api.ResponseDescription;
+import com.nthn.storevision.constant.api.*;
 import com.nthn.storevision.controller.ProductController;
 import com.nthn.storevision.dto.ProductDTO;
 import com.nthn.storevision.dto.request.ProductRestoreRequest;
@@ -21,7 +20,6 @@ import com.nthn.storevision.service.product.ProductCreationService;
 import com.nthn.storevision.service.product.ProductDeletionService;
 import com.nthn.storevision.service.product.ProductRetrievalService;
 import com.nthn.storevision.service.product.ProductUpdateService;
-import com.nthn.storevision.util.PaginationUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -47,7 +45,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "Product", description = "Product management endpoints")
 @Slf4j
 @RestController
-@RequestMapping(value = "/products", version = "v1")
+@RequestMapping(value = EndpointDefinitions.PRODUCTS, version = "v1")
 @RequiredArgsConstructor
 public class ProductControllerV1 implements ProductController {
 
@@ -56,11 +54,7 @@ public class ProductControllerV1 implements ProductController {
   private final ProductRetrievalService retrievalService;
   private final ProductUpdateService updateService;
 
-  @Operation(
-      summary = "Create a new product",
-      description =
-          "Creates a new product. Name + category must be unique among active records (BR-P01)."
-              + " Price must be > 0 (BR-P02). stockQuantity must be >= 0 (BR-P03).")
+  @Operation(summary = "Create a new product", description = OperationDescription.PRODUCT_CREATION)
   @ApiResponse(responseCode = ResponseCode.CREATED, description = ResponseDescription.CREATED)
   @ApiResponse(
       responseCode = ResponseCode.BAD_REQUEST,
@@ -79,11 +73,7 @@ public class ProductControllerV1 implements ProductController {
 
   @Operation(
       summary = "Delete a product by ID",
-      description =
-          "By default, soft-deletes the product. If active PENDING orders reference this"
-              + " product, a warning is logged but the deletion still proceeds (BR-P04). If"
-              + " `hard=true`, permanently removes the record from the database instead (Admin"
-              + " only).")
+      description = OperationDescription.PRODUCT_DELETION)
   @ApiResponse(responseCode = ResponseCode.NO_CONTENT, description = ResponseDescription.DELETED)
   @ApiResponse(responseCode = ResponseCode.NOT_FOUND, description = ResponseDescription.NOT_FOUND)
   @PreAuthorize("hasRole('ADMIN') or (!#hard and hasRole('MANAGER'))")
@@ -91,8 +81,9 @@ public class ProductControllerV1 implements ProductController {
   @DeleteMapping("/{id}")
   @Override
   public void deleteProduct(
-      @Parameter(description = ResponseDescription.PRODUCT_ID) @PathVariable final Long id,
-      @Parameter(description = ResponseDescription.HARD_DELETE) @RequestParam(defaultValue = "false")
+      @Parameter(description = ParameterDescription.PRODUCT_ID) @PathVariable final Long id,
+      @Parameter(description = ResponseDescription.HARD_DELETE)
+          @RequestParam(defaultValue = "false")
           final boolean hard) {
     if (hard) {
       log.debug("DELETE /products/{}?hard=true", id);
@@ -105,25 +96,23 @@ public class ProductControllerV1 implements ProductController {
 
   @Operation(
       summary = "Retrieve active products (paginated)",
-      description =
-          "Returns one page of non-deleted product records ordered by name, optionally filtered"
-              + " by name (case-insensitive, partial match) and/or category (exact match). Omit a"
-              + " filter parameter to skip it.")
+      description = OperationDescription.PRODUCT_LIST)
   @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)
   @PreAuthorize("isAuthenticated()")
   @GetMapping
   @Override
   public PageDTO<ProductDTO> getAllProducts(
-      @Parameter(description = ResponseDescription.PAGE_INDEX)
-          @RequestParam(defaultValue = PaginationUtil.DEFAULT_PAGE)
+      @Parameter(description = ParameterDescription.PAGE_INDEX)
+          @RequestParam(defaultValue = DefaultRequestParam.DEFAULT_PAGE)
           final int page,
-      @Parameter(description = ResponseDescription.PAGE_SIZE)
-          @RequestParam(defaultValue = PaginationUtil.DEFAULT_SIZE)
+      @Parameter(description = ParameterDescription.PAGE_SIZE)
+          @RequestParam(defaultValue = DefaultRequestParam.DEFAULT_SIZE)
           final int size,
-      @Parameter(description = "Partial product name (case-insensitive)")
+      @Parameter(description = ParameterDescription.PRODUCT_NAME_FILTER)
           @RequestParam(required = false)
           final String name,
-      @Parameter(description = "Exact category name") @RequestParam(required = false)
+      @Parameter(description = ParameterDescription.PRODUCT_CATEGORY_FILTER)
+          @RequestParam(required = false)
           final String category) {
     log.debug(
         "GET /products — page: {}, size: {}, name: {}, category: {}", page, size, name, category);
@@ -132,23 +121,21 @@ public class ProductControllerV1 implements ProductController {
 
   @Operation(
       summary = "Retrieve a product by ID",
-      description = "Returns the product record with the specified ID.")
+      description = OperationDescription.PRODUCT_GET_BY_ID)
   @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)
   @ApiResponse(responseCode = ResponseCode.NOT_FOUND, description = ResponseDescription.NOT_FOUND)
   @PreAuthorize("hasAnyRole('ADMIN','MANAGER','STAFF')")
   @GetMapping("/{id}")
   @Override
   public ProductDTO getProductById(
-      @Parameter(description = ResponseDescription.PRODUCT_ID) @PathVariable final Long id) {
+      @Parameter(description = ParameterDescription.PRODUCT_ID) @PathVariable final Long id) {
     log.debug("GET /products/{}", id);
     return retrievalService.findProductDTOById(id);
   }
 
   @Operation(
       summary = "Restore a soft-deleted product",
-      description =
-          "Clears the soft-delete markers, making the product active again. The request body's"
-              + " `deleted` field must be `false`.")
+      description = OperationDescription.PRODUCT_RESTORE)
   @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.RESTORED)
   @ApiResponse(
       responseCode = ResponseCode.BAD_REQUEST,
@@ -158,18 +145,14 @@ public class ProductControllerV1 implements ProductController {
   @PatchMapping("/{id}")
   @Override
   public ProductDTO restoreProduct(
-      @Parameter(description = ResponseDescription.PRODUCT_ID) @PathVariable final Long id,
+      @Parameter(description = ParameterDescription.PRODUCT_ID) @PathVariable final Long id,
       @Valid @RequestBody final ProductRestoreRequest request) {
     log.debug("PATCH /products/{}", id);
     deletionService.restore(id);
     return retrievalService.findProductDTOById(id);
   }
 
-  @Operation(
-      summary = "Update a product by ID",
-      description =
-          "Updates all mutable fields of an existing product. Name + category must remain unique"
-              + " among active records, excluding this product's own record (BR-P01).")
+  @Operation(summary = "Update a product by ID", description = OperationDescription.PRODUCT_UPDATE)
   @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)
   @ApiResponse(
       responseCode = ResponseCode.BAD_REQUEST,
@@ -182,7 +165,7 @@ public class ProductControllerV1 implements ProductController {
   @PutMapping("/{id}")
   @Override
   public ProductDTO updateProduct(
-      @Parameter(description = ResponseDescription.PRODUCT_ID) @PathVariable final Long id,
+      @Parameter(description = ParameterDescription.PRODUCT_ID) @PathVariable final Long id,
       @Valid @RequestBody final ProductDTO dto) {
     log.debug("PUT /products/{}", id);
     return updateService.update(id, dto);

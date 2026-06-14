@@ -6,13 +6,12 @@
  * File: InventoryControllerV1.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-13 17:42:34
+ * Last Modified: 2026-06-14 15:47:14
  */
 
 package com.nthn.storevision.controller.v1;
 
-import com.nthn.storevision.constant.api.ResponseCode;
-import com.nthn.storevision.constant.api.ResponseDescription;
+import com.nthn.storevision.constant.api.*;
 import com.nthn.storevision.controller.InventoryController;
 import com.nthn.storevision.dto.InventoryDTO;
 import com.nthn.storevision.dto.StockMovementDTO;
@@ -23,7 +22,6 @@ import com.nthn.storevision.dto.response.PageDTO;
 import com.nthn.storevision.service.inventory.InventoryAdjustmentService;
 import com.nthn.storevision.service.inventory.InventoryCreationService;
 import com.nthn.storevision.service.inventory.InventoryRetrievalService;
-import com.nthn.storevision.util.PaginationUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -48,19 +46,10 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "Inventory", description = "Inventory management endpoints")
 @Slf4j
 @RestController
-@RequestMapping(value = "/inventory", version = "v1")
+@RequestMapping(value = EndpointDefinitions.INVENTORY, version = "v1")
 @RequiredArgsConstructor
 public class InventoryControllerV1 implements InventoryController {
 
-  private static final String ADJUSTMENT_RECORDED = "Stock adjustment recorded successfully";
-  private static final String LOW_STOCK_DESC =
-      "When true, returns only products with stock quantity at or below the configured low-stock"
-          + " threshold (default 10, BR-I04)";
-  private static final String MOVEMENT_HISTORY_DESC =
-      "All stock movements (RECEIPT, ISSUE, ADJUSTMENT) for the product, ordered by most recent first.";
-  private static final String RECEIPT_CREATED = "Stock receipt recorded successfully";
-  private static final String RECEIPT_HISTORY_DESC =
-      "RECEIPT movements ordered by most recent first. Both date parameters are optional: omit to retrieve full history.";
   private final InventoryAdjustmentService adjustmentService;
   private final InventoryCreationService creationService;
   private final InventoryRetrievalService retrievalService;
@@ -68,10 +57,10 @@ public class InventoryControllerV1 implements InventoryController {
   /** {@inheritDoc} */
   @Operation(
       summary = "Adjust stock quantity for a product",
-      description =
-          "Records an ADJUSTMENT stock movement and updates the product's stock quantity."
-              + " Quantity can be positive (increase) or negative (decrease).")
-  @ApiResponse(responseCode = ResponseCode.OK, description = ADJUSTMENT_RECORDED)
+      description = OperationDescription.INVENTORY_ADJUSTMENT)
+  @ApiResponse(
+      responseCode = ResponseCode.OK,
+      description = ResponseDescription.INVENTORY_ADJUSTMENT_RECORDED)
   @ApiResponse(
       responseCode = ResponseCode.BAD_REQUEST,
       description = ResponseDescription.INVALID_INPUT)
@@ -90,17 +79,17 @@ public class InventoryControllerV1 implements InventoryController {
   /** {@inheritDoc} */
   @Operation(
       summary = "Record a stock receipt",
-      description =
-          "Creates a RECEIPT stock movement and increments the product's stock quantity."
-              + " Enforces BR-I01 (performed_by) and BR-I02 (quantity >= 1).")
-  @ApiResponse(responseCode = ResponseCode.CREATED, description = RECEIPT_CREATED)
+      description = OperationDescription.INVENTORY_RECEIPT)
+  @ApiResponse(
+      responseCode = ResponseCode.CREATED,
+      description = ResponseDescription.INVENTORY_RECEIPT_CREATED)
   @ApiResponse(
       responseCode = ResponseCode.BAD_REQUEST,
       description = ResponseDescription.INVALID_INPUT)
   @ApiResponse(responseCode = ResponseCode.NOT_FOUND, description = ResponseDescription.NOT_FOUND)
   @PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
   @ResponseStatus(HttpStatus.CREATED)
-  @PostMapping("/receipts")
+  @PostMapping(EndpointDefinitions.RECEIPTS)
   @Override
   public StockReceiptDTO createReceipt(@Valid @RequestBody final StockReceiptRequest request) {
     log.debug("POST /inventory/receipts — productId: {}", request.getProductId());
@@ -110,16 +99,14 @@ public class InventoryControllerV1 implements InventoryController {
   /** {@inheritDoc} */
   @Operation(
       summary = "List product stock levels",
-      description =
-          "Returns current stock quantity and price for active products. When lowStock=true,"
-              + " only products at or below the configured low-stock threshold are returned"
-              + " (BR-I04).")
+      description = OperationDescription.INVENTORY_LIST)
   @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)
   @PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
   @GetMapping
   @Override
   public List<InventoryDTO> getAllInventory(
-      @Parameter(description = LOW_STOCK_DESC) @RequestParam(required = false, defaultValue = "false")
+      @Parameter(description = ResponseDescription.INVENTORY_LOW_STOCK)
+          @RequestParam(required = false, defaultValue = "false")
           final boolean lowStock) {
     log.debug("GET /inventory — lowStock: {}", lowStock);
     return lowStock ? retrievalService.findLowStockProducts() : retrievalService.findAllInventory();
@@ -128,48 +115,54 @@ public class InventoryControllerV1 implements InventoryController {
   /** {@inheritDoc} */
   @Operation(
       summary = "Get stock level for a single product",
-      description = "Returns current stock details for the specified product.")
+      description = OperationDescription.INVENTORY_GET_BY_PRODUCT_ID)
   @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)
   @ApiResponse(responseCode = ResponseCode.NOT_FOUND, description = ResponseDescription.NOT_FOUND)
   @PreAuthorize("hasAnyRole('ADMIN','MANAGER','STAFF')")
   @GetMapping("/{productId}")
   @Override
   public InventoryDTO getInventoryByProductId(
-      @Parameter(description = ResponseDescription.PRODUCT_ID) @PathVariable final Long productId) {
+      @Parameter(description = ParameterDescription.PRODUCT_ID) @PathVariable
+          final Long productId) {
     log.debug("GET /inventory/{}", productId);
     return retrievalService.findInventoryByProductId(productId);
   }
 
   /** {@inheritDoc} */
-  @Operation(summary = "List stock movements for a product", description = MOVEMENT_HISTORY_DESC)
+  @Operation(
+      summary = "List stock movements for a product",
+      description = OperationDescription.INVENTORY_MOVEMENT_HISTORY)
   @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)
   @ApiResponse(responseCode = ResponseCode.NOT_FOUND, description = ResponseDescription.NOT_FOUND)
   @PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
   @GetMapping("/{productId}/movements")
   @Override
   public List<StockMovementDTO> getMovementsByProductId(
-      @Parameter(description = ResponseDescription.PRODUCT_ID) @PathVariable final Long productId) {
+      @Parameter(description = ParameterDescription.PRODUCT_ID) @PathVariable
+          final Long productId) {
     log.debug("GET /inventory/{}/movements", productId);
     return retrievalService.findMovementsByProductId(productId);
   }
 
   /** {@inheritDoc} */
-  @Operation(summary = "List stock receipt history (paginated)", description = RECEIPT_HISTORY_DESC)
+  @Operation(
+      summary = "List stock receipt history (paginated)",
+      description = OperationDescription.INVENTORY_RECEIPT_HISTORY)
   @PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
-  @GetMapping("/receipts")
+  @GetMapping(EndpointDefinitions.RECEIPTS)
   @Override
   public PageDTO<StockReceiptDTO> getReceiptHistory(
-      @Parameter(description = "Start of date range (ISO-8601 datetime), inclusive")
+      @Parameter(description = ResponseDescription.INVENTORY_RECEIPT_FROM_DATE)
           @RequestParam(required = false)
           final LocalDateTime from,
-      @Parameter(description = "End of date range (ISO-8601 datetime), inclusive")
+      @Parameter(description = ResponseDescription.INVENTORY_RECEIPT_TO_DATE)
           @RequestParam(required = false)
           final LocalDateTime to,
-      @Parameter(description = ResponseDescription.PAGE_INDEX)
-          @RequestParam(defaultValue = PaginationUtil.DEFAULT_PAGE)
+      @Parameter(description = ParameterDescription.PAGE_INDEX)
+          @RequestParam(defaultValue = DefaultRequestParam.DEFAULT_PAGE)
           final int page,
-      @Parameter(description = ResponseDescription.PAGE_SIZE)
-          @RequestParam(defaultValue = PaginationUtil.DEFAULT_SIZE)
+      @Parameter(description = ParameterDescription.PAGE_SIZE)
+          @RequestParam(defaultValue = DefaultRequestParam.DEFAULT_SIZE)
           final int size) {
     log.debug(
         "GET /inventory/receipts — from: {}, to: {}, page: {}, size: {}", from, to, page, size);

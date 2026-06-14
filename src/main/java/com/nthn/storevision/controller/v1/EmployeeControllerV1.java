@@ -6,14 +6,12 @@
  * File: EmployeeControllerV1.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-14 12:30:32
+ * Last Modified: 2026-06-14 15:47:14
  */
 
 package com.nthn.storevision.controller.v1;
 
-import com.nthn.storevision.constant.api.OperationDescription;
-import com.nthn.storevision.constant.api.ResponseCode;
-import com.nthn.storevision.constant.api.ResponseDescription;
+import com.nthn.storevision.constant.api.*;
 import com.nthn.storevision.controller.EmployeeController;
 import com.nthn.storevision.dto.EmployeeDTO;
 import com.nthn.storevision.dto.response.PageDTO;
@@ -21,7 +19,6 @@ import com.nthn.storevision.service.employee.EmployeeCreationService;
 import com.nthn.storevision.service.employee.EmployeeDeletionService;
 import com.nthn.storevision.service.employee.EmployeeRetrievalService;
 import com.nthn.storevision.service.employee.EmployeeUpdateService;
-import com.nthn.storevision.util.PaginationUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -45,7 +42,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "Employee", description = "Employee management endpoints")
 @Slf4j
 @RestController
-@RequestMapping(value = "/employees", version = "v1")
+@RequestMapping(value = EndpointDefinitions.EMPLOYEES, version = "v1")
 @RequiredArgsConstructor
 public class EmployeeControllerV1 implements EmployeeController {
 
@@ -56,7 +53,7 @@ public class EmployeeControllerV1 implements EmployeeController {
 
   @Operation(
       summary = "Create a new employee",
-      description = "Creates a new employee record and persists it to the database.")
+      description = OperationDescription.EMPLOYEE_CREATION)
   @ApiResponse(responseCode = ResponseCode.CREATED, description = ResponseDescription.CREATED)
   @ApiResponse(
       responseCode = ResponseCode.BAD_REQUEST,
@@ -71,32 +68,30 @@ public class EmployeeControllerV1 implements EmployeeController {
 
   @Operation(
       summary = "Soft-delete an employee by ID",
-      description =
-          OperationDescription.EMPLOYEE_DELETION)
+      description = OperationDescription.EMPLOYEE_DELETION)
   @ApiResponse(responseCode = ResponseCode.NO_CONTENT, description = ResponseDescription.DELETED)
   @ApiResponse(responseCode = ResponseCode.NOT_FOUND, description = ResponseDescription.NOT_FOUND)
   @ResponseStatus(HttpStatus.NO_CONTENT)
   @DeleteMapping("/{id}")
   @Override
   public void deleteEmployee(
-      @Parameter(description = ResponseDescription.EMPLOYEE_ID) @PathVariable final Long id) {
+      @Parameter(description = ParameterDescription.EMPLOYEE_ID) @PathVariable final Long id) {
     log.debug("DELETE /employees/{}", id);
     deletionService.markAsDeleted(id);
   }
 
   @Operation(
       summary = "Retrieve employees (paginated)",
-      description =
-          "Returns one page of active (non-deleted) employee records ordered by username.")
+      description = OperationDescription.EMPLOYEE_LIST)
   @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)
   @GetMapping
   @Override
   public PageDTO<EmployeeDTO> getAllEmployees(
-      @Parameter(description = ResponseDescription.PAGE_INDEX)
-          @RequestParam(defaultValue = PaginationUtil.DEFAULT_PAGE)
+      @Parameter(description = ParameterDescription.PAGE_INDEX)
+          @RequestParam(defaultValue = DefaultRequestParam.DEFAULT_PAGE)
           final int page,
-      @Parameter(description = ResponseDescription.PAGE_SIZE)
-          @RequestParam(defaultValue = PaginationUtil.DEFAULT_SIZE)
+      @Parameter(description = ParameterDescription.PAGE_SIZE)
+          @RequestParam(defaultValue = DefaultRequestParam.DEFAULT_SIZE)
           final int size) {
     log.debug("GET /employees — page: {}, size: {}", page, size);
     return retrievalService.findEmployeesPage(page, size);
@@ -104,21 +99,20 @@ public class EmployeeControllerV1 implements EmployeeController {
 
   @Operation(
       summary = "Retrieve an employee by ID",
-      description = "Returns the employee record with the specified ID.")
+      description = OperationDescription.EMPLOYEE_GET_BY_ID)
   @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)
   @ApiResponse(responseCode = ResponseCode.NOT_FOUND, description = ResponseDescription.NOT_FOUND)
   @GetMapping("/{id}")
   @Override
   public EmployeeDTO getEmployeeById(
-      @Parameter(description = ResponseDescription.EMPLOYEE_ID) @PathVariable final Long id) {
+      @Parameter(description = ParameterDescription.EMPLOYEE_ID) @PathVariable final Long id) {
     log.debug("GET /employees/{}", id);
     return retrievalService.findEmployeeDTOById(id);
   }
 
   @Operation(
       summary = "Update an employee by ID",
-      description =
-          "Updates the mutable fields (username, password, role) of an existing employee.")
+      description = OperationDescription.EMPLOYEE_UPDATE)
   @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)
   @ApiResponse(
       responseCode = ResponseCode.BAD_REQUEST,
@@ -127,7 +121,7 @@ public class EmployeeControllerV1 implements EmployeeController {
   @PutMapping("/{id}")
   @Override
   public EmployeeDTO updateEmployee(
-      @Parameter(description = ResponseDescription.EMPLOYEE_ID) @PathVariable final Long id,
+      @Parameter(description = ParameterDescription.EMPLOYEE_ID) @PathVariable final Long id,
       @Valid @RequestBody final EmployeeDTO dto) {
     log.debug("PUT /employees/{}", id);
     return updateService.update(id, dto);
