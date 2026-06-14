@@ -6,12 +6,12 @@
  * File: CorsConfig.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-04 10:04:17
+ * Last Modified: 2026-06-14 15:44:15
  */
 
 package com.nthn.storevision.config;
 
-import com.nthn.storevision.constant.ApiPathConstants;
+import com.nthn.storevision.constant.api.EndpointDefinitions;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.NonNull;
@@ -65,7 +65,7 @@ public class CorsConfig implements WebMvcConfigurer {
   public void addCorsMappings(final @NonNull CorsRegistry registry) {
     log.debug("Configuring CORS");
     registry
-        .addMapping(ApiPathConstants.API.getValue())
+        .addMapping(EndpointDefinitions.API)
         .allowedOrigins("http://localhost:3000") //
         // React frontend default
         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")

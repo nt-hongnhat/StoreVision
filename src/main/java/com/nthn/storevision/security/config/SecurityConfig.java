@@ -6,16 +6,17 @@
  * File: SecurityConfig.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-14 12:01:22
+ * Last Modified: 2026-06-14 15:45:45
  */
 
 package com.nthn.storevision.security.config;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
-import com.nthn.storevision.constant.ApiPathConstants;
+import com.nthn.storevision.constant.api.EndpointDefinitions;
 import com.nthn.storevision.security.filter.UserInfoFilter;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -47,6 +48,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 @EnableMethodSecurity
 @RequiredArgsConstructor
+@Slf4j
 public class SecurityConfig {
 
   private static final String ADMIN = "ADMIN";
@@ -74,19 +76,19 @@ public class SecurityConfig {
    */
   @Bean
   public SecurityFilterChain securityFilterChain(final HttpSecurity http) {
-
+    log.info("Configuring security filter chain");
     http.authorizeHttpRequests(
             auth ->
                 auth.requestMatchers(
-                        ApiPathConstants.PUBLIC_ALL.getValue(),
-                        ApiPathConstants.LOGIN_ALL.getValue(),
+                        EndpointDefinitions.PUBLIC_ALL,
+                        EndpointDefinitions.LOGIN_ALL,
                         "/oauth2/**",
                         "/css/**",
                         "/js/**",
-                        ApiPathConstants.API_DOCS.getValue(),
-                        ApiPathConstants.SWAGGER_UI.getValue(),
+                        EndpointDefinitions.API_DOCS_ALL,
+                        EndpointDefinitions.SWAGGER_UI,
                         "/swagger-ui.html",
-                        ApiPathConstants.ACTUATOR.getValue())
+                        EndpointDefinitions.ACTUATOR_ALL)
                     .permitAll()
 
                     // Products (3.1) and Inventory (3.2): every endpoint requires
@@ -99,30 +101,30 @@ public class SecurityConfig {
 
                     // Orders (3.3): STAFF creates, views by id and completes;
                     // listing and cancelling are ADMIN/MANAGER
-                    .requestMatchers(HttpMethod.POST, ApiPathConstants.ORDERS.getValue())
+                    .requestMatchers(HttpMethod.POST, EndpointDefinitions.ORDERS)
                     .hasAnyRole(ADMIN, MANAGER, STAFF)
                     // PATCH /orders/{id} (status transition): URL-level access is
                     // ADMIN/MANAGER/STAFF; @PreAuthorize on the controller method
                     // restricts STAFF to the COMPLETED transition only (cancelling
                     // remains ADMIN/MANAGER)
-                    .requestMatchers(HttpMethod.PATCH, ApiPathConstants.ORDERS_ALL.getValue())
+                    .requestMatchers(HttpMethod.PATCH, EndpointDefinitions.ORDERS_ALL)
                     .hasAnyRole(ADMIN, MANAGER, STAFF)
-                    .requestMatchers(HttpMethod.GET, ApiPathConstants.ORDERS.getValue())
+                    .requestMatchers(HttpMethod.GET, EndpointDefinitions.ORDERS)
                     .hasAnyRole(ADMIN, MANAGER)
-                    .requestMatchers(HttpMethod.GET, ApiPathConstants.ORDERS_ALL.getValue())
+                    .requestMatchers(HttpMethod.GET, EndpointDefinitions.ORDERS_ALL)
                     .hasAnyRole(ADMIN, MANAGER, STAFF)
-                    .requestMatchers(ApiPathConstants.ORDERS_ALL.getValue())
+                    .requestMatchers(EndpointDefinitions.ORDERS_ALL)
                     .hasAnyRole(ADMIN, MANAGER)
 
                     // Order items (3.3.x): sub-resource of orders, same RBAC as Orders —
                     // STAFF creates and views by id; listing and mutations are ADMIN/MANAGER
-                    .requestMatchers(HttpMethod.POST, ApiPathConstants.ORDER_ITEMS.getValue())
+                    .requestMatchers(HttpMethod.POST, EndpointDefinitions.ORDER_ITEMS)
                     .hasAnyRole(ADMIN, MANAGER, STAFF)
-                    .requestMatchers(HttpMethod.GET, ApiPathConstants.ORDER_ITEMS.getValue())
+                    .requestMatchers(HttpMethod.GET, EndpointDefinitions.ORDER_ITEMS)
                     .hasAnyRole(ADMIN, MANAGER)
-                    .requestMatchers(HttpMethod.GET, ApiPathConstants.ORDER_ITEMS_ALL.getValue())
+                    .requestMatchers(HttpMethod.GET, EndpointDefinitions.ORDER_ITEMS_ALL)
                     .hasAnyRole(ADMIN, MANAGER, STAFF)
-                    .requestMatchers(ApiPathConstants.ORDER_ITEMS_ALL.getValue())
+                    .requestMatchers(EndpointDefinitions.ORDER_ITEMS_ALL)
                     .hasAnyRole(ADMIN, MANAGER)
 
                     // Customers & loyalty (3.4): loyalty details are open to every
@@ -133,13 +135,13 @@ public class SecurityConfig {
                     .hasAnyRole(ADMIN, MANAGER, STAFF)
                     .requestMatchers(HttpMethod.GET, "/customers/*/orders")
                     .hasAnyRole(ADMIN, MANAGER)
-                    .requestMatchers(HttpMethod.POST, ApiPathConstants.CUSTOMERS.getValue())
+                    .requestMatchers(HttpMethod.POST, EndpointDefinitions.CUSTOMERS)
                     .hasAnyRole(ADMIN, MANAGER, STAFF)
-                    .requestMatchers(HttpMethod.GET, ApiPathConstants.CUSTOMERS.getValue())
+                    .requestMatchers(HttpMethod.GET, EndpointDefinitions.CUSTOMERS)
                     .hasAnyRole(ADMIN, MANAGER)
-                    .requestMatchers(HttpMethod.GET, ApiPathConstants.CUSTOMERS_ALL.getValue())
+                    .requestMatchers(HttpMethod.GET, EndpointDefinitions.CUSTOMERS_ALL)
                     .hasAnyRole(ADMIN, MANAGER, STAFF)
-                    .requestMatchers(ApiPathConstants.CUSTOMERS_ALL.getValue())
+                    .requestMatchers(EndpointDefinitions.CUSTOMERS_ALL)
                     .hasAnyRole(ADMIN, MANAGER)
 
                     // Employees (1.2): account administration is ADMIN-only
@@ -166,6 +168,7 @@ public class SecurityConfig {
         .addFilterAfter(new UserInfoFilter(), UsernamePasswordAuthenticationFilter.class)
         .csrf(AbstractHttpConfigurer::disable); // Often needed for REST APIs during development
 
+    log.info("Security filter chain configured");
     return http.build();
   }
 
@@ -177,11 +180,12 @@ public class SecurityConfig {
    */
   @Bean
   public WebSecurityCustomizer webSecurityCustomizer() {
+    log.info("Configuring web security to ignore certain request matchers");
     return web ->
         web.ignoring()
             .requestMatchers(
-                ApiPathConstants.SWAGGER_UI.getValue(),
-                ApiPathConstants.API_DOCS.getValue(),
-                ApiPathConstants.ACTUATOR.getValue());
+                EndpointDefinitions.SWAGGER_UI,
+                EndpointDefinitions.API_DOCS_ALL,
+                EndpointDefinitions.ACTUATOR_ALL);
   }
 }

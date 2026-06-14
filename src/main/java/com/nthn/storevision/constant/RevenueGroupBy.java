@@ -6,11 +6,12 @@
  * File: RevenueGroupBy.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-12 22:09:58
+ * Last Modified: 2026-06-14 15:41:48
  */
 
 package com.nthn.storevision.constant;
 
+import com.nthn.storevision.constant.api.DefaultRequestParam;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -22,11 +23,11 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum RevenueGroupBy {
   /** One bucket per calendar day. */
-  DAY("day"),
+  DAY(DefaultRequestParam.DEFAULT_GROUP_BY),
   /** One bucket per ISO week. */
   WEEK("week"),
   /** One bucket per calendar month. */
-  MONTH("month");
+  MONTH(DefaultRequestParam.DEFAULT_PERIOD);
 
   /** The PostgreSQL {@code date_trunc} unit backing this bucket. */
   private final String truncUnit;
