@@ -23,6 +23,15 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum VoucherMessageCode implements LocalizedMessageCode {
   /**
+   * Represents the message code for a validation error where the {@code deleted} field of a
+   * restore request is not {@code false}.
+   *
+   * <p>This code is used when {@code PATCH /vouchers/{id}} is called with {@code deleted: true} —
+   * restoring a voucher only supports clearing the soft-delete markers; use {@code DELETE
+   * /vouchers/{id}} to soft-delete it instead.
+   */
+  DELETED_MUST_BE_FALSE("VCM006"),
+  /**
    * Represents the message code for an error where a voucher has expired.
    *
    * <p>This code is used when the voucher's expiry date is before the current date (BR-V01).

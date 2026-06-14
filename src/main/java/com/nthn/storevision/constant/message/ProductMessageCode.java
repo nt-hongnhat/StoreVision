@@ -26,6 +26,15 @@ public enum ProductMessageCode implements LocalizedMessageCode {
    */
   ALREADY_EXISTS("PRM002"),
   /**
+   * Represents the message code for a validation error where the {@code deleted} field of a
+   * restore request is not {@code false}.
+   *
+   * <p>This code is used when {@code PATCH /products/{id}} is called with {@code deleted: true} —
+   * restoring a product only supports clearing the soft-delete markers; use {@code DELETE
+   * /products/{id}} to soft-delete it instead.
+   */
+  DELETED_MUST_BE_FALSE("PRM008"),
+  /**
    * Represents the message code for a validation error where a product name is required.
    *
    * <p>This code is used when a product name is missing or empty, which is a required field.

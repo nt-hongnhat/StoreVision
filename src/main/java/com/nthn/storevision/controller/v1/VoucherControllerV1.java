@@ -15,6 +15,7 @@ import com.nthn.storevision.constant.api.ResponseCode;
 import com.nthn.storevision.constant.api.ResponseDescription;
 import com.nthn.storevision.controller.VoucherController;
 import com.nthn.storevision.dto.VoucherDTO;
+import com.nthn.storevision.dto.request.VoucherRestoreRequest;
 import com.nthn.storevision.dto.response.PageDTO;
 import com.nthn.storevision.service.voucher.VoucherCreationService;
 import com.nthn.storevision.service.voucher.VoucherDeletionService;
@@ -50,9 +51,9 @@ import org.springframework.web.bind.annotation.RestController;
 public class VoucherControllerV1 implements VoucherController {
 
   private final VoucherCreationService creationService;
+  private final VoucherDeletionService deletionService;
   private final VoucherRetrievalService retrievalService;
   private final VoucherUpdateService updateService;
-  private final VoucherDeletionService deletionService;
 
   /** {@inheritDoc} */
   @Operation(summary = "Create a new voucher", description = "Creates a new promotional voucher.")
@@ -136,14 +137,20 @@ public class VoucherControllerV1 implements VoucherController {
   /** {@inheritDoc} */
   @Operation(
       summary = "Restore a soft-deleted voucher by ID",
-      description = "Restores a voucher that was previously soft-deleted.")
-  @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)
+      description =
+          "Clears the soft-delete markers, making the voucher active again. The request body's"
+              + " `deleted` field must be `false`.")
+  @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.RESTORED)
+  @ApiResponse(
+      responseCode = ResponseCode.BAD_REQUEST,
+      description = ResponseDescription.INVALID_INPUT)
   @ApiResponse(responseCode = ResponseCode.NOT_FOUND, description = ResponseDescription.NOT_FOUND)
-  @PatchMapping("/{id}/restore")
+  @PatchMapping("/{id}")
   @Override
   public VoucherDTO restoreVoucher(
-      @Parameter(description = ResponseDescription.VOUCHER_ID) @PathVariable final Long id) {
-    log.debug("PATCH /vouchers/{}/restore", id);
+      @Parameter(description = ResponseDescription.VOUCHER_ID) @PathVariable final Long id,
+      @Valid @RequestBody final VoucherRestoreRequest request) {
+    log.debug("PATCH /vouchers/{}", id);
     return deletionService.restore(id);
   }
 }

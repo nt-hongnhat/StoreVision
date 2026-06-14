@@ -6,7 +6,7 @@
  * File: CustomerControllerV1.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-12 23:27:08
+ * Last Modified: 2026-06-14 12:27:10
  */
 
 package com.nthn.storevision.controller.v1;
@@ -56,19 +56,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class CustomerControllerV1 implements CustomerController {
 
-  private static final String EMAIL_EXISTS_DESC =
-      "Customer email already exists, including on soft-deleted records (BR-C01)";
-  private static final String HAS_PENDING_ORDERS_DESC =
-      "Customer still has PENDING orders and cannot be deleted (BR-C02)";
-  private static final String INSUFFICIENT_POINTS_DESC =
-      "Requested points exceed the customer's current balance (BR-C03)";
-  private static final String LOYALTY_DESC =
-      "Returns the customer's loyalty tier, point balance, total spending and the immutable point"
-          + " transaction history (BR-C05).";
-  private static final String REDEEM_DESC =
-      "Redeems loyalty points for a single-use FIXED_AMOUNT voucher. The redemption is rejected"
-          + " when it exceeds the current point balance — the balance can never go negative"
-          + " (BR-C03). Tier and total spending are not affected (BR-C04).";
   private final CustomerCreationService creationService;
   private final CustomerDeletionService deletionService;
   private final LoyaltyService loyaltyService;
@@ -86,7 +73,7 @@ public class CustomerControllerV1 implements CustomerController {
   @ApiResponse(
       responseCode = ResponseCode.BAD_REQUEST,
       description = ResponseDescription.INVALID_INPUT)
-  @ApiResponse(responseCode = ResponseCode.CONFLICT, description = EMAIL_EXISTS_DESC)
+  @ApiResponse(responseCode = ResponseCode.CONFLICT, description = ResponseDescription.EMAIL_EXISTS)
   @ResponseStatus(HttpStatus.CREATED)
   @PostMapping
   @Override
@@ -101,7 +88,9 @@ public class CustomerControllerV1 implements CustomerController {
       description = OperationDescription.CUSTOMER_DELETION)
   @ApiResponse(responseCode = ResponseCode.NO_CONTENT, description = ResponseDescription.DELETED)
   @ApiResponse(responseCode = ResponseCode.NOT_FOUND, description = ResponseDescription.NOT_FOUND)
-  @ApiResponse(responseCode = ResponseCode.CONFLICT, description = HAS_PENDING_ORDERS_DESC)
+  @ApiResponse(
+      responseCode = ResponseCode.CONFLICT,
+      description = ResponseDescription.HAS_PENDING_ORDERS)
   @ResponseStatus(HttpStatus.NO_CONTENT)
   @DeleteMapping("/{id}")
   @Override
@@ -180,7 +169,7 @@ public class CustomerControllerV1 implements CustomerController {
   @ApiResponse(responseCode = ResponseCode.NOT_FOUND, description = ResponseDescription.NOT_FOUND)
   @ApiResponse(
       responseCode = ResponseCode.UNPROCESSABLE_ENTITY,
-      description = INSUFFICIENT_POINTS_DESC)
+      description = ResponseDescription.INSUFFICIENT_POINTS)
   @ResponseStatus(HttpStatus.CREATED)
   @PostMapping("/{id}/loyalty/redeem")
   @Override

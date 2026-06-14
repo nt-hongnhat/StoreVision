@@ -6,7 +6,7 @@
  * File: OrderMessageCode.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-12 20:54:50
+ * Last Modified: 2026-06-14 11:52:15
  */
 
 package com.nthn.storevision.constant.message;
@@ -44,10 +44,18 @@ public enum OrderMessageCode implements LocalizedMessageCode {
   /**
    * Represents the message code for an error where an order is not in the expected state.
    *
-   * <p>This code is used when a state transition (complete or cancel) is attempted on an order
-   * that is not {@code PENDING} — completed and cancelled orders are final (BR-O02).
+   * <p>This code is used when a state transition (complete or cancel) is attempted on an order that
+   * is not {@code PENDING} — completed and cancelled orders are final (BR-O02).
    */
   INVALID_STATE("ORM006"),
+  /**
+   * Represents the message code for an error where the requested target status of a status
+   * transition request is not a valid transition target.
+   *
+   * <p>This code is used when {@code status} in {@code OrderStatusUpdateRequest} is neither {@code
+   * COMPLETED} nor {@code CANCELLED} (BR-O02).
+   */
+  INVALID_STATUS_TRANSITION("ORM008"),
   /**
    * Represents the message code for a validation error where an order has no items.
    *
@@ -59,7 +67,13 @@ public enum OrderMessageCode implements LocalizedMessageCode {
    *
    * <p>This code is used when an order entity is not found in the system.
    */
-  NOT_FOUND("ORM001");
+  NOT_FOUND("ORM001"),
+  /**
+   * Represents the message code for a validation error where the target order status is missing.
+   *
+   * <p>This code is used when {@code status} is missing from {@code OrderStatusUpdateRequest}.
+   */
+  STATUS_REQUIRED("ORM007");
 
   private final String code;
 }
