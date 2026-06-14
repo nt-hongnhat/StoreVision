@@ -470,15 +470,18 @@ skip the soft-delete block (because `isDeleted == false`) and only update
 - API base path: `/` (at the root)
 - Swagger config: `application-swagger.yml` — do not duplicate configuration
   elsewhere.
-- **Base request-mapping paths** (`@RequestMapping(value = ..., version = "v1")`)
+- **Base request-mapping paths** (
+  `@RequestMapping(value = ..., version = "v1")`)
   must reference a `public static final String` constant from
-  `ApiPathConstants.Constants` (e.g., `ApiPathConstants.Constants.CUSTOMERS =
-  "/customers"`) — never hardcode the path literal. The same literal is reused
-  by the corresponding `ApiPathConstants` enum value (e.g.,
-  `ApiPathConstants.CUSTOMERS.getValue()`) for `SecurityConfig` request
-  matchers, so the controller's base path and its security matcher can never
-  drift apart. When adding a new domain, register both the `Constants` field
-  and the enum value in `ApiPathConstants` before writing any controller code.
+  `constant/api/EndpointDefinitions` (e.g., `EndpointDefinitions.CUSTOMERS =
+  "/customers"`) — never hardcode the path literal. `EndpointDefinitions` is a
+  flat enum of plain string constants (no instances, `;`-only body) used
+  directly by both the controller's `@RequestMapping(value = ...)` and the
+  corresponding `SecurityConfig` request matchers, so the controller's base
+  path and its security matcher can never drift apart. When adding a new
+  domain, register its path constant (and an `_ALL` wildcard variant if
+  `SecurityConfig` needs one) in `EndpointDefinitions`, in alphabetical order,
+  before writing any controller code.
 
 #### Controller Interface-Implementation pattern
 
@@ -486,7 +489,7 @@ skip the soft-delete block (because `isDeleted == false`) and only update
 controller/
     XxxController.java          ← version-agnostic interface (contract only)
     v1/
-        XxxControllerV1.java    ← @RestController, @RequestMapping(value = ApiPathConstants.Constants.XXX, version = "1")
+        XxxControllerV1.java    ← @RestController, @RequestMapping(value = EndpointDefinitions.XXX, version = "v1")
 ```
 
 **Controller interface rules (`XxxController.java`):**
@@ -540,13 +543,23 @@ constants — never inline strings, and never as `private static final String`
 fields in a controller class:
 
 - **HTTP response codes** (e.g., `"200"`, `"409"`) → `constant/api/ResponseCode`
-- **Every `@ApiResponse`/`@Parameter` description string** →
-  `public static final String` in `constant/api/ResponseDescription`. This
-  includes generic descriptions (e.g., `"Resource not found"`), domain-specific
-  ID descriptions (e.g., `"Product ID"`, `"Order ID"`), **and**
-  operation-/business-rule-specific descriptions unique to a single controller
-  (e.g., a conflict message for BR-P01). There is no "controller-local"
-  exception — all of these live in `ResponseDescription`, in alphabetical order.
+- **Every `@ApiResponse(description = ...)` string** → `public static final
+  String` in `constant/api/ResponseDescription`. This includes generic
+  descriptions (e.g., `"Resource not found"`) **and** operation-/business-rule
+  -specific descriptions unique to a single controller (e.g., a conflict
+  message for BR-P01). There is no "controller-local" exception — all of these
+  live in `ResponseDescription`, in alphabetical order.
+- **Every `@Parameter(description = ...)` string** → `public static final
+  String` in `constant/api/ParameterDescription`. This includes domain ID
+  descriptions (e.g., `"Product ID"`, `"Order ID"`), pagination parameters
+  (`PAGE_INDEX`, `PAGE_SIZE`), and any other request-parameter description, in
+  alphabetical order.
+- **Every `@RequestParam(defaultValue = ...)` string** → `public static final
+  String` in `constant/api/DefaultRequestParam` (e.g., `DEFAULT_PAGE = "0"`,
+  `DEFAULT_SIZE = "20"`), in alphabetical order. Keep these separate from
+  `PaginationUtil`/other helper classes — `@RequestParam(defaultValue = ...)`
+  requires a genuine compile-time constant `String`, which a
+  `DefaultRequestParam` enum constant guarantees.
 - **Every `@Operation(description = ...)` string** → `public static final
   String` in `constant/api/OperationDescription`. Each constant carries its own
   Javadoc block that documents the operation's behavior and the business rules
@@ -555,12 +568,18 @@ fields in a controller class:
   inline as a string literal — it is not extracted to either constants class.
 
 ```java
-// correct — domain ID uses ResponseDescription constant
-@Parameter(description = ResponseDescription.PRODUCT_ID)
+// correct — domain ID uses ParameterDescription constant
+@Parameter(description = ParameterDescription.PRODUCT_ID)
 @PathVariable
 final Long id
 
-// correct — operation-/business-rule-specific description also lives in ResponseDescription
+// correct — pagination parameter description + default value use their
+// respective constants classes
+@Parameter(description = ParameterDescription.PAGE_INDEX)
+@RequestParam(defaultValue = DefaultRequestParam.DEFAULT_PAGE)
+final int page
+
+// correct — operation-/business-rule-specific description lives in ResponseDescription
 @ApiResponse(
     responseCode = ResponseCode.CONFLICT,
     description = ResponseDescription.PRODUCT_NAME_EXISTS_IN_CATEGORY)
@@ -576,6 +595,7 @@ final Long id
 @PathVariable
 final Long id   // ❌
 @ApiResponse(responseCode = "409", description = "Conflict")          // ❌
+@RequestParam(defaultValue = "0") final int page                      // ❌
 
 // wrong — no private constants in controllers, not even for one-off descriptions
 private static final String CONFLICT_DESC = "Product name already exists in the same category"; // ❌
@@ -584,10 +604,17 @@ private static final String CONFLICT_DESC = "Product name already exists in the 
 **Registering a new constant**:
 
 - `ResponseDescription` — when adding a new domain (e.g., `Supplier`) or a new
-  endpoint that needs its own `@ApiResponse`/`@Parameter` description, add the
-  corresponding `public static final String` constant (e.g.,
-  `SUPPLIER_ID = "Supplier ID"`), in alphabetical order, before writing any
-  controller code.
+  endpoint that needs its own `@ApiResponse` description, add the corresponding
+  `public static final String` constant, in alphabetical order, before writing
+  any controller code.
+- `ParameterDescription` — when adding a new domain ID (e.g.,
+  `SUPPLIER_ID = "Supplier ID"`) or any other new `@Parameter` description, add
+  the corresponding `public static final String` constant, in alphabetical
+  order, before writing any controller code.
+- `DefaultRequestParam` — when an endpoint needs a new
+  `@RequestParam(defaultValue = ...)`, add the corresponding
+  `public static final String` constant, in alphabetical order, before writing
+  any controller code.
 - `OperationDescription` — when an endpoint's `@Operation(description = ...)`
   documents non-trivial behavior or business rules, add a new
   `public static final String` constant with a Javadoc block describing the
