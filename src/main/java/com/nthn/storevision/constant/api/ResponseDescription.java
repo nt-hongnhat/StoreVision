@@ -6,7 +6,7 @@
  * File: ResponseDescription.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-14 12:27:34
+ * Last Modified: 2026-06-14 15:36:12
  */
 
 package com.nthn.storevision.constant.api;
@@ -17,6 +17,15 @@ package com.nthn.storevision.constant.api;
  */
 public enum ResponseDescription {
   ;
+
+  /**
+   * Indicates that the requested reporting date range is invalid because the 'from' date is after
+   * the 'to' date (BR-A02).
+   *
+   * <p>Associated with HTTP response code 400 (Bad Request).
+   */
+  public static final String ANALYTICS_INVALID_RANGE =
+      "The 'from' date is after the 'to' date (BR-A02)";
 
   /**
    * Represents a response description indicating a stock-related inconsistency during order
@@ -31,12 +40,6 @@ public enum ResponseDescription {
 
   /** Resource created successfully. */
   public static final String CREATED = "Resource created successfully";
-
-  /**
-   * Represents the description for an identifier used to specify a customer. Used in API response
-   * descriptions to provide clarity on the meaning of the customer ID field.
-   */
-  public static final String CUSTOMER_ID = "Customer ID";
 
   /** Resource deleted (soft-deleted) successfully. */
   public static final String DELETED = "Resource deleted successfully";
@@ -53,12 +56,6 @@ public enum ResponseDescription {
       "Customer email already exists, including on soft-deleted records (BR-C01)";
 
   /**
-   * Represents the description for an identifier used to specify an employee. Used in API response
-   * descriptions to provide clarity on the meaning of the employee ID field.
-   */
-  public static final String EMPLOYEE_ID = "Employee ID";
-
-  /**
    * Indicates whether the operation involves permanently removing a record instead of performing a
    * soft-delete. This action is restricted to admin-level permissions.
    */
@@ -72,14 +69,6 @@ public enum ResponseDescription {
   public static final String HAS_PENDING_ORDERS =
       "Customer still has PENDING orders and cannot be deleted (BR-C02)";
 
-  /**
-   * Error message indicating that the customer does not have enough points in their balance to
-   * fulfill the request. This constant is typically used to represent a response or validation
-   * error in scenarios involving loyalty points or rewards systems.
-   */
-  public static final String INSUFFICIENT_POINTS =
-      "Requested points exceed the customer's current balance (BR-C03)";
-
   /** Request body failed validation. */
   public static final String INVALID_INPUT = "Invalid input data";
 
@@ -91,42 +80,33 @@ public enum ResponseDescription {
   public static final String INVALID_STATE =
       "Order is not in PENDING status — completed and cancelled orders are final (BR-O02)";
 
+  /** Stock adjustment recorded successfully. */
+  public static final String INVENTORY_ADJUSTMENT_RECORDED =
+      "Stock adjustment recorded successfully";
+
   /**
-   * Represents the description for an identifier used to specify a notification. Used in API
-   * response descriptions to provide clarity on the meaning of the notification ID field.
+   * Describes the lowStock filter flag, which restricts results to products at or below the
+   * configured low-stock threshold (BR-I04).
    */
-  public static final String NOTIFICATION_ID = "Notification ID";
+  public static final String INVENTORY_LOW_STOCK =
+      "When true, returns only products with stock quantity at or below the configured low-stock threshold (default 10, BR-I04)";
+
+  /** Stock receipt recorded successfully. */
+  public static final String INVENTORY_RECEIPT_CREATED = "Stock receipt recorded successfully";
+
+  /** Describes the inclusive start of the date range used to filter stock receipt history. */
+  public static final String INVENTORY_RECEIPT_FROM_DATE =
+      "Start of date range (ISO-8601 datetime), inclusive";
+
+  /** Describes the inclusive end of the date range used to filter stock receipt history. */
+  public static final String INVENTORY_RECEIPT_TO_DATE =
+      "End of date range (ISO-8601 datetime), inclusive";
 
   /** The requested resource does not exist. */
   public static final String NOT_FOUND = "Resource not found";
 
   /** Operation completed successfully. */
   public static final String OK = "Operation completed successfully";
-
-  /**
-   * Represents the description for an identifier used to specify an order. Used in API response
-   * descriptions to provide clarity on the meaning of the order ID field.
-   */
-  public static final String ORDER_ID = "Order ID";
-
-  /**
-   * Represents the description for an identifier used to specify an order item. Used in API
-   * response descriptions to provide clarity on the meaning of the order item ID field.
-   */
-  public static final String ORDER_ITEM_ID = "Order item ID";
-
-  /** Description for the zero-based page index request parameter of paginated endpoints. */
-  public static final String PAGE_INDEX =
-      "Zero-based page index (negative values are treated as 0)";
-
-  /** Description for the page size request parameter of paginated endpoints. */
-  public static final String PAGE_SIZE = "Page size, clamped to the range [1, 100]";
-
-  /**
-   * Represents the description for an identifier used to specify a product. Used in API response
-   * descriptions to provide clarity on the meaning of the product ID field.
-   */
-  public static final String PRODUCT_ID = "Product ID";
 
   /**
    * Indicates that a product with the same name already exists in the specified category. Used in
@@ -139,6 +119,9 @@ public enum ResponseDescription {
   /** Resource restored (soft-delete markers cleared) successfully. */
   public static final String RESTORED = "Resource restored successfully";
 
+  /** Indicates that a Server-Sent Events (SSE) connection has been successfully established. */
+  public static final String SSE_CONNECTION_ESTABLISHED = "SSE connection established";
+
   /**
    * Indicates that the request cannot be processed due to insufficient stock quantity (BR-O01) or
    * because the voucher cannot be applied due to one of the following scenarios: BR-V01 to BR-V04.
@@ -146,9 +129,4 @@ public enum ResponseDescription {
   public static final String UNPROCESSABLE =
       "Stock quantity is insufficient (BR-O01) or the voucher cannot be applied (BR-V01–BR-V04)";
 
-  /**
-   * Represents the description for an identifier used to specify a voucher. Used in API response
-   * descriptions to provide clarity on the meaning of the voucher ID field.
-   */
-  public static final String VOUCHER_ID = "Voucher ID";
 }
