@@ -6,7 +6,7 @@
  * File: SecurityConfig.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-13 15:07:04
+ * Last Modified: 2026-06-14 12:01:22
  */
 
 package com.nthn.storevision.security.config;
@@ -37,10 +37,10 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
  * <p>RBAC rules follow the permission matrix of the system design (section 3): ADMIN has full
  * access, MANAGER manages catalog/inventory/orders/customers, STAFF creates orders and looks up
  * data, and plain authenticated users (customers, {@code ROLE_USER}) may only search products and
- * view loyalty details. BR-A04: STAFF cannot reach any {@code /analytics} endpoint. Products
- * (3.1) and Inventory (3.2) only require authentication at the path-matcher level; their
- * fine-grained per-role rules are enforced via {@code @PreAuthorize} on the controller methods
- * (see {@link com.nthn.storevision.controller.v1.ProductControllerV1} and {@link
+ * view loyalty details. BR-A04: STAFF cannot reach any {@code /analytics} endpoint. Products (3.1)
+ * and Inventory (3.2) only require authentication at the path-matcher level; their fine-grained
+ * per-role rules are enforced via {@code @PreAuthorize} on the controller methods (see {@link
+ * com.nthn.storevision.controller.v1.ProductControllerV1} and {@link
  * com.nthn.storevision.controller.v1.InventoryControllerV1}).
  */
 @Configuration
@@ -99,17 +99,30 @@ public class SecurityConfig {
 
                     // Orders (3.3): STAFF creates, views by id and completes;
                     // listing and cancelling are ADMIN/MANAGER
-                    .requestMatchers(HttpMethod.POST, "/orders")
+                    .requestMatchers(HttpMethod.POST, ApiPathConstants.ORDERS.getValue())
                     .hasAnyRole(ADMIN, MANAGER, STAFF)
-                    .requestMatchers(HttpMethod.PATCH, "/orders/*/complete")
+                    // PATCH /orders/{id} (status transition): URL-level access is
+                    // ADMIN/MANAGER/STAFF; @PreAuthorize on the controller method
+                    // restricts STAFF to the COMPLETED transition only (cancelling
+                    // remains ADMIN/MANAGER)
+                    .requestMatchers(HttpMethod.PATCH, ApiPathConstants.ORDERS_ALL.getValue())
                     .hasAnyRole(ADMIN, MANAGER, STAFF)
-                    .requestMatchers(HttpMethod.PATCH, "/orders/*/cancel")
+                    .requestMatchers(HttpMethod.GET, ApiPathConstants.ORDERS.getValue())
                     .hasAnyRole(ADMIN, MANAGER)
-                    .requestMatchers(HttpMethod.GET, "/orders")
-                    .hasAnyRole(ADMIN, MANAGER)
-                    .requestMatchers(HttpMethod.GET, "/orders/*")
+                    .requestMatchers(HttpMethod.GET, ApiPathConstants.ORDERS_ALL.getValue())
                     .hasAnyRole(ADMIN, MANAGER, STAFF)
-                    .requestMatchers("/orders/**")
+                    .requestMatchers(ApiPathConstants.ORDERS_ALL.getValue())
+                    .hasAnyRole(ADMIN, MANAGER)
+
+                    // Order items (3.3.x): sub-resource of orders, same RBAC as Orders —
+                    // STAFF creates and views by id; listing and mutations are ADMIN/MANAGER
+                    .requestMatchers(HttpMethod.POST, ApiPathConstants.ORDER_ITEMS.getValue())
+                    .hasAnyRole(ADMIN, MANAGER, STAFF)
+                    .requestMatchers(HttpMethod.GET, ApiPathConstants.ORDER_ITEMS.getValue())
+                    .hasAnyRole(ADMIN, MANAGER)
+                    .requestMatchers(HttpMethod.GET, ApiPathConstants.ORDER_ITEMS_ALL.getValue())
+                    .hasAnyRole(ADMIN, MANAGER, STAFF)
+                    .requestMatchers(ApiPathConstants.ORDER_ITEMS_ALL.getValue())
                     .hasAnyRole(ADMIN, MANAGER)
 
                     // Customers & loyalty (3.4): loyalty details are open to every
@@ -120,13 +133,13 @@ public class SecurityConfig {
                     .hasAnyRole(ADMIN, MANAGER, STAFF)
                     .requestMatchers(HttpMethod.GET, "/customers/*/orders")
                     .hasAnyRole(ADMIN, MANAGER)
-                    .requestMatchers(HttpMethod.POST, "/customers")
+                    .requestMatchers(HttpMethod.POST, ApiPathConstants.CUSTOMERS.getValue())
                     .hasAnyRole(ADMIN, MANAGER, STAFF)
-                    .requestMatchers(HttpMethod.GET, "/customers")
+                    .requestMatchers(HttpMethod.GET, ApiPathConstants.CUSTOMERS.getValue())
                     .hasAnyRole(ADMIN, MANAGER)
-                    .requestMatchers(HttpMethod.GET, "/customers/*")
+                    .requestMatchers(HttpMethod.GET, ApiPathConstants.CUSTOMERS_ALL.getValue())
                     .hasAnyRole(ADMIN, MANAGER, STAFF)
-                    .requestMatchers("/customers/**")
+                    .requestMatchers(ApiPathConstants.CUSTOMERS_ALL.getValue())
                     .hasAnyRole(ADMIN, MANAGER)
 
                     // Employees (1.2): account administration is ADMIN-only
