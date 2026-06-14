@@ -6,15 +6,17 @@
  * File: NotificationControllerV1.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-13 17:36:04
+ * Last Modified: 2026-06-14 12:29:07
  */
 
 package com.nthn.storevision.controller.v1;
 
+import com.nthn.storevision.constant.api.OperationDescription;
 import com.nthn.storevision.constant.api.ResponseCode;
 import com.nthn.storevision.constant.api.ResponseDescription;
 import com.nthn.storevision.controller.NotificationController;
 import com.nthn.storevision.dto.NotificationDTO;
+import com.nthn.storevision.dto.request.NotificationReadRequest;
 import com.nthn.storevision.dto.response.PageDTO;
 import com.nthn.storevision.service.notification.NotificationRetrievalService;
 import com.nthn.storevision.service.notification.NotificationUpdateService;
@@ -24,11 +26,13 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -42,16 +46,14 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 @RequiredArgsConstructor
 public class NotificationControllerV1 implements NotificationController {
 
-  private static final String LIST_DESC =
-      "Internal notifications (e.g. LOW_STOCK_ALERT raised by the scheduled job, section 3.2.3),"
-          + " ordered by most recently created first.";
-
   private final NotificationRetrievalService retrievalService;
-  private final SseEmitterService sseEmitterService; // Injected SseEmitterService
+  private final SseEmitterService sseEmitterService;
   private final NotificationUpdateService updateService;
 
   /** {@inheritDoc} */
-  @Operation(summary = "List notifications (paginated)", description = LIST_DESC)
+  @Operation(
+      summary = "List notifications (paginated)",
+      description = OperationDescription.LOW_STOCK_ALERT_NOTIFICATION)
   @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)
   @GetMapping
   @Override
@@ -69,20 +71,24 @@ public class NotificationControllerV1 implements NotificationController {
   /** {@inheritDoc} */
   @Operation(
       summary = "Mark a notification as read",
-      description = "Sets the read flag of the specified notification to true.")
+      description = OperationDescription.READ_NOTIFICATION_DESCRIPTION)
   @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)
+  @ApiResponse(
+      responseCode = ResponseCode.BAD_REQUEST,
+      description = ResponseDescription.INVALID_INPUT)
   @ApiResponse(responseCode = ResponseCode.NOT_FOUND, description = ResponseDescription.NOT_FOUND)
-  @PatchMapping("/{id}/read")
+  @PatchMapping("/{id}")
   @Override
   public NotificationDTO markNotificationAsRead(
-      @Parameter(description = ResponseDescription.NOTIFICATION_ID) @PathVariable final Long id) {
-    log.debug("PATCH /notifications/{}/read", id);
+      @Parameter(description = ResponseDescription.NOTIFICATION_ID) @PathVariable final Long id,
+      @Valid @RequestBody final NotificationReadRequest request) {
+    log.debug("PATCH /notifications/{}", id);
     return updateService.markAsRead(id);
   }
 
   @Operation(
       summary = "Stream real-time notifications",
-      description = "Establishes an SSE connection to receive real-time notification updates.")
+      description = OperationDescription.SSE_CONNECTION_DESCRIPTION)
   @ApiResponse(responseCode = ResponseCode.OK, description = "SSE connection established")
   @GetMapping("/stream")
   @Override

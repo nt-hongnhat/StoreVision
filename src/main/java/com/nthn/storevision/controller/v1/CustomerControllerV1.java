@@ -11,6 +11,8 @@
 
 package com.nthn.storevision.controller.v1;
 
+import com.nthn.storevision.constant.ApiPathConstants;
+import com.nthn.storevision.constant.api.OperationDescription;
 import com.nthn.storevision.constant.api.ResponseCode;
 import com.nthn.storevision.constant.api.ResponseDescription;
 import com.nthn.storevision.controller.CustomerController;
@@ -50,7 +52,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "Customer", description = "Customer management endpoints")
 @Slf4j
 @RestController
-@RequestMapping(value = "/customers", version = "v1")
+@RequestMapping(value = ApiPathConstants.Constants.CUSTOMERS, version = "v1")
 @RequiredArgsConstructor
 public class CustomerControllerV1 implements CustomerController {
 
@@ -96,10 +98,7 @@ public class CustomerControllerV1 implements CustomerController {
   /** {@inheritDoc} */
   @Operation(
       summary = "Soft-delete a customer by ID",
-      description =
-          "Marks the customer as deleted without physically removing the record."
-              + " The record can be restored later."
-              + " Rejected while the customer still has PENDING orders (BR-C02).")
+      description = OperationDescription.CUSTOMER_DELETION)
   @ApiResponse(responseCode = ResponseCode.NO_CONTENT, description = ResponseDescription.DELETED)
   @ApiResponse(responseCode = ResponseCode.NOT_FOUND, description = ResponseDescription.NOT_FOUND)
   @ApiResponse(responseCode = ResponseCode.CONFLICT, description = HAS_PENDING_ORDERS_DESC)
@@ -157,7 +156,9 @@ public class CustomerControllerV1 implements CustomerController {
   }
 
   /** {@inheritDoc} */
-  @Operation(summary = "Retrieve a customer's loyalty details", description = LOYALTY_DESC)
+  @Operation(
+      summary = "Retrieve a customer's loyalty details",
+      description = OperationDescription.LOYALTY)
   @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)
   @ApiResponse(responseCode = ResponseCode.NOT_FOUND, description = ResponseDescription.NOT_FOUND)
   @GetMapping("/{id}/loyalty")
@@ -169,7 +170,9 @@ public class CustomerControllerV1 implements CustomerController {
   }
 
   /** {@inheritDoc} */
-  @Operation(summary = "Redeem loyalty points for a voucher", description = REDEEM_DESC)
+  @Operation(
+      summary = "Redeem loyalty points for a voucher",
+      description = OperationDescription.REDEEM)
   @ApiResponse(responseCode = ResponseCode.CREATED, description = ResponseDescription.CREATED)
   @ApiResponse(
       responseCode = ResponseCode.BAD_REQUEST,
