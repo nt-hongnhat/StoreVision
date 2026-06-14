@@ -14,7 +14,7 @@ package com.nthn.storevision.controller;
 import com.nthn.storevision.dto.InventoryDTO;
 import com.nthn.storevision.dto.StockMovementDTO;
 import com.nthn.storevision.dto.StockReceiptDTO;
-import com.nthn.storevision.dto.request.InventoryAdjustmentRequest; 
+import com.nthn.storevision.dto.request.InventoryAdjustmentRequest;
 import com.nthn.storevision.dto.request.StockReceiptRequest;
 import com.nthn.storevision.dto.response.PageDTO;
 import jakarta.validation.Valid;
