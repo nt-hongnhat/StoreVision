@@ -6,17 +6,22 @@
  * File: OrderControllerV1.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-13 16:19:24
+ * Last Modified: 2026-06-14 12:27:40
  */
 
 package com.nthn.storevision.controller.v1;
 
+import com.nthn.storevision.constant.ApiPathConstants;
+import com.nthn.storevision.constant.OrderStatus;
+import com.nthn.storevision.constant.api.OperationDescription;
 import com.nthn.storevision.constant.api.ResponseCode;
 import com.nthn.storevision.constant.api.ResponseDescription;
 import com.nthn.storevision.controller.OrderController;
 import com.nthn.storevision.dto.OrderDTO;
 import com.nthn.storevision.dto.request.OrderCreationRequest;
+import com.nthn.storevision.dto.request.OrderStatusUpdateRequest;
 import com.nthn.storevision.dto.response.PageDTO;
+import com.nthn.storevision.exception.InvalidOrderStatusTransitionException;
 import com.nthn.storevision.service.order.OrderCreationService;
 import com.nthn.storevision.service.order.OrderDeletionService;
 import com.nthn.storevision.service.order.OrderRetrievalService;
@@ -30,6 +35,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -46,71 +52,27 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "Order", description = "Order management endpoints")
 @Slf4j
 @RestController
-@RequestMapping(value = "/orders", version = "v1")
+@RequestMapping(value = ApiPathConstants.Constants.ORDERS, version = "v1")
 @RequiredArgsConstructor
 public class OrderControllerV1 implements OrderController {
 
-  private static final String CANCEL_ORDER_DESC =
-      "Cancels a PENDING order (PENDING → CANCELLED). No stock is deducted and no loyalty points"
-          + " are awarded. A COMPLETED order cannot be cancelled (BR-O02). CANCELLED is a final"
-          + " state.";
-  private static final String COMPLETE_ORDER_DESC =
-      "Confirms payment for a PENDING order (PENDING → COMPLETED). Re-checks stock availability"
-          + " (BR-O01), deducts stock and records ISSUE stock movements in the same transaction"
-          + " (BR-I05), awards loyalty points to the customer and increments the voucher usage"
-          + " count. COMPLETED is a final state.";
-  private static final String COMPLETE_STOCK_DESC =
-      "Stock quantity is insufficient for one or more order items at completion time (BR-O01)";
-  private static final String CREATE_ORDER_DESC =
-      "Creates a sales order in PENDING status. Validates the customer, the products and the stock"
-          + " availability without deducting it (BR-O01), validates the optional voucher"
-          + " (BR-V01–BR-V04), computes subtotal, discount, tax and total server-side (BR-O03) and"
-          + " locks each item's unit price at creation time (BR-O04)."
-          + " The order must contain at least one item (BR-O05).";
-  private static final String INVALID_STATE_DESC =
-      "Order is not in PENDING status — completed and cancelled orders are final (BR-O02)";
-  private static final String UNPROCESSABLE_DESC =
-      "Stock quantity is insufficient (BR-O01) or the voucher cannot be applied (BR-V01–BR-V04)";
   private final OrderCreationService creationService;
   private final OrderDeletionService deletionService;
   private final OrderRetrievalService retrievalService;
   private final OrderUpdateService updateService;
 
   /** {@inheritDoc} */
-  @Operation(summary = "Cancel a pending order", description = CANCEL_ORDER_DESC)
-  @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)
-  @ApiResponse(responseCode = ResponseCode.NOT_FOUND, description = ResponseDescription.NOT_FOUND)
-  @ApiResponse(responseCode = ResponseCode.CONFLICT, description = INVALID_STATE_DESC)
-  @PatchMapping("/{id}/cancel")
-  @Override
-  public OrderDTO cancelOrder(
-      @Parameter(description = ResponseDescription.ORDER_ID) @PathVariable final Long id) {
-    log.debug("PATCH /orders/{}/cancel", id);
-    return updateService.cancel(id);
-  }
-
-  /** {@inheritDoc} */
-  @Operation(summary = "Confirm payment for a pending order", description = COMPLETE_ORDER_DESC)
-  @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)
-  @ApiResponse(responseCode = ResponseCode.NOT_FOUND, description = ResponseDescription.NOT_FOUND)
-  @ApiResponse(responseCode = ResponseCode.CONFLICT, description = INVALID_STATE_DESC)
-  @ApiResponse(responseCode = ResponseCode.UNPROCESSABLE_ENTITY, description = COMPLETE_STOCK_DESC)
-  @PatchMapping("/{id}/complete")
-  @Override
-  public OrderDTO completeOrder(
-      @Parameter(description = ResponseDescription.ORDER_ID) @PathVariable final Long id) {
-    log.debug("PATCH /orders/{}/complete", id);
-    return updateService.complete(id);
-  }
-
-  /** {@inheritDoc} */
-  @Operation(summary = "Create a new sales order", description = CREATE_ORDER_DESC)
+  @Operation(
+      summary = "Create a new sales order",
+      description = OperationDescription.CREATE_ORDER)
   @ApiResponse(responseCode = ResponseCode.CREATED, description = ResponseDescription.CREATED)
   @ApiResponse(
       responseCode = ResponseCode.BAD_REQUEST,
       description = ResponseDescription.INVALID_INPUT)
   @ApiResponse(responseCode = ResponseCode.NOT_FOUND, description = ResponseDescription.NOT_FOUND)
-  @ApiResponse(responseCode = ResponseCode.UNPROCESSABLE_ENTITY, description = UNPROCESSABLE_DESC)
+  @ApiResponse(
+      responseCode = ResponseCode.UNPROCESSABLE_ENTITY,
+      description = ResponseDescription.UNPROCESSABLE)
   @ResponseStatus(HttpStatus.CREATED)
   @PostMapping
   @Override
@@ -182,5 +144,37 @@ public class OrderControllerV1 implements OrderController {
       @Valid @RequestBody final OrderDTO dto) {
     log.debug("PUT /orders/{}", id);
     return updateService.update(id, dto);
+  }
+
+  /** {@inheritDoc} */
+  @Operation(
+      summary = "Transition the status of a pending order",
+      description = OperationDescription.UPDATE_STATUS)
+  @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)
+  @ApiResponse(
+      responseCode = ResponseCode.BAD_REQUEST,
+      description = ResponseDescription.INVALID_INPUT)
+  @ApiResponse(responseCode = ResponseCode.NOT_FOUND, description = ResponseDescription.NOT_FOUND)
+  @ApiResponse(
+      responseCode = ResponseCode.CONFLICT,
+      description = ResponseDescription.INVALID_STATE)
+  @ApiResponse(
+      responseCode = ResponseCode.UNPROCESSABLE_ENTITY,
+      description = ResponseDescription.COMPLETE_STOCK)
+  @PreAuthorize(
+      "hasAnyRole('ADMIN','MANAGER')"
+          + " or (#request.status == T(com.nthn.storevision.constant.OrderStatus).COMPLETED"
+          + " and hasRole('STAFF'))")
+  @PatchMapping("/{id}")
+  @Override
+  public OrderDTO updateOrderStatus(
+      @Parameter(description = ResponseDescription.ORDER_ID) @PathVariable final Long id,
+      @Valid @RequestBody final OrderStatusUpdateRequest request) {
+    log.debug("PATCH /orders/{} — status: {}", id, request.getStatus());
+    return switch (request.getStatus()) {
+      case COMPLETED -> updateService.complete(id);
+      case CANCELLED -> updateService.cancel(id);
+      case PENDING -> throw new InvalidOrderStatusTransitionException(OrderStatus.PENDING);
+    };
   }
 }

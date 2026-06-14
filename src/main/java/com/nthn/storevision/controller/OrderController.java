@@ -13,6 +13,7 @@ package com.nthn.storevision.controller;
 
 import com.nthn.storevision.dto.OrderDTO;
 import com.nthn.storevision.dto.request.OrderCreationRequest;
+import com.nthn.storevision.dto.request.OrderStatusUpdateRequest;
 import com.nthn.storevision.dto.response.PageDTO;
 import jakarta.validation.Valid;
 
@@ -22,25 +23,6 @@ import jakarta.validation.Valid;
  * @see com.nthn.storevision.controller.v1.OrderControllerV1
  */
 public interface OrderController {
-
-  /**
-   * Cancels a PENDING order (PENDING → CANCELLED). No stock is deducted and no loyalty points are
-   * awarded; a COMPLETED order cannot be canceled (BR-O02).
-   *
-   * @param id the ID of the order to cancel
-   * @return the canceled order
-   */
-  OrderDTO cancelOrder(Long id);
-
-  /**
-   * Confirms payment for a PENDING order (PENDING → COMPLETED). Re-checks and deducts stock,
-   * records ISSUE stock movements (BR-I05), awards loyalty points and increments the voucher usage
-   * count.
-   *
-   * @param id the ID of the order to complete
-   * @return the completed order
-   */
-  OrderDTO completeOrder(Long id);
 
   /**
    * Creates a new sales order in PENDING status. Stock is only verified, not deducted (BR-O01); the
@@ -84,4 +66,20 @@ public interface OrderController {
    * @return the updated order
    */
   OrderDTO updateOrder(Long id, @Valid OrderDTO dto);
+
+  /**
+   * Transitions a PENDING order to {@code COMPLETED} or {@code CANCELLED} (BR-O02); completed and
+   * cancelled orders are final states.
+   *
+   * <p>{@code COMPLETED}: re-checks stock availability (BR-O01), deducts stock and records {@code
+   * ISSUE} stock movements (BR-I05), awards loyalty points and increments the voucher usage count.
+   *
+   * <p>{@code CANCELLED}: no stock is deducted and no loyalty points are awarded.
+   *
+   * @param id the ID of the order to transition
+   * @param request the target status; must not be {@code null} and must be {@code COMPLETED} or
+   *     {@code CANCELLED}
+   * @return the updated order
+   */
+  OrderDTO updateOrderStatus(Long id, @Valid OrderStatusUpdateRequest request);
 }

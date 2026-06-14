@@ -205,20 +205,27 @@ graph TD
 
 #### 3.1.1 Danh sách API
 
-| Phương thức | Endpoint                                       | Mô tả                               | Quyền                 |
-|-------------|------------------------------------------------|-------------------------------------|-----------------------|
-| `POST`      | `/store-vision/api/v1/products`                | Thêm mới sản phẩm                   | ADMIN, MANAGER        |
-| `GET`       | `/store-vision/api/v1/products`                | Lấy danh sách / tìm kiếm sản phẩm (phân trang, lọc theo `name`, `category`) | Tất cả |
-| `GET`       | `/store-vision/api/v1/products/{id}`           | Lấy chi tiết một sản phẩm           | ADMIN, MANAGER, STAFF |
-| `PUT`       | `/store-vision/api/v1/products/{id}`           | Cập nhật thông tin sản phẩm         | ADMIN, MANAGER        |
-| `DELETE`    | `/store-vision/api/v1/products/{id}`           | Xóa mềm sản phẩm                    | ADMIN, MANAGER        |
-| `DELETE`    | `/store-vision/api/v1/products/{id}/permanent` | Xóa vĩnh viễn                       | ADMIN                 |
-| `PATCH`     | `/store-vision/api/v1/products/{id}/restore`   | Khôi phục sản phẩm đã xóa mềm       | ADMIN, MANAGER        |
+| Phương thức | Endpoint                                     | Mô tả                                                                       | Quyền                 |
+|-------------|----------------------------------------------|-----------------------------------------------------------------------------|-----------------------|
+| `POST`      | `/store-vision/api/v1/products`              | Thêm mới sản phẩm                                                           | ADMIN, MANAGER        |
+| `GET`       | `/store-vision/api/v1/products`              | Lấy danh sách / tìm kiếm sản phẩm (phân trang, lọc theo `name`, `category`) | Tất cả                |
+| `GET`       | `/store-vision/api/v1/products/{id}`         | Lấy chi tiết một sản phẩm                                                   | ADMIN, MANAGER, STAFF |
+| `PUT`       | `/store-vision/api/v1/products/{id}`         | Cập nhật thông tin sản phẩm                                                 | ADMIN, MANAGER        |
+| `DELETE`    | `/store-vision/api/v1/products/{id}`         | Xóa mềm sản phẩm (`?hard=true` → xóa vĩnh viễn, chỉ ADMIN)                  | ADMIN, MANAGER        |
+| `PATCH`     | `/store-vision/api/v1/products/{id}`         | Khôi phục sản phẩm đã xóa mềm (body: `{"deleted": false}`)                  | ADMIN, MANAGER        |
 
 > Tìm kiếm sản phẩm theo tên/danh mục đã được gộp vào `GET /products` thông qua
 > các tham số truy vấn tùy chọn `name` và `category` (bỏ trống để không lọc).
+>
+> Xóa vĩnh viễn sản phẩm đã được gộp vào `DELETE /products/{id}` thông qua tham
+> số truy vấn `hard=true` (chỉ ADMIN), thay cho route riêng
+`/products/{id}/permanent`.
 > Quyền truy cập từng endpoint được áp dụng qua `@PreAuthorize` trên
 > `ProductControllerV1`, không chỉ dựa vào path matcher.
+>
+> Khôi phục sản phẩm đã xóa mềm đã được gộp vào `PATCH /products/{id}` với body
+> `{"deleted": false}` (validate bằng `@AssertFalse`, trả về PRM008 nếu
+> `deleted: true`), thay cho route riêng `/products/{id}/restore`.
 
 #### 3.1.2 Luồng xử lý: Thêm mới sản phẩm
 
@@ -294,14 +301,14 @@ public record ProductDTO(
 
 #### 3.2.1 Danh sách API
 
-| Phương thức | Endpoint                                               | Mô tả                                         | Quyền                 |
-|-------------|--------------------------------------------------------|-----------------------------------------------|-----------------------|
-| `GET`       | `/store-vision/api/v1/inventory`                       | Lấy danh sách tồn kho tất cả sản phẩm (tham số tùy chọn `lowStock=true` để chỉ lấy sản phẩm sắp hết hàng, BR-I04) | ADMIN, MANAGER |
-| `GET`       | `/store-vision/api/v1/inventory/{productId}`           | Tồn kho chi tiết một sản phẩm                 | ADMIN, MANAGER, STAFF |
-| `POST`      | `/store-vision/api/v1/inventory/receipts`              | Tạo phiếu nhập hàng                           | ADMIN, MANAGER        |
-| `POST`      | `/store-vision/api/v1/inventory/adjustments`           | Điều chỉnh số lượng tồn kho sản phẩm          | ADMIN, MANAGER        |
-| `GET`       | `/store-vision/api/v1/inventory/receipts`              | Lịch sử nhập hàng (phân trang, lọc theo ngày) | ADMIN, MANAGER        |
-| `GET`       | `/store-vision/api/v1/inventory/{productId}/movements` | Lịch sử xuất/nhập kho theo sản phẩm           | ADMIN, MANAGER        |
+| Phương thức | Endpoint                                               | Mô tả                                                                                                             | Quyền                 |
+|-------------|--------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------|-----------------------|
+| `GET`       | `/store-vision/api/v1/inventory`                       | Lấy danh sách tồn kho tất cả sản phẩm (tham số tùy chọn `lowStock=true` để chỉ lấy sản phẩm sắp hết hàng, BR-I04) | ADMIN, MANAGER        |
+| `GET`       | `/store-vision/api/v1/inventory/{productId}`           | Tồn kho chi tiết một sản phẩm                                                                                     | ADMIN, MANAGER, STAFF |
+| `POST`      | `/store-vision/api/v1/inventory/receipts`              | Tạo phiếu nhập hàng                                                                                               | ADMIN, MANAGER        |
+| `POST`      | `/store-vision/api/v1/inventory/adjustments`           | Điều chỉnh số lượng tồn kho sản phẩm                                                                              | ADMIN, MANAGER        |
+| `GET`       | `/store-vision/api/v1/inventory/receipts`              | Lịch sử nhập hàng (phân trang, lọc theo ngày)                                                                     | ADMIN, MANAGER        |
+| `GET`       | `/store-vision/api/v1/inventory/{productId}/movements` | Lịch sử xuất/nhập kho theo sản phẩm                                                                               | ADMIN, MANAGER        |
 
 > Danh sách sản phẩm sắp hết hàng đã được gộp vào `GET /inventory` thông qua
 > tham số truy vấn `lowStock=true` (BR-I04). Quyền truy cập từng endpoint được
@@ -362,15 +369,20 @@ public void checkLowStockAlert() {
 
 #### 3.3.1 Danh sách API
 
-| Phương thức | Endpoint                                            | Mô tả                                                    | Quyền                 |
-|-------------|-----------------------------------------------------|----------------------------------------------------------|-----------------------|
-| `POST`      | `/store-vision/api/v1/orders`                       | Tạo đơn hàng mới (POS / Online)                          | ADMIN, MANAGER, STAFF |
-| `GET`       | `/store-vision/api/v1/orders`                       | Lấy danh sách đơn hàng (phân trang, lọc trạng thái/ngày) | ADMIN, MANAGER        |
-| `GET`       | `/store-vision/api/v1/orders/{id}`                  | Lấy chi tiết đơn hàng + danh sách sản phẩm               | ADMIN, MANAGER, STAFF |
-| `PATCH`     | `/store-vision/api/v1/orders/{id}/complete`         | Xác nhận thanh toán → COMPLETED                          | ADMIN, MANAGER, STAFF |
-| `PATCH`     | `/store-vision/api/v1/orders/{id}/cancel`           | Hủy đơn hàng → CANCELLED                                 | ADMIN, MANAGER        |
+| Phương thức | Endpoint                           | Mô tả                                                              | Quyền                                       |
+|-------------|------------------------------------|--------------------------------------------------------------------|---------------------------------------------|
+| `POST`      | `/store-vision/api/v1/orders`      | Tạo đơn hàng mới (POS / Online)                                    | ADMIN, MANAGER, STAFF                       |
+| `GET`       | `/store-vision/api/v1/orders`      | Lấy danh sách đơn hàng (phân trang, lọc trạng thái/ngày)           | ADMIN, MANAGER                              |
+| `GET`       | `/store-vision/api/v1/orders/{id}` | Lấy chi tiết đơn hàng + danh sách sản phẩm                         | ADMIN, MANAGER, STAFF                       |
+| `PATCH`     | `/store-vision/api/v1/orders/{id}` | Chuyển trạng thái đơn hàng (`{"status":"COMPLETED"\|"CANCELLED"}`) | ADMIN, MANAGER, STAFF (STAFF chỉ COMPLETED) |
 
-> Lịch sử đơn hàng của một khách hàng được truy xuất qua `GET /store-vision/api/v1/customers/{id}/orders` (xem 3.4).
+> Lịch sử đơn hàng của một khách hàng được truy xuất qua
+`GET /store-vision/api/v1/customers/{id}/orders` (xem 3.4).
+>
+> Xác nhận thanh toán (→ COMPLETED) và hủy đơn (→ CANCELLED) đã được gộp vào
+> `PATCH /orders/{id}` với body `{"status": "COMPLETED" | "CANCELLED"}` (
+> BR-O02),
+> thay cho hai route riêng `/orders/{id}/complete` và `/orders/{id}/cancel`.
 
 #### 3.3.2 Trạng thái đơn hàng (State Machine)
 
@@ -426,7 +438,7 @@ flowchart TD
 
 ```mermaid
 flowchart TD
-    A["Staff: PATCH /v1/orders/{id}/complete\n@Transactional"] --> C1
+    A["Staff: PATCH /v1/orders/{id}\n{status: COMPLETED}\n@Transactional"] --> C1
     C1{order.status == PENDING?}
     C1 -->|Không| E1["throw InvalidOrderStateException\n→ 409 Conflict"]
     C1 -->|Có| C2
