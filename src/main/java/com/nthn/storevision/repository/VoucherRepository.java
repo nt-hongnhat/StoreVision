@@ -6,22 +6,25 @@
  * File: VoucherRepository.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-12 23:08:47
+ * Last Modified: 2026-06-14 15:44:37
  */
 
 package com.nthn.storevision.repository;
 
 import com.nthn.storevision.entity.VoucherEntity;
+import com.nthn.storevision.repository.generic.DeleteRepository;
 import com.nthn.storevision.repository.generic.ReadRepository;
 import com.nthn.storevision.repository.generic.SaveRepository;
 import java.util.Optional;
 
 /**
- * Repository interface for managing {@link VoucherEntity} instances. Defines read and save
- * operations for vouchers — vouchers are never hard-deleted from business flows.
+ * Repository interface for managing {@link VoucherEntity} instances. Defines read, save, and delete
+ * operations for vouchers.
  */
 public interface VoucherRepository
-    extends ReadRepository<VoucherEntity, Long>, SaveRepository<VoucherEntity> {
+    extends ReadRepository<VoucherEntity, Long>,
+        SaveRepository<VoucherEntity>,
+        DeleteRepository<Long> {
 
   /**
    * Finds a voucher by its unique code.

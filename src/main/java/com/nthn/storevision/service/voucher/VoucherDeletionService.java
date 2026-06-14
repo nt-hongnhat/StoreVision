@@ -6,17 +6,21 @@
  * File: VoucherDeletionService.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-13 16:44:24
+ * Last Modified: 2026-06-14 15:46:05
  */
 
 package com.nthn.storevision.service.voucher;
 
-import com.nthn.storevision.dto.VoucherDTO;
 import com.nthn.storevision.entity.VoucherEntity;
+import com.nthn.storevision.service.generic.HardDeletable;
 import com.nthn.storevision.service.generic.SoftDeletable;
 
 /**
- * Service interface for deleting {@link VoucherEntity} instances.
+ * Service interface for soft-deleting, restoring, and permanently deleting {@link VoucherEntity}
+ * entities.
+ *
+ * @see SoftDeletable
+ * @see HardDeletable
  */
-public interface VoucherDeletionService extends SoftDeletable<VoucherDTO, VoucherEntity> {
-}
+public interface VoucherDeletionService
+    extends SoftDeletable<VoucherEntity, Long>, HardDeletable<VoucherEntity, Long> {}

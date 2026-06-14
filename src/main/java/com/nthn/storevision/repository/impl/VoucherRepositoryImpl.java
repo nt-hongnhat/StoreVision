@@ -6,7 +6,7 @@
  * File: VoucherRepositoryImpl.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-13 17:26:56
+ * Last Modified: 2026-06-14 15:44:44
  */
 
 package com.nthn.storevision.repository.impl;
@@ -30,6 +30,37 @@ import org.springframework.stereotype.Repository;
 public class VoucherRepositoryImpl implements VoucherRepository {
 
   private final JpaVoucherRepository jpaRepository;
+
+  @Override
+  public void deleteById(final Long id) {
+    jpaRepository.deleteById(id);
+  }
+
+  @Override
+  public void markDeletedById(final Long id) {
+    findById(id)
+        .ifPresent(
+            entity -> {
+              entity.setDeleted(true);
+              save(entity);
+            });
+  }
+
+  @Override
+  public VoucherEntity save(final VoucherEntity entity) {
+    return jpaRepository.save(entity);
+  }
+
+  @Override
+  public void restoreById(final Long id) {
+    findById(id)
+        .ifPresent(
+            entity -> {
+              entity.setDeletedBy(null).setDeletedDate(null);
+              entity.setDeleted(false);
+              save(entity);
+            });
+  }
 
   @Override
   public List<VoucherEntity> findAll() {
@@ -59,10 +90,5 @@ public class VoucherRepositoryImpl implements VoucherRepository {
   @Override
   public boolean incrementUsageIfBelowLimit(final Long id) {
     return 0 < jpaRepository.incrementUsageIfBelowLimit(id);
-  }
-
-  @Override
-  public VoucherEntity save(final VoucherEntity entity) {
-    return jpaRepository.save(entity);
   }
 }
