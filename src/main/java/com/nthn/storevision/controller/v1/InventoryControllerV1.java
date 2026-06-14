@@ -34,6 +34,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -74,6 +75,7 @@ public class InventoryControllerV1 implements InventoryController {
       responseCode = ResponseCode.BAD_REQUEST,
       description = ResponseDescription.INVALID_INPUT)
   @ApiResponse(responseCode = ResponseCode.NOT_FOUND, description = ResponseDescription.NOT_FOUND)
+  @PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
   @PostMapping("/adjustments")
   @Override
   public InventoryDTO adjustStock(@Valid @RequestBody final InventoryAdjustmentRequest request) {
@@ -95,6 +97,7 @@ public class InventoryControllerV1 implements InventoryController {
       responseCode = ResponseCode.BAD_REQUEST,
       description = ResponseDescription.INVALID_INPUT)
   @ApiResponse(responseCode = ResponseCode.NOT_FOUND, description = ResponseDescription.NOT_FOUND)
+  @PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
   @ResponseStatus(HttpStatus.CREATED)
   @PostMapping("/receipts")
   @Override
@@ -108,6 +111,7 @@ public class InventoryControllerV1 implements InventoryController {
       summary = "List all product stock levels",
       description = "Returns current stock quantity and price for all active products.")
   @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)
+  @PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
   @GetMapping
   @Override
   public List<InventoryDTO> getAllInventory() {
@@ -121,6 +125,7 @@ public class InventoryControllerV1 implements InventoryController {
       description = "Returns current stock details for the specified product.")
   @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)
   @ApiResponse(responseCode = ResponseCode.NOT_FOUND, description = ResponseDescription.NOT_FOUND)
+  @PreAuthorize("hasAnyRole('ADMIN','MANAGER','STAFF')")
   @GetMapping("/{productId}")
   @Override
   public InventoryDTO getInventoryByProductId(
@@ -144,6 +149,7 @@ public class InventoryControllerV1 implements InventoryController {
   @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)
   @ApiResponse(responseCode = ResponseCode.NOT_FOUND, description = ResponseDescription.NOT_FOUND)
   @GetMapping("/movements/{productId}")
+  @PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
   @Override
   public List<StockMovementDTO> getMovementsByProductId(
       @Parameter(description = ResponseDescription.PRODUCT_ID) @PathVariable final Long productId) {
@@ -153,6 +159,7 @@ public class InventoryControllerV1 implements InventoryController {
 
   /** {@inheritDoc} */
   @Operation(summary = "List stock receipt history (paginated)", description = RECEIPT_HISTORY_DESC)
+  @PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
   @GetMapping("/receipts")
   @Override
   public PageDTO<StockReceiptDTO> getReceiptHistory(
