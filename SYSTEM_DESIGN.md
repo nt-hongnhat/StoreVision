@@ -292,13 +292,19 @@ public record ProductDTO(
 
 | Phương thức | Endpoint                                               | Mô tả                                         | Quyền                 |
 |-------------|--------------------------------------------------------|-----------------------------------------------|-----------------------|
-| `GET`       | `/store-vision/api/v1/inventory`                       | Lấy danh sách tồn kho tất cả sản phẩm         | ADMIN, MANAGER        |
+| `GET`       | `/store-vision/api/v1/inventory`                       | Lấy danh sách tồn kho tất cả sản phẩm (tham số tùy chọn `lowStock=true` để chỉ lấy sản phẩm sắp hết hàng, BR-I04) | ADMIN, MANAGER |
 | `GET`       | `/store-vision/api/v1/inventory/{productId}`           | Tồn kho chi tiết một sản phẩm                 | ADMIN, MANAGER, STAFF |
 | `POST`      | `/store-vision/api/v1/inventory/receipts`              | Tạo phiếu nhập hàng                           | ADMIN, MANAGER        |
 | `POST`      | `/store-vision/api/v1/inventory/adjustments`           | Điều chỉnh số lượng tồn kho sản phẩm          | ADMIN, MANAGER        |
 | `GET`       | `/store-vision/api/v1/inventory/receipts`              | Lịch sử nhập hàng (phân trang, lọc theo ngày) | ADMIN, MANAGER        |
 | `GET`       | `/store-vision/api/v1/inventory/low-stock`             | Danh sách sản phẩm sắp hết hàng               | ADMIN, MANAGER        |
 | `GET`       | `/store-vision/api/v1/inventory/movements/{productId}` | Lịch sử xuất/nhập kho theo sản phẩm           | ADMIN, MANAGER        |
+| `GET`       | `/store-vision/api/v1/inventory/{productId}/movements` | Lịch sử xuất/nhập kho theo sản phẩm           | ADMIN, MANAGER        |
+
+> Danh sách sản phẩm sắp hết hàng đã được gộp vào `GET /inventory` thông qua
+> tham số truy vấn `lowStock=true` (BR-I04). Quyền truy cập từng endpoint được
+> áp dụng qua `@PreAuthorize` trên `InventoryControllerV1`, không chỉ dựa vào
+> path matcher.
 
 #### 3.2.2 Luồng xử lý: Nhập hàng (Stock Receipt)
 

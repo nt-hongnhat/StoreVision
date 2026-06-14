@@ -46,12 +46,16 @@ public interface InventoryController {
   StockReceiptDTO createReceipt(@Valid StockReceiptRequest request);
 
   /**
-   * Returns the current stock level for all active products.
+   * Returns the current stock level for active products. When {@code lowStock} is {@code true},
+   * only products whose stock is at or below the configured low-stock threshold (BR-I04) are
+   * returned; otherwise all active products are returned.
    *
+   * @param lowStock {@code true} to return only low-stock products; {@code false} for all active
+   *     products
    * @return list of stock summaries; never {@code null}
    * @see com.nthn.storevision.controller.v1.InventoryControllerV1#getAllInventory
    */
-  List<InventoryDTO> getAllInventory();
+  List<InventoryDTO> getAllInventory(boolean lowStock);
 
   /**
    * Returns the current stock level for a single product.
@@ -61,14 +65,6 @@ public interface InventoryController {
    * @see com.nthn.storevision.controller.v1.InventoryControllerV1#getInventoryByProductId
    */
   InventoryDTO getInventoryByProductId(Long productId);
-
-  /**
-   * Returns products whose stock is at or below the configured low-stock threshold (BR-I04).
-   *
-   * @return list of low-stock products; never {@code null}
-   * @see com.nthn.storevision.controller.v1.InventoryControllerV1#getLowStockProducts
-   */
-  List<InventoryDTO> getLowStockProducts();
 
   /**
    * Returns all stock movements for a product, ordered by most recent first.

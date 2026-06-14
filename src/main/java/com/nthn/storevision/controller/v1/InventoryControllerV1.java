@@ -54,7 +54,8 @@ public class InventoryControllerV1 implements InventoryController {
 
   private static final String ADJUSTMENT_RECORDED = "Stock adjustment recorded successfully";
   private static final String LOW_STOCK_DESC =
-      "Products with stock quantity at or below the configured threshold (default 10, BR-I04)";
+      "When true, returns only products with stock quantity at or below the configured low-stock"
+          + " threshold (default 10, BR-I04)";
   private static final String MOVEMENT_HISTORY_DESC =
       "All stock movements (RECEIPT, ISSUE, ADJUSTMENT) for the product, ordered by most recent first.";
   private static final String RECEIPT_CREATED = "Stock receipt recorded successfully";
@@ -108,15 +109,20 @@ public class InventoryControllerV1 implements InventoryController {
 
   /** {@inheritDoc} */
   @Operation(
-      summary = "List all product stock levels",
-      description = "Returns current stock quantity and price for all active products.")
+      summary = "List product stock levels",
+      description =
+          "Returns current stock quantity and price for active products. When lowStock=true,"
+              + " only products at or below the configured low-stock threshold are returned"
+              + " (BR-I04).")
   @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)
   @PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
   @GetMapping
   @Override
-  public List<InventoryDTO> getAllInventory() {
-    log.debug("GET /inventory");
-    return retrievalService.findAllInventory();
+  public List<InventoryDTO> getAllInventory(
+      @Parameter(description = LOW_STOCK_DESC) @RequestParam(required = false, defaultValue = "false")
+          final boolean lowStock) {
+    log.debug("GET /inventory — lowStock: {}", lowStock);
+    return lowStock ? retrievalService.findLowStockProducts() : retrievalService.findAllInventory();
   }
 
   /** {@inheritDoc} */
@@ -132,16 +138,6 @@ public class InventoryControllerV1 implements InventoryController {
       @Parameter(description = ResponseDescription.PRODUCT_ID) @PathVariable final Long productId) {
     log.debug("GET /inventory/{}", productId);
     return retrievalService.findInventoryByProductId(productId);
-  }
-
-  /** {@inheritDoc} */
-  @Operation(summary = "List low-stock products", description = LOW_STOCK_DESC)
-  @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)
-  @GetMapping("/low-stock")
-  @Override
-  public List<InventoryDTO> getLowStockProducts() {
-    log.debug("GET /inventory/low-stock");
-    return retrievalService.findLowStockProducts();
   }
 
   /** {@inheritDoc} */

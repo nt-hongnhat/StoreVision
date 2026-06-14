@@ -6,7 +6,7 @@
  * File: InventoryDTO.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-05 17:15:15
+ * Last Modified: 2026-06-14 11:15:48
  */
 
 package com.nthn.storevision.dto;
@@ -19,7 +19,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
- * Stock-level summary for a single product. Used by GET /inventory and GET /inventory/low-stock.
+ * Stock-level summary for a single product. Used by GET /inventory (including the {@code
+ * lowStock=true} filter) and GET /inventory/{productId}.
  */
 @Getter
 @Setter
