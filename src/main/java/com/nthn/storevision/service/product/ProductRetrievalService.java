@@ -6,7 +6,7 @@
  * File: ProductRetrievalService.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-13 19:43:56
+ * Last Modified: 2026-06-14 10:57:57
  */
 
 package com.nthn.storevision.service.product;
@@ -50,22 +50,16 @@ public interface ProductRetrievalService extends Readable<ProductEntity, Long> {
   ProductDTO findProductDTOById(Long id);
 
   /**
-   * Retrieves one page of active products ordered by name, mapped to {@link ProductDTO}.
-   * Out-of-range parameters are clamped instead of rejected.
+   * Retrieves one page of active products ordered by name, optionally filtered by name
+   * (case-insensitive contains) and/or category (exact match), mapped to {@link ProductDTO}.
+   * Out-of-range pagination parameters are clamped instead of rejected. Passing {@code null} for
+   * {@code name} or {@code category} omits that filter.
    *
    * @param page zero-based page index; negative values are treated as 0
    * @param size page size; clamped to a sane maximum
-   * @return the requested page of products; never {@code null}
-   */
-  PageDTO<ProductDTO> findProductsPage(int page, int size);
-
-  /**
-   * Searches active products by optional name (case-insensitive contains) and optional category
-   * (exact match). Passing {@code null} for either parameter omits that filter.
-   *
    * @param name partial product name to match (case-insensitive), or {@code null} to skip
    * @param category exact category to match, or {@code null} to skip
-   * @return list of matching active {@link ProductDTO}s
+   * @return the requested page of matching products; never {@code null}
    */
-  List<ProductDTO> search(String name, String category);
+  PageDTO<ProductDTO> findProductsPage(int page, int size, String name, String category);
 }

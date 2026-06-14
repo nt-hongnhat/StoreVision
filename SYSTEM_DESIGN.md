@@ -208,13 +208,17 @@ graph TD
 | Phương thức | Endpoint                                       | Mô tả                               | Quyền                 |
 |-------------|------------------------------------------------|-------------------------------------|-----------------------|
 | `POST`      | `/store-vision/api/v1/products`                | Thêm mới sản phẩm                   | ADMIN, MANAGER        |
-| `GET`       | `/store-vision/api/v1/products`                | Lấy danh sách sản phẩm (phân trang) | ADMIN, MANAGER, STAFF |
+| `GET`       | `/store-vision/api/v1/products`                | Lấy danh sách / tìm kiếm sản phẩm (phân trang, lọc theo `name`, `category`) | Tất cả |
 | `GET`       | `/store-vision/api/v1/products/{id}`           | Lấy chi tiết một sản phẩm           | ADMIN, MANAGER, STAFF |
 | `PUT`       | `/store-vision/api/v1/products/{id}`           | Cập nhật thông tin sản phẩm         | ADMIN, MANAGER        |
 | `DELETE`    | `/store-vision/api/v1/products/{id}`           | Xóa mềm sản phẩm                    | ADMIN, MANAGER        |
 | `DELETE`    | `/store-vision/api/v1/products/{id}/permanent` | Xóa vĩnh viễn                       | ADMIN                 |
 | `PATCH`     | `/store-vision/api/v1/products/{id}/restore`   | Khôi phục sản phẩm đã xóa mềm       | ADMIN, MANAGER        |
-| `GET`       | `/store-vision/api/v1/products/search`         | Tìm kiếm sản phẩm theo tên/danh mục | Tất cả                |
+
+> Tìm kiếm sản phẩm theo tên/danh mục đã được gộp vào `GET /products` thông qua
+> các tham số truy vấn tùy chọn `name` và `category` (bỏ trống để không lọc).
+> Quyền truy cập từng endpoint được áp dụng qua `@PreAuthorize` trên
+> `ProductControllerV1`, không chỉ dựa vào path matcher.
 
 #### 3.1.2 Luồng xử lý: Thêm mới sản phẩm
 

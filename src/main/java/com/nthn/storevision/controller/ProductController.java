@@ -14,7 +14,6 @@ package com.nthn.storevision.controller;
 import com.nthn.storevision.dto.ProductDTO;
 import com.nthn.storevision.dto.response.PageDTO;
 import jakarta.validation.Valid;
-import java.util.List;
 
 /**
  * API contract for product management endpoints.
@@ -39,13 +38,16 @@ public interface ProductController {
   void deleteProduct(Long id);
 
   /**
-   * Retrieves one page of active (non-deleted) products ordered by name.
+   * Retrieves one page of active (non-deleted) products ordered by name, optionally filtered by
+   * name (case-insensitive contains) and/or category (exact match).
    *
    * @param page zero-based page index
    * @param size page size
+   * @param name partial product name filter, or {@code null} to skip
+   * @param category exact category filter, or {@code null} to skip
    * @return the requested page of products
    */
-  PageDTO<ProductDTO> getAllProducts(int page, int size);
+  PageDTO<ProductDTO> getAllProducts(int page, int size, String name, String category);
 
   /**
    * Retrieves a product by ID.
@@ -68,15 +70,6 @@ public interface ProductController {
    * @param id the ID of the product to restore
    */
   void restoreProduct(Long id);
-
-  /**
-   * Searches active products by optional name (case-insensitive contains) and optional category.
-   *
-   * @param name partial name filter, or {@code null} to skip
-   * @param category exact category filter, or {@code null} to skip
-   * @return matching active products
-   */
-  List<ProductDTO> searchProducts(String name, String category);
 
   /**
    * Updates an existing product (name, price, stockQuantity, category, description, sku,

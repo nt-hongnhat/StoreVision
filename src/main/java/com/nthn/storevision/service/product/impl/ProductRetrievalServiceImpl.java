@@ -6,7 +6,7 @@
  * File: ProductRetrievalServiceImpl.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-13 19:44:15
+ * Last Modified: 2026-06-14 11:22:33
  */
 
 package com.nthn.storevision.service.product.impl;
@@ -70,19 +70,18 @@ public class ProductRetrievalServiceImpl
 
   @Override
   @Transactional(readOnly = true)
-  public PageDTO<ProductDTO> findProductsPage(final int page, final int size) {
-    log.debug("Fetching products page: page={}, size={}", page, size);
+  public PageDTO<ProductDTO> findProductsPage(
+      final int page, final int size, final String name, final String category) {
+    log.debug(
+        "Fetching products page: page={}, size={}, name={}, category={}",
+        page,
+        size,
+        name,
+        category);
     return PageDTO.from(
         getRepository()
-            .findAllActive(PaginationUtil.toPageRequest(page, size, DEFAULT_SORT))
+            .searchActive(name, category, PaginationUtil.toPageRequest(page, size, DEFAULT_SORT))
             .map(productMapper::toDTO));
-  }
-
-  @Override
-  @Transactional(readOnly = true)
-  public List<ProductDTO> search(final String name, final String category) {
-    log.debug("Searching active products — name: {}, category: {}", name, category);
-    return getRepository().searchActive(name, category).stream().map(productMapper::toDTO).toList();
   }
 
   @Override

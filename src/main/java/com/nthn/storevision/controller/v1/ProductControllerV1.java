@@ -26,10 +26,10 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -67,6 +67,7 @@ public class ProductControllerV1 implements ProductController {
   @ApiResponse(
       responseCode = ResponseCode.CONFLICT,
       description = ResponseDescription.PRODUCT_NAME_EXISTS_IN_CATEGORY)
+  @PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
   @ResponseStatus(HttpStatus.CREATED)
   @PostMapping
   @Override
@@ -82,6 +83,7 @@ public class ProductControllerV1 implements ProductController {
               + " a warning is logged but the deletion still proceeds (BR-P04).")
   @ApiResponse(responseCode = ResponseCode.NO_CONTENT, description = ResponseDescription.DELETED)
   @ApiResponse(responseCode = ResponseCode.NOT_FOUND, description = ResponseDescription.NOT_FOUND)
+  @PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   @DeleteMapping("/{id}")
   @Override
@@ -93,8 +95,12 @@ public class ProductControllerV1 implements ProductController {
 
   @Operation(
       summary = "Retrieve active products (paginated)",
-      description = "Returns one page of non-deleted product records ordered by name.")
+      description =
+          "Returns one page of non-deleted product records ordered by name, optionally filtered"
+              + " by name (case-insensitive, partial match) and/or category (exact match). Omit a"
+              + " filter parameter to skip it.")
   @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)
+  @PreAuthorize("isAuthenticated()")
   @GetMapping
   @Override
   public PageDTO<ProductDTO> getAllProducts(
@@ -103,9 +109,15 @@ public class ProductControllerV1 implements ProductController {
           final int page,
       @Parameter(description = ResponseDescription.PAGE_SIZE)
           @RequestParam(defaultValue = PaginationUtil.DEFAULT_SIZE)
-          final int size) {
-    log.debug("GET /products — page: {}, size: {}", page, size);
-    return retrievalService.findProductsPage(page, size);
+          final int size,
+      @Parameter(description = "Partial product name (case-insensitive)")
+          @RequestParam(required = false)
+          final String name,
+      @Parameter(description = "Exact category name") @RequestParam(required = false)
+          final String category) {
+    log.debug(
+        "GET /products — page: {}, size: {}, name: {}, category: {}", page, size, name, category);
+    return retrievalService.findProductsPage(page, size, name, category);
   }
 
   @Operation(
@@ -113,6 +125,7 @@ public class ProductControllerV1 implements ProductController {
       description = "Returns the product record with the specified ID.")
   @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)
   @ApiResponse(responseCode = ResponseCode.NOT_FOUND, description = ResponseDescription.NOT_FOUND)
+  @PreAuthorize("hasAnyRole('ADMIN','MANAGER','STAFF')")
   @GetMapping("/{id}")
   @Override
   public ProductDTO getProductById(
@@ -126,6 +139,7 @@ public class ProductControllerV1 implements ProductController {
       description = "Physically removes the product record from the database. Admin only.")
   @ApiResponse(responseCode = ResponseCode.NO_CONTENT, description = ResponseDescription.DELETED)
   @ApiResponse(responseCode = ResponseCode.NOT_FOUND, description = ResponseDescription.NOT_FOUND)
+  @PreAuthorize("hasRole('ADMIN')")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   @DeleteMapping("/{id}/permanent")
   @Override
@@ -142,6 +156,7 @@ public class ProductControllerV1 implements ProductController {
       responseCode = ResponseCode.NO_CONTENT,
       description = "Product restored successfully")
   @ApiResponse(responseCode = ResponseCode.NOT_FOUND, description = ResponseDescription.NOT_FOUND)
+  @PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   @PatchMapping("/{id}/restore")
   @Override
@@ -149,24 +164,6 @@ public class ProductControllerV1 implements ProductController {
       @Parameter(description = ResponseDescription.PRODUCT_ID) @PathVariable final Long id) {
     log.debug("PATCH /products/{}/restore", id);
     deletionService.restore(id);
-  }
-
-  @Operation(
-      summary = "Search active products",
-      description =
-          "Filters active products by optional name (case-insensitive, partial match)"
-              + " and optional category (exact match). Omit a parameter to skip that filter.")
-  @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)
-  @GetMapping("/search")
-  @Override
-  public List<ProductDTO> searchProducts(
-      @Parameter(description = "Partial product name (case-insensitive)")
-          @RequestParam(required = false)
-          final String name,
-      @Parameter(description = "Exact category name") @RequestParam(required = false)
-          final String category) {
-    log.debug("GET /products/search — name: {}, category: {}", name, category);
-    return retrievalService.search(name, category);
   }
 
   @Operation(
@@ -182,6 +179,7 @@ public class ProductControllerV1 implements ProductController {
   @ApiResponse(
       responseCode = ResponseCode.CONFLICT,
       description = ResponseDescription.PRODUCT_NAME_EXISTS_IN_CATEGORY)
+  @PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
   @PutMapping("/{id}")
   @Override
   public ProductDTO updateProduct(
