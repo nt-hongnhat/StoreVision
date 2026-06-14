@@ -361,7 +361,8 @@ public void checkLowStockAlert() {
 | `GET`       | `/store-vision/api/v1/orders/{id}`                  | Lấy chi tiết đơn hàng + danh sách sản phẩm               | ADMIN, MANAGER, STAFF |
 | `PATCH`     | `/store-vision/api/v1/orders/{id}/complete`         | Xác nhận thanh toán → COMPLETED                          | ADMIN, MANAGER, STAFF |
 | `PATCH`     | `/store-vision/api/v1/orders/{id}/cancel`           | Hủy đơn hàng → CANCELLED                                 | ADMIN, MANAGER        |
-| `GET`       | `/store-vision/api/v1/orders/customer/{customerId}` | Lịch sử đơn hàng của một khách hàng                      | ADMIN, MANAGER        |
+
+> Lịch sử đơn hàng của một khách hàng được truy xuất qua `GET /store-vision/api/v1/customers/{id}/orders` (xem 3.4).
 
 #### 3.3.2 Trạng thái đơn hàng (State Machine)
 
