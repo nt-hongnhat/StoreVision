@@ -6,7 +6,7 @@
  * File: ProductControllerV1.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-12 23:28:13
+ * Last Modified: 2026-06-14 11:53:04
  */
 
 package com.nthn.storevision.controller.v1;
@@ -15,6 +15,7 @@ import com.nthn.storevision.constant.api.ResponseCode;
 import com.nthn.storevision.constant.api.ResponseDescription;
 import com.nthn.storevision.controller.ProductController;
 import com.nthn.storevision.dto.ProductDTO;
+import com.nthn.storevision.dto.request.ProductRestoreRequest;
 import com.nthn.storevision.dto.response.PageDTO;
 import com.nthn.storevision.service.product.ProductCreationService;
 import com.nthn.storevision.service.product.ProductDeletionService;
@@ -77,20 +78,29 @@ public class ProductControllerV1 implements ProductController {
   }
 
   @Operation(
-      summary = "Soft-delete a product by ID",
+      summary = "Delete a product by ID",
       description =
-          "Marks the product as deleted. If active PENDING orders reference this product,"
-              + " a warning is logged but the deletion still proceeds (BR-P04).")
+          "By default, soft-deletes the product. If active PENDING orders reference this"
+              + " product, a warning is logged but the deletion still proceeds (BR-P04). If"
+              + " `hard=true`, permanently removes the record from the database instead (Admin"
+              + " only).")
   @ApiResponse(responseCode = ResponseCode.NO_CONTENT, description = ResponseDescription.DELETED)
   @ApiResponse(responseCode = ResponseCode.NOT_FOUND, description = ResponseDescription.NOT_FOUND)
-  @PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
+  @PreAuthorize("hasRole('ADMIN') or (!#hard and hasRole('MANAGER'))")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   @DeleteMapping("/{id}")
   @Override
   public void deleteProduct(
-      @Parameter(description = ResponseDescription.PRODUCT_ID) @PathVariable final Long id) {
-    log.debug("DELETE /products/{}", id);
-    deletionService.markAsDeleted(id);
+      @Parameter(description = ResponseDescription.PRODUCT_ID) @PathVariable final Long id,
+      @Parameter(description = ResponseDescription.HARD_DELETE) @RequestParam(defaultValue = "false")
+          final boolean hard) {
+    if (hard) {
+      log.debug("DELETE /products/{}?hard=true", id);
+      deletionService.permanentlyDelete(id);
+    } else {
+      log.debug("DELETE /products/{}", id);
+      deletionService.markAsDeleted(id);
+    }
   }
 
   @Operation(
@@ -135,35 +145,24 @@ public class ProductControllerV1 implements ProductController {
   }
 
   @Operation(
-      summary = "Permanently delete a product by ID",
-      description = "Physically removes the product record from the database. Admin only.")
-  @ApiResponse(responseCode = ResponseCode.NO_CONTENT, description = ResponseDescription.DELETED)
-  @ApiResponse(responseCode = ResponseCode.NOT_FOUND, description = ResponseDescription.NOT_FOUND)
-  @PreAuthorize("hasRole('ADMIN')")
-  @ResponseStatus(HttpStatus.NO_CONTENT)
-  @DeleteMapping("/{id}/permanent")
-  @Override
-  public void permanentlyDeleteProduct(
-      @Parameter(description = ResponseDescription.PRODUCT_ID) @PathVariable final Long id) {
-    log.debug("DELETE /products/{}/permanent", id);
-    deletionService.permanentlyDelete(id);
-  }
-
-  @Operation(
       summary = "Restore a soft-deleted product",
-      description = "Clears the soft-delete markers, making the product active again.")
+      description =
+          "Clears the soft-delete markers, making the product active again. The request body's"
+              + " `deleted` field must be `false`.")
+  @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.RESTORED)
   @ApiResponse(
-      responseCode = ResponseCode.NO_CONTENT,
-      description = "Product restored successfully")
+      responseCode = ResponseCode.BAD_REQUEST,
+      description = ResponseDescription.INVALID_INPUT)
   @ApiResponse(responseCode = ResponseCode.NOT_FOUND, description = ResponseDescription.NOT_FOUND)
   @PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
-  @ResponseStatus(HttpStatus.NO_CONTENT)
-  @PatchMapping("/{id}/restore")
+  @PatchMapping("/{id}")
   @Override
-  public void restoreProduct(
-      @Parameter(description = ResponseDescription.PRODUCT_ID) @PathVariable final Long id) {
-    log.debug("PATCH /products/{}/restore", id);
+  public ProductDTO restoreProduct(
+      @Parameter(description = ResponseDescription.PRODUCT_ID) @PathVariable final Long id,
+      @Valid @RequestBody final ProductRestoreRequest request) {
+    log.debug("PATCH /products/{}", id);
     deletionService.restore(id);
+    return retrievalService.findProductDTOById(id);
   }
 
   @Operation(
