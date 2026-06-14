@@ -6,7 +6,7 @@
  * File: InventoryAdjustmentServiceImpl.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-13 17:17:27
+ * Last Modified: 2026-06-13 19:53:11
  */
 
 package com.nthn.storevision.service.inventory.impl;
@@ -22,6 +22,7 @@ import com.nthn.storevision.exception.EntityAccessException;
 import com.nthn.storevision.model.User;
 import com.nthn.storevision.repository.StockMovementRepository;
 import com.nthn.storevision.service.inventory.InventoryAdjustmentService;
+import com.nthn.storevision.service.inventory.InventoryRetrievalService;
 import com.nthn.storevision.service.product.ProductRetrievalService;
 import com.nthn.storevision.service.product.ProductUpdateService;
 import java.time.LocalDateTime;
@@ -43,6 +44,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class InventoryAdjustmentServiceImpl implements InventoryAdjustmentService {
 
   private final AuditorAware<User> auditorAware;
+  private final InventoryRetrievalService inventoryRetrievalService;
   private final ProductRetrievalService productRetrievalService;
   private final ProductUpdateService productUpdateService;
   private final StockMovementRepository stockMovementRepository;
@@ -68,7 +70,7 @@ public class InventoryAdjustmentServiceImpl implements InventoryAdjustmentServic
       log.info(
           "No stock adjustment needed for productId={} as quantity is 0.", request.productId());
       // Return current inventory if no change
-      return productRetrievalService.findInventoryByProductId(request.productId());
+      return inventoryRetrievalService.findInventoryByProductId(request.productId());
     }
 
     // Record stock movement
@@ -90,7 +92,7 @@ public class InventoryAdjustmentServiceImpl implements InventoryAdjustmentServic
         product.getStockQuantity() + request.quantity());
 
     // Return the updated inventory details
-    return productRetrievalService.findInventoryByProductId(request.productId());
+    return inventoryRetrievalService.findInventoryByProductId(request.productId());
   }
 
   @NonNull
