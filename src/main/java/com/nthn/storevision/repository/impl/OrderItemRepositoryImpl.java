@@ -6,7 +6,7 @@
  * File: OrderItemRepositoryImpl.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-12 23:07:46
+ * Last Modified: 2026-06-14 12:05:40
  */
 
 package com.nthn.storevision.repository.impl;
@@ -60,6 +60,11 @@ public class OrderItemRepositoryImpl implements OrderItemRepository {
   }
 
   @Override
+  public OrderItemEntity save(final OrderItemEntity orderItem) {
+    return jpaRepository.save(orderItem);
+  }
+
+  @Override
   public List<OrderItemEntity> findAll() {
     return jpaRepository.findByDeletedDateIsNull();
   }
@@ -80,7 +85,7 @@ public class OrderItemRepositoryImpl implements OrderItemRepository {
   }
 
   @Override
-  public OrderItemEntity save(final OrderItemEntity orderItem) {
-    return jpaRepository.save(orderItem);
+  public Page<OrderItemEntity> searchByOrderId(final Long orderId, final Pageable pageable) {
+    return jpaRepository.searchByOrderId(orderId, pageable);
   }
 }

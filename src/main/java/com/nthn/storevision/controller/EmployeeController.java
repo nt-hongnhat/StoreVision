@@ -1,8 +1,19 @@
+/*
+ * Copyright (c) 2026 Hong Nhat. All rights reserved.
+ *
+ * Project: Store Vision
+ * Module: Store Vision Main
+ * File: EmployeeController.java
+ * Author: Nguyen Thi Hong Nhat
+ * Contact: hongnhat1121@gmail.com
+ * Last Modified: 2026-06-14 11:44:10
+ */
+
 package com.nthn.storevision.controller;
 
 import com.nthn.storevision.dto.EmployeeDTO;
+import com.nthn.storevision.dto.response.PageDTO;
 import jakarta.validation.Valid;
-import java.util.List;
 
 /**
  * API contract for employee management endpoints.
@@ -27,11 +38,13 @@ public interface EmployeeController {
   void deleteEmployee(Long id);
 
   /**
-   * Retrieves all active employees.
+   * Retrieves one page of active employees.
    *
-   * @return list of all non-deleted employees
+   * @param page zero-based page index; negative values are treated as 0
+   * @param size requested page size; clamped to the range [1, 100]
+   * @return the requested page of employees
    */
-  List<EmployeeDTO> getAllEmployees();
+  PageDTO<EmployeeDTO> getAllEmployees(int page, int size);
 
   /**
    * Retrieves an employee by ID.
@@ -44,7 +57,7 @@ public interface EmployeeController {
   /**
    * Updates an existing employee.
    *
-   * @param id  the ID of the employee to update
+   * @param id the ID of the employee to update
    * @param dto the updated employee data
    * @return the updated employee
    */

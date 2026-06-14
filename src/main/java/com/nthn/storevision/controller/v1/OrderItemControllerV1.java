@@ -6,25 +6,27 @@
  * File: OrderItemControllerV1.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-05 16:06:32
+ * Last Modified: 2026-06-14 12:04:32
  */
 
 package com.nthn.storevision.controller.v1;
 
+import com.nthn.storevision.constant.ApiPathConstants;
 import com.nthn.storevision.constant.api.ResponseCode;
 import com.nthn.storevision.constant.api.ResponseDescription;
 import com.nthn.storevision.controller.OrderItemController;
 import com.nthn.storevision.dto.OrderItemDTO;
+import com.nthn.storevision.dto.response.PageDTO;
 import com.nthn.storevision.service.orderitem.OrderItemCreationService;
 import com.nthn.storevision.service.orderitem.OrderItemDeletionService;
 import com.nthn.storevision.service.orderitem.OrderItemRetrievalService;
 import com.nthn.storevision.service.orderitem.OrderItemUpdateService;
+import com.nthn.storevision.util.PaginationUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -35,6 +37,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -42,7 +45,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "Order Item", description = "Order item management endpoints")
 @Slf4j
 @RestController
-@RequestMapping(value = "/order-items", version = "v1")
+@RequestMapping(value = ApiPathConstants.Constants.ORDER_ITEMS, version = "v1")
 @RequiredArgsConstructor
 public class OrderItemControllerV1 implements OrderItemController {
 
@@ -83,14 +86,24 @@ public class OrderItemControllerV1 implements OrderItemController {
   }
 
   @Operation(
-      summary = "Retrieve all order items",
-      description = "Returns a list of all active (non-deleted) order item records.")
+      summary = "Retrieve order items (paginated)",
+      description =
+          "Returns one page of active (non-deleted) order item records, optionally filtered to"
+              + " a single parent order via the orderId query parameter.")
   @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)
   @GetMapping
   @Override
-  public List<OrderItemDTO> getAllOrderItems() {
-    log.debug("GET /order-items");
-    return retrievalService.findAllOrderItemsAsDTO();
+  public PageDTO<OrderItemDTO> getAllOrderItems(
+      @Parameter(description = ResponseDescription.PAGE_INDEX)
+          @RequestParam(defaultValue = PaginationUtil.DEFAULT_PAGE)
+          final int page,
+      @Parameter(description = ResponseDescription.PAGE_SIZE)
+          @RequestParam(defaultValue = PaginationUtil.DEFAULT_SIZE)
+          final int size,
+      @Parameter(description = ResponseDescription.ORDER_ID) @RequestParam(required = false)
+          final Long orderId) {
+    log.debug("GET /order-items — page: {}, size: {}, orderId: {}", page, size, orderId);
+    return retrievalService.findOrderItemsPage(page, size, orderId);
   }
 
   @Operation(

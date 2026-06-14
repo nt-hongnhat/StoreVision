@@ -6,7 +6,7 @@
  * File: EmployeeRetrievalServiceImpl.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-12 17:16:36
+ * Last Modified: 2026-06-14 12:04:55
  */
 
 package com.nthn.storevision.service.employee.impl;
@@ -14,15 +14,17 @@ package com.nthn.storevision.service.employee.impl;
 import com.nthn.storevision.constant.message.EmployeeMessageCode;
 import com.nthn.storevision.constant.message.LocalizedMessageCode;
 import com.nthn.storevision.dto.EmployeeDTO;
+import com.nthn.storevision.dto.response.PageDTO;
 import com.nthn.storevision.entity.EmployeeEntity;
 import com.nthn.storevision.mapper.EmployeeMapper;
 import com.nthn.storevision.repository.EmployeeRepository; // Changed from JpaEmployeeRepository
 import com.nthn.storevision.service.common.AbstractReadable;
 import com.nthn.storevision.service.employee.EmployeeRetrievalService;
-import java.util.List;
+import com.nthn.storevision.util.PaginationUtil;
 import java.util.Optional;
 import java.util.function.Function;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,6 +39,8 @@ public class EmployeeRetrievalServiceImpl
         EmployeeEntity, Long, EmployeeRepository> // Changed from JpaEmployeeRepository
     implements EmployeeRetrievalService {
 
+  private static final Sort DEFAULT_SORT = Sort.by(Sort.Direction.ASC, "username");
+
   private final EmployeeMapper employeeMapper;
 
   /**
@@ -50,18 +54,6 @@ public class EmployeeRetrievalServiceImpl
       final EmployeeMapper employeeMapper) { // Changed from JpaEmployeeRepository
     super(repository);
     this.employeeMapper = employeeMapper;
-  }
-
-  /**
-   * Retrieves all employees and maps them to {@link EmployeeDTO}.
-   *
-   * @return a list of all {@link EmployeeDTO}s.
-   */
-  @Override
-  @Transactional(readOnly = true)
-  public List<EmployeeDTO> findAllEmployeesAsDTO() {
-    log.debug("Fetching all employees as DTO");
-    return findAll(employeeMapper::toDTO);
   }
 
   /**
@@ -93,6 +85,23 @@ public class EmployeeRetrievalServiceImpl
   public EmployeeDTO findEmployeeDTOById(final Long id) {
     log.debug("Fetching employee DTO by id: {}", id);
     return findById(id, employeeMapper::toDTO);
+  }
+
+  /**
+   * Retrieves one page of active employees.
+   *
+   * @param page zero-based page index; negative values are treated as 0
+   * @param size requested page size; clamped to the range [1, 100]
+   * @return the requested page of {@link EmployeeDTO}s; never {@code null}
+   */
+  @Override
+  @Transactional(readOnly = true)
+  public PageDTO<EmployeeDTO> findEmployeesPage(final int page, final int size) {
+    log.debug("Fetching employees page — page: {}, size: {}", page, size);
+    return PageDTO.from(
+        getRepository()
+            .findAllActive(PaginationUtil.toPageRequest(page, size, DEFAULT_SORT))
+            .map(employeeMapper::toDTO));
   }
 
   /**

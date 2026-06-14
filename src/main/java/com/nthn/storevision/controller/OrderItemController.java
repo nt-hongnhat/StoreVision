@@ -1,8 +1,19 @@
+/*
+ * Copyright (c) 2026 Hong Nhat. All rights reserved.
+ *
+ * Project: Store Vision
+ * Module: Store Vision Main
+ * File: OrderItemController.java
+ * Author: Nguyen Thi Hong Nhat
+ * Contact: hongnhat1121@gmail.com
+ * Last Modified: 2026-06-14 11:44:10
+ */
+
 package com.nthn.storevision.controller;
 
 import com.nthn.storevision.dto.OrderItemDTO;
+import com.nthn.storevision.dto.response.PageDTO;
 import jakarta.validation.Valid;
-import java.util.List;
 
 /**
  * API contract for order-item management endpoints.
@@ -27,11 +38,15 @@ public interface OrderItemController {
   void deleteOrderItem(Long id);
 
   /**
-   * Retrieves all active order items.
+   * Retrieves one page of active order items, optionally filtered by their parent order.
    *
-   * @return list of all non-deleted order items
+   * @param page zero-based page index; negative values are treated as 0
+   * @param size requested page size; clamped to the range [1, 100]
+   * @param orderId the parent order ID to filter by; may be {@code null} to return order items for
+   *     all orders
+   * @return the requested page of order items
    */
-  List<OrderItemDTO> getAllOrderItems();
+  PageDTO<OrderItemDTO> getAllOrderItems(int page, int size, Long orderId);
 
   /**
    * Retrieves an order item by ID.
@@ -44,7 +59,7 @@ public interface OrderItemController {
   /**
    * Updates an existing order item.
    *
-   * @param id  the ID of the order item to update
+   * @param id the ID of the order item to update
    * @param dto the updated order item data
    * @return the updated order item
    */
