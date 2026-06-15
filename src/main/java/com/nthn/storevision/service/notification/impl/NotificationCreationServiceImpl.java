@@ -2,23 +2,22 @@
  * Copyright (c) 2026 Hong Nhat. All rights reserved.
  *
  * Project: Store Vision
- * Module: Store Vision Main
+ * Module: StoreVision.main
  * File: NotificationCreationServiceImpl.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-13 16:26:01
+ * Last Modified: 2026-06-15 21:55:06
  */
 
 package com.nthn.storevision.service.notification.impl;
 
-import com.nthn.storevision.constant.NotificationType;
-import com.nthn.storevision.dto.InventoryDTO;
-import com.nthn.storevision.dto.NotificationDTO; 
+import com.nthn.storevision.constant.notification.NotificationType;
+import com.nthn.storevision.dto.inventory.InventoryDTO;
+import com.nthn.storevision.dto.notification.NotificationDTO;
 import com.nthn.storevision.entity.NotificationEntity;
 import com.nthn.storevision.mapper.EntityMapperConfig; 
 import com.nthn.storevision.repository.NotificationRepository;
 import com.nthn.storevision.service.notification.NotificationCreationService;
-import com.nthn.storevision.service.notification.SseEmitterService; 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.NonNull;
@@ -39,7 +38,7 @@ public class NotificationCreationServiceImpl implements NotificationCreationServ
   private static final String LOW_STOCK_TITLE = "Low stock alert";
   private final EntityMapperConfig<NotificationDTO, Long, NotificationEntity> notificationMapper; // Injected mapper
   private final NotificationRepository notificationRepository;
-  private final SseEmitterService sseEmitterService;
+  private final SseEmitterServiceImpl sseEmitterService;
 
   /** {@inheritDoc} */
   @Override

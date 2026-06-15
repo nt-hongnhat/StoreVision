@@ -11,9 +11,9 @@
 
 package com.nthn.storevision.service.inventory;
 
-import com.nthn.storevision.dto.InventoryDTO;
-import com.nthn.storevision.dto.StockMovementDTO;
-import com.nthn.storevision.dto.StockReceiptDTO;
+import com.nthn.storevision.dto.inventory.InventoryDTO;
+import com.nthn.storevision.dto.stock_movement.StockMovementDTO;
+import com.nthn.storevision.dto.stock_movement.StockReceiptDTO;
 import com.nthn.storevision.dto.response.PageDTO;
 import java.time.LocalDateTime;
 import java.util.List;

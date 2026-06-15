@@ -13,7 +13,7 @@ package com.nthn.storevision.controller.v1;
 
 import com.nthn.storevision.constant.api.*;
 import com.nthn.storevision.controller.OrderItemController;
-import com.nthn.storevision.dto.OrderItemDTO;
+import com.nthn.storevision.dto.order_item.OrderItemDTO;
 import com.nthn.storevision.dto.response.PageDTO;
 import com.nthn.storevision.service.orderitem.OrderItemCreationService;
 import com.nthn.storevision.service.orderitem.OrderItemDeletionService;

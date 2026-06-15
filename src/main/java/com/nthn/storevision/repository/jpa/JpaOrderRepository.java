@@ -2,16 +2,16 @@
  * Copyright (c) 2026 Hong Nhat. All rights reserved.
  *
  * Project: Store Vision
- * Module: Store Vision Main
+ * Module: StoreVision.main
  * File: JpaOrderRepository.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-12 23:21:28
+ * Last Modified: 2026-06-15 21:52:00
  */
 
 package com.nthn.storevision.repository.jpa;
 
-import com.nthn.storevision.constant.OrderStatus;
+import com.nthn.storevision.constant.order.OrderStatus;
 import com.nthn.storevision.entity.OrderEntity;
 import java.util.List;
 import org.springframework.data.domain.Page;

@@ -11,7 +11,7 @@
 
 package com.nthn.storevision.service.customer;
 
-import com.nthn.storevision.dto.CustomerDTO;
+import com.nthn.storevision.dto.customer.CustomerDTO;
 import com.nthn.storevision.service.generic.Creatable;
 
 /**

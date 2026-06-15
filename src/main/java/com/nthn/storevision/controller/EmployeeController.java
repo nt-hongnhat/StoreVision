@@ -11,7 +11,7 @@
 
 package com.nthn.storevision.controller;
 
-import com.nthn.storevision.dto.EmployeeDTO;
+import com.nthn.storevision.dto.employee.EmployeeDTO;
 import com.nthn.storevision.dto.response.PageDTO;
 import jakarta.validation.Valid;
 

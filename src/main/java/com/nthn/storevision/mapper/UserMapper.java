@@ -11,7 +11,7 @@
 
 package com.nthn.storevision.mapper;
 
-import com.nthn.storevision.dto.UserDTO;
+import com.nthn.storevision.dto.user.UserDTO;
 import com.nthn.storevision.entity.UserEntity;
 import com.nthn.storevision.model.User;
 import org.mapstruct.Mapper;

@@ -11,7 +11,7 @@
 
 package com.nthn.storevision.controller;
 
-import com.nthn.storevision.dto.NotificationDTO;
+import com.nthn.storevision.dto.notification.NotificationDTO;
 import com.nthn.storevision.dto.request.NotificationReadRequest;
 import com.nthn.storevision.dto.response.PageDTO;
 import jakarta.validation.Valid;

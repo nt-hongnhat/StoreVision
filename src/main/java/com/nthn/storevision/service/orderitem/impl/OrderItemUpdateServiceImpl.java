@@ -12,7 +12,7 @@
 package com.nthn.storevision.service.orderitem.impl;
 
 import com.nthn.storevision.constant.message.OrderItemMessageCode;
-import com.nthn.storevision.dto.OrderItemDTO;
+import com.nthn.storevision.dto.order_item.OrderItemDTO;
 import com.nthn.storevision.entity.OrderItemEntity;
 import com.nthn.storevision.exception.EntityNotFoundException;
 import com.nthn.storevision.mapper.EntityMapperConfig;

@@ -11,7 +11,7 @@
 
 package com.nthn.storevision.mapper;
 
-import com.nthn.storevision.dto.EmployeeDTO;
+import com.nthn.storevision.dto.employee.EmployeeDTO;
 import com.nthn.storevision.entity.EmployeeEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;

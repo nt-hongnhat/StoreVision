@@ -2,17 +2,17 @@
  * Copyright (c) 2026 Hong Nhat. All rights reserved.
  *
  * Project: Store Vision
- * Module: Store Vision Main
+ * Module: StoreVision.main
  * File: AnalyticsControllerV1.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-14 15:42:12
+ * Last Modified: 2026-06-15 21:52:00
  */
 
 package com.nthn.storevision.controller.v1;
 
-import com.nthn.storevision.constant.AnalyticsPeriod;
-import com.nthn.storevision.constant.RevenueGroupBy;
+import com.nthn.storevision.constant.analytics.AnalyticsPeriod;
+import com.nthn.storevision.constant.analytics.RevenueGroupBy;
 import com.nthn.storevision.constant.api.*;
 import com.nthn.storevision.controller.AnalyticsController;
 import com.nthn.storevision.dto.analytics.InventoryValuationDTO;

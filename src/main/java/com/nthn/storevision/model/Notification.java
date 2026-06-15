@@ -2,16 +2,16 @@
  * Copyright (c) 2026 Hong Nhat. All rights reserved.
  *
  * Project: Store Vision
- * Module: Store Vision Main
+ * Module: StoreVision.main
  * File: Notification.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-13 14:51:54
+ * Last Modified: 2026-06-15 21:51:59
  */
 
 package com.nthn.storevision.model;
 
-import com.nthn.storevision.constant.NotificationType;
+import com.nthn.storevision.constant.notification.NotificationType;
 
 /**
  * Represents an internal system notification in the StoreVision domain. Notifications are created

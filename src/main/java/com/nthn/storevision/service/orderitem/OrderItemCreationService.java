@@ -1,6 +1,6 @@
 package com.nthn.storevision.service.orderitem;
 
-import com.nthn.storevision.dto.OrderItemDTO;
+import com.nthn.storevision.dto.order_item.OrderItemDTO;
 import com.nthn.storevision.service.generic.Creatable;
 
 /**

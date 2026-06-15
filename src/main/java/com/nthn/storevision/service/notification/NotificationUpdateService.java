@@ -11,7 +11,7 @@
 
 package com.nthn.storevision.service.notification;
 
-import com.nthn.storevision.dto.NotificationDTO;
+import com.nthn.storevision.dto.notification.NotificationDTO;
 import org.jspecify.annotations.NonNull;
 
 /** Service interface for updating notification state. */

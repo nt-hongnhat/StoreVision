@@ -16,7 +16,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.nthn.storevision.dto.InventoryDTO;
+import com.nthn.storevision.dto.inventory.InventoryDTO;
 import com.nthn.storevision.service.inventory.InventoryRetrievalService;
 import com.nthn.storevision.service.notification.NotificationCreationService;
 import java.util.List;

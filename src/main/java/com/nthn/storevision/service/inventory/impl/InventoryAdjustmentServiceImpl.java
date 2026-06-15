@@ -2,18 +2,18 @@
  * Copyright (c) 2026 Hong Nhat. All rights reserved.
  *
  * Project: Store Vision
- * Module: Store Vision Main
+ * Module: StoreVision.main
  * File: InventoryAdjustmentServiceImpl.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-13 19:53:11
+ * Last Modified: 2026-06-15 21:51:59
  */
 
 package com.nthn.storevision.service.inventory.impl;
 
-import com.nthn.storevision.constant.StockMovementType;
+import com.nthn.storevision.constant.stock_movement.StockMovementType;
 import com.nthn.storevision.constant.message.InventoryMessageCode;
-import com.nthn.storevision.dto.InventoryDTO;
+import com.nthn.storevision.dto.inventory.InventoryDTO;
 import com.nthn.storevision.dto.request.InventoryAdjustmentRequest;
 import com.nthn.storevision.entity.ProductEntity;
 import com.nthn.storevision.entity.StockMovementEntity;

@@ -11,7 +11,7 @@
 
 package com.nthn.storevision.service.employee;
 
-import com.nthn.storevision.dto.EmployeeDTO;
+import com.nthn.storevision.dto.employee.EmployeeDTO;
 import com.nthn.storevision.service.generic.Creatable;
 
 /**

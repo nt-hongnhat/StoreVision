@@ -11,7 +11,7 @@
 
 package com.nthn.storevision.service.voucher;
 
-import com.nthn.storevision.dto.VoucherDTO;
+import com.nthn.storevision.dto.voucher.VoucherDTO;
 import java.math.BigDecimal;
 
 import com.nthn.storevision.exception.voucher.*;

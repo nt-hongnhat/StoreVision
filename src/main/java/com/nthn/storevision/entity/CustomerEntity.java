@@ -2,16 +2,16 @@
  * Copyright (c) 2026 Hong Nhat. All rights reserved.
  *
  * Project: Store Vision
- * Module: Store Vision Main
+ * Module: StoreVision.main
  * File: CustomerEntity.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-12 21:42:56
+ * Last Modified: 2026-06-15 21:51:59
  */
 
 package com.nthn.storevision.entity;
 
-import com.nthn.storevision.constant.LoyaltyTier;
+import com.nthn.storevision.constant.loyalty_point.LoyaltyTier;
 import com.nthn.storevision.entity.mapped.BaseEntity;
 import com.nthn.storevision.model.Customer;
 import jakarta.persistence.*;

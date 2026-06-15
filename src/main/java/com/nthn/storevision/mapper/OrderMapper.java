@@ -11,7 +11,7 @@
 
 package com.nthn.storevision.mapper;
 
-import com.nthn.storevision.dto.OrderDTO;
+import com.nthn.storevision.dto.order.OrderDTO;
 import com.nthn.storevision.entity.CustomerEntity;
 import com.nthn.storevision.entity.OrderEntity;
 import org.jspecify.annotations.Nullable;

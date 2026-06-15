@@ -11,7 +11,7 @@
 
 package com.nthn.storevision.mapper;
 
-import com.nthn.storevision.dto.VoucherDTO;
+import com.nthn.storevision.dto.voucher.VoucherDTO;
 import com.nthn.storevision.entity.VoucherEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;

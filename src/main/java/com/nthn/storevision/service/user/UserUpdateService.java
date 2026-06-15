@@ -11,7 +11,7 @@
 
 package com.nthn.storevision.service.user;
 
-import com.nthn.storevision.dto.UserDTO;
+import com.nthn.storevision.dto.user.UserDTO;
 import com.nthn.storevision.model.User;
 import com.nthn.storevision.service.generic.Updatable;
 

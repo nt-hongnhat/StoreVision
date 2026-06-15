@@ -13,7 +13,7 @@ package com.nthn.storevision.service.order.impl;
 
 import com.nthn.storevision.constant.message.LocalizedMessageCode;
 import com.nthn.storevision.constant.message.OrderMessageCode;
-import com.nthn.storevision.dto.OrderDTO;
+import com.nthn.storevision.dto.order.OrderDTO;
 import com.nthn.storevision.dto.response.PageDTO;
 import com.nthn.storevision.entity.OrderEntity;
 import com.nthn.storevision.mapper.OrderMapper;

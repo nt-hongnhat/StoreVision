@@ -12,7 +12,7 @@
 package com.nthn.storevision.service.product.impl;
 
 import com.nthn.storevision.constant.message.ProductMessageCode;
-import com.nthn.storevision.dto.ProductDTO;
+import com.nthn.storevision.dto.product.ProductDTO;
 import com.nthn.storevision.entity.ProductEntity;
 import com.nthn.storevision.exception.EntityNotFoundException;
 import com.nthn.storevision.exception.InsufficientStockException;

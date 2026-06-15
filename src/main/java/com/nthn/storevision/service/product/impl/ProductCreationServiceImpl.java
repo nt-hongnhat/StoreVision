@@ -11,7 +11,7 @@
 
 package com.nthn.storevision.service.product.impl;
 
-import com.nthn.storevision.dto.ProductDTO;
+import com.nthn.storevision.dto.product.ProductDTO;
 import com.nthn.storevision.entity.ProductEntity;
 import com.nthn.storevision.exception.product.ProductNameAlreadyExistsException;
 import com.nthn.storevision.mapper.EntityMapperConfig;

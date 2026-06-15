@@ -6,14 +6,14 @@
  * File: OrderUpdateServiceImpl.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-15 21:40:22
+ * Last Modified: 2026-06-15 21:51:59
  */
 
 package com.nthn.storevision.service.order.impl;
 
-import com.nthn.storevision.constant.OrderStatus;
+import com.nthn.storevision.constant.order.OrderStatus;
 import com.nthn.storevision.constant.message.OrderMessageCode;
-import com.nthn.storevision.dto.OrderDTO;
+import com.nthn.storevision.dto.order.OrderDTO;
 import com.nthn.storevision.entity.OrderEntity;
 import com.nthn.storevision.entity.OrderItemEntity;
 import com.nthn.storevision.entity.ProductEntity;

@@ -11,7 +11,7 @@
 
 package com.nthn.storevision.mapper;
 
-import com.nthn.storevision.dto.LoyaltyPointHistoryDTO;
+import com.nthn.storevision.dto.loyalty_point.LoyaltyPointHistoryDTO;
 import com.nthn.storevision.entity.LoyaltyPointHistoryEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

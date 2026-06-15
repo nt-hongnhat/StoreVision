@@ -11,7 +11,7 @@
 
 package com.nthn.storevision.mapper;
 
-import com.nthn.storevision.dto.NotificationDTO;
+import com.nthn.storevision.dto.notification.NotificationDTO;
 import com.nthn.storevision.entity.NotificationEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

@@ -2,11 +2,11 @@
  * Copyright (c) 2026 Hong Nhat. All rights reserved.
  *
  * Project: Store Vision
- * Module: Store Vision Main
+ * Module: StoreVision.test
  * File: LoyaltyServiceImplTest.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-13 14:38:59
+ * Last Modified: 2026-06-15 21:51:59
  */
 
 package com.nthn.storevision.service.customer.impl;
@@ -18,12 +18,12 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.nthn.storevision.constant.DiscountType;
-import com.nthn.storevision.constant.LoyaltyPointType;
-import com.nthn.storevision.constant.LoyaltyTier;
-import com.nthn.storevision.dto.LoyaltyDetailsDTO;
-import com.nthn.storevision.dto.LoyaltyPointHistoryDTO;
-import com.nthn.storevision.dto.VoucherDTO;
+import com.nthn.storevision.constant.voucher.DiscountType;
+import com.nthn.storevision.constant.loyalty_point.LoyaltyPointType;
+import com.nthn.storevision.constant.loyalty_point.LoyaltyTier;
+import com.nthn.storevision.dto.loyalty_point.LoyaltyDetailsDTO;
+import com.nthn.storevision.dto.loyalty_point.LoyaltyPointHistoryDTO;
+import com.nthn.storevision.dto.voucher.VoucherDTO;
 import com.nthn.storevision.entity.CustomerEntity;
 import com.nthn.storevision.entity.LoyaltyPointHistoryEntity;
 import com.nthn.storevision.exception.EntityNotFoundException;

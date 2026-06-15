@@ -11,7 +11,7 @@
 
 package com.nthn.storevision.service.orderitem.impl;
 
-import com.nthn.storevision.dto.OrderItemDTO;
+import com.nthn.storevision.dto.order_item.OrderItemDTO;
 import com.nthn.storevision.entity.OrderItemEntity;
 import com.nthn.storevision.mapper.EntityMapperConfig;
 import com.nthn.storevision.repository.OrderItemRepository;

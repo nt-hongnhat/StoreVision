@@ -12,7 +12,7 @@
 package com.nthn.storevision.service.notification.impl;
 
 import com.nthn.storevision.constant.message.NotificationMessageCode;
-import com.nthn.storevision.dto.NotificationDTO;
+import com.nthn.storevision.dto.notification.NotificationDTO;
 import com.nthn.storevision.entity.NotificationEntity;
 import com.nthn.storevision.exception.EntityNotFoundException;
 import com.nthn.storevision.mapper.NotificationMapper;

@@ -11,7 +11,7 @@
 
 package com.nthn.storevision.service.product;
 
-import com.nthn.storevision.dto.ProductDTO;
+import com.nthn.storevision.dto.product.ProductDTO;
 import com.nthn.storevision.dto.response.PageDTO;
 import com.nthn.storevision.entity.ProductEntity;
 import com.nthn.storevision.service.generic.Readable;

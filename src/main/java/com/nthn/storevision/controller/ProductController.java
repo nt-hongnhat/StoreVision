@@ -11,7 +11,7 @@
 
 package com.nthn.storevision.controller;
 
-import com.nthn.storevision.dto.ProductDTO;
+import com.nthn.storevision.dto.product.ProductDTO;
 import com.nthn.storevision.dto.request.ProductRestoreRequest;
 import com.nthn.storevision.dto.response.PageDTO;
 import jakarta.validation.Valid;

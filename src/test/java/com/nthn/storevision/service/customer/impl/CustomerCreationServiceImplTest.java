@@ -18,7 +18,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.nthn.storevision.dto.CustomerDTO;
+import com.nthn.storevision.dto.customer.CustomerDTO;
 import com.nthn.storevision.entity.CustomerEntity;
 import com.nthn.storevision.exception.customer.CustomerEmailAlreadyExistsException;
 import com.nthn.storevision.mapper.CustomerMapper;

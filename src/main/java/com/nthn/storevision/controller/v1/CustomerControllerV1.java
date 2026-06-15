@@ -13,10 +13,10 @@ package com.nthn.storevision.controller.v1;
 
 import com.nthn.storevision.constant.api.*;
 import com.nthn.storevision.controller.CustomerController;
-import com.nthn.storevision.dto.CustomerDTO;
-import com.nthn.storevision.dto.LoyaltyDetailsDTO;
-import com.nthn.storevision.dto.OrderDTO;
-import com.nthn.storevision.dto.VoucherDTO;
+import com.nthn.storevision.dto.customer.CustomerDTO;
+import com.nthn.storevision.dto.loyalty_point.LoyaltyDetailsDTO;
+import com.nthn.storevision.dto.order.OrderDTO;
+import com.nthn.storevision.dto.voucher.VoucherDTO;
 import com.nthn.storevision.dto.request.RedeemPointsRequest;
 import com.nthn.storevision.dto.response.PageDTO;
 import com.nthn.storevision.service.customer.CustomerCreationService;

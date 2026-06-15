@@ -2,16 +2,16 @@
  * Copyright (c) 2026 Hong Nhat. All rights reserved.
  *
  * Project: Store Vision
- * Module: Store Vision Main
+ * Module: StoreVision.main
  * File: NotificationEntity.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-13 14:54:35
+ * Last Modified: 2026-06-15 21:51:59
  */
 
 package com.nthn.storevision.entity;
 
-import com.nthn.storevision.constant.NotificationType;
+import com.nthn.storevision.constant.notification.NotificationType;
 import com.nthn.storevision.entity.mapped.BaseEntity;
 import com.nthn.storevision.model.Notification;
 import jakarta.persistence.*;

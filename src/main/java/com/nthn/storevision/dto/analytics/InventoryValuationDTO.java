@@ -11,6 +11,7 @@
 
 package com.nthn.storevision.dto.analytics;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -20,4 +21,8 @@ import java.util.List;
  * @param totalValue sum of all product stock values; never {@code null}
  * @param items per-product valuation rows; never {@code null}
  */
-public record InventoryValuationDTO(BigDecimal totalValue, List<InventoryValuationItemDTO> items) {}
+@Schema(description = "Valuation of the entire current inventory.")
+public record InventoryValuationDTO(
+    @Schema(description = "Sum of all product stock values.", example = "15000000")
+        BigDecimal totalValue,
+    @Schema(description = "Per-product valuation rows.") List<InventoryValuationItemDTO> items) {}

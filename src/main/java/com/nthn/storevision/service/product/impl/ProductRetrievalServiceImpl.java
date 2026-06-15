@@ -13,7 +13,7 @@ package com.nthn.storevision.service.product.impl;
 
 import com.nthn.storevision.constant.message.LocalizedMessageCode;
 import com.nthn.storevision.constant.message.ProductMessageCode;
-import com.nthn.storevision.dto.ProductDTO;
+import com.nthn.storevision.dto.product.ProductDTO;
 import com.nthn.storevision.dto.response.PageDTO;
 import com.nthn.storevision.entity.ProductEntity;
 import com.nthn.storevision.mapper.ProductMapper;

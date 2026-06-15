@@ -13,9 +13,9 @@ package com.nthn.storevision.controller.v1;
 
 import com.nthn.storevision.constant.api.*;
 import com.nthn.storevision.controller.InventoryController;
-import com.nthn.storevision.dto.InventoryDTO;
-import com.nthn.storevision.dto.StockMovementDTO;
-import com.nthn.storevision.dto.StockReceiptDTO;
+import com.nthn.storevision.dto.inventory.InventoryDTO;
+import com.nthn.storevision.dto.stock_movement.StockMovementDTO;
+import com.nthn.storevision.dto.stock_movement.StockReceiptDTO;
 import com.nthn.storevision.dto.request.InventoryAdjustmentRequest;
 import com.nthn.storevision.dto.request.StockReceiptRequest;
 import com.nthn.storevision.dto.response.PageDTO;

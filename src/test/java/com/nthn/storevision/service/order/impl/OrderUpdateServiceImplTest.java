@@ -6,7 +6,7 @@
  * File: OrderUpdateServiceImplTest.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-15 21:40:22
+ * Last Modified: 2026-06-15 21:52:00
  */
 
 package com.nthn.storevision.service.order.impl;
@@ -19,8 +19,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
-import com.nthn.storevision.constant.OrderStatus;
-import com.nthn.storevision.dto.OrderDTO;
+import com.nthn.storevision.constant.order.OrderStatus;
+import com.nthn.storevision.dto.order.OrderDTO;
 import com.nthn.storevision.entity.CustomerEntity;
 import com.nthn.storevision.entity.OrderEntity;
 import com.nthn.storevision.entity.OrderItemEntity;

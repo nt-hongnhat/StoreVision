@@ -11,8 +11,8 @@
 
 package com.nthn.storevision.service.customer;
 
-import com.nthn.storevision.dto.LoyaltyDetailsDTO;
-import com.nthn.storevision.dto.VoucherDTO;
+import com.nthn.storevision.dto.loyalty_point.LoyaltyDetailsDTO;
+import com.nthn.storevision.dto.voucher.VoucherDTO;
 import java.math.BigDecimal;
 import org.jspecify.annotations.NonNull;
 

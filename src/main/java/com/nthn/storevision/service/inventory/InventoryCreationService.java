@@ -12,7 +12,7 @@
 package com.nthn.storevision.service.inventory;
 
 import com.nthn.storevision.dto.request.StockReceiptRequest;
-import com.nthn.storevision.dto.StockReceiptDTO;
+import com.nthn.storevision.dto.stock_movement.StockReceiptDTO;
 import org.jspecify.annotations.NonNull;
 
 /**

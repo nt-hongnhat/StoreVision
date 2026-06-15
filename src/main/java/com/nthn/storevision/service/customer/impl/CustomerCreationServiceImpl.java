@@ -11,7 +11,7 @@
 
 package com.nthn.storevision.service.customer.impl;
 
-import com.nthn.storevision.dto.CustomerDTO;
+import com.nthn.storevision.dto.customer.CustomerDTO;
 import com.nthn.storevision.entity.CustomerEntity;
 import com.nthn.storevision.exception.customer.CustomerEmailAlreadyExistsException;
 import com.nthn.storevision.mapper.EntityMapperConfig;

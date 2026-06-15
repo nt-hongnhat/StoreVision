@@ -11,8 +11,8 @@
 
 package com.nthn.storevision.mapper;
 
-import com.nthn.storevision.dto.StockMovementDTO;
-import com.nthn.storevision.dto.StockReceiptDTO;
+import com.nthn.storevision.dto.stock_movement.StockMovementDTO;
+import com.nthn.storevision.dto.stock_movement.StockReceiptDTO;
 import com.nthn.storevision.entity.StockMovementEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

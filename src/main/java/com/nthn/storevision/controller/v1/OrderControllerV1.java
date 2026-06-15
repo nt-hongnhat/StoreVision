@@ -6,15 +6,15 @@
  * File: OrderControllerV1.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-15 21:40:22
+ * Last Modified: 2026-06-15 21:51:59
  */
 
 package com.nthn.storevision.controller.v1;
 
 import com.nthn.storevision.constant.api.*;
-import com.nthn.storevision.constant.OrderStatus;
+import com.nthn.storevision.constant.order.OrderStatus;
 import com.nthn.storevision.controller.OrderController;
-import com.nthn.storevision.dto.OrderDTO;
+import com.nthn.storevision.dto.order.OrderDTO;
 import com.nthn.storevision.dto.request.OrderCreationRequest;
 import com.nthn.storevision.dto.request.OrderStatusUpdateRequest;
 import com.nthn.storevision.dto.response.PageDTO;
@@ -149,7 +149,7 @@ public class OrderControllerV1 implements OrderController {
       description = ResponseDescription.COMPLETE_STOCK)
   @PreAuthorize(
       "hasAnyRole('ADMIN','MANAGER')"
-          + " or (#request.status == T(com.nthn.storevision.constant.OrderStatus).COMPLETED"
+          + " or (#request.status == T(com.nthn.storevision.constant.order.OrderStatus).COMPLETED"
           + " and hasRole('STAFF'))")
   @PatchMapping("/{id}")
   @Override

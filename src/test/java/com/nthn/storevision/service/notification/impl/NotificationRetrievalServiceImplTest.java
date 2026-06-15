@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-import com.nthn.storevision.dto.NotificationDTO;
+import com.nthn.storevision.dto.notification.NotificationDTO;
 import com.nthn.storevision.dto.response.PageDTO;
 import com.nthn.storevision.entity.NotificationEntity;
 import com.nthn.storevision.exception.EntityNotFoundException;

@@ -2,11 +2,11 @@
  * Copyright (c) 2026 Hong Nhat. All rights reserved.
  *
  * Project: Store Vision
- * Module: Store Vision Main
+ * Module: StoreVision.test
  * File: NotificationCreationServiceImplTest.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-13 15:00:00
+ * Last Modified: 2026-06-15 21:51:59
  */
 
 package com.nthn.storevision.service.notification.impl;
@@ -14,8 +14,8 @@ package com.nthn.storevision.service.notification.impl;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 
-import com.nthn.storevision.constant.NotificationType;
-import com.nthn.storevision.dto.InventoryDTO;
+import com.nthn.storevision.constant.notification.NotificationType;
+import com.nthn.storevision.dto.inventory.InventoryDTO;
 import com.nthn.storevision.entity.NotificationEntity;
 import com.nthn.storevision.repository.NotificationRepository;
 import org.junit.jupiter.api.BeforeEach;

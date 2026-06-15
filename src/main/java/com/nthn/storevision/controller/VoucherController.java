@@ -11,7 +11,7 @@
 
 package com.nthn.storevision.controller;
 
-import com.nthn.storevision.dto.VoucherDTO;
+import com.nthn.storevision.dto.voucher.VoucherDTO;
 import com.nthn.storevision.dto.request.VoucherRestoreRequest;
 import com.nthn.storevision.dto.response.PageDTO;
 import jakarta.validation.Valid;

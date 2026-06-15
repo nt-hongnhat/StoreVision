@@ -11,7 +11,7 @@
 
 package com.nthn.storevision.service.order;
 
-import com.nthn.storevision.dto.OrderDTO;
+import com.nthn.storevision.dto.order.OrderDTO;
 import com.nthn.storevision.dto.response.PageDTO;
 import com.nthn.storevision.entity.OrderEntity;
 import com.nthn.storevision.service.generic.Readable;

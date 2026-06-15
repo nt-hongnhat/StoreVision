@@ -11,7 +11,7 @@
 
 package com.nthn.storevision.service.order;
 
-import com.nthn.storevision.dto.OrderDTO;
+import com.nthn.storevision.dto.order.OrderDTO;
 import com.nthn.storevision.exception.order.InvalidOrderStateException;
 import com.nthn.storevision.service.generic.Updatable;
 import org.jspecify.annotations.NonNull;

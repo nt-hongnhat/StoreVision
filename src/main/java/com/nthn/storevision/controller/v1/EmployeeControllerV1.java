@@ -13,7 +13,7 @@ package com.nthn.storevision.controller.v1;
 
 import com.nthn.storevision.constant.api.*;
 import com.nthn.storevision.controller.EmployeeController;
-import com.nthn.storevision.dto.EmployeeDTO;
+import com.nthn.storevision.dto.employee.EmployeeDTO;
 import com.nthn.storevision.dto.response.PageDTO;
 import com.nthn.storevision.service.employee.EmployeeCreationService;
 import com.nthn.storevision.service.employee.EmployeeDeletionService;

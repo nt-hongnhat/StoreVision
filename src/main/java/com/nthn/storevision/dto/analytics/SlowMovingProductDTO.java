@@ -11,6 +11,8 @@
 
 package com.nthn.storevision.dto.analytics;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 /**
  * One row of the slow-moving products report: active products with the fewest completed sales in
  * the look-back window, ties broken by the highest remaining stock.
@@ -20,5 +22,11 @@ package com.nthn.storevision.dto.analytics;
  * @param stockQuantity current units in stock; never {@code null}
  * @param quantitySold units sold within the look-back window; zero when never sold
  */
+@Schema(description = "One row of the slow-moving products report.")
 public record SlowMovingProductDTO(
-    Long productId, String productName, Integer stockQuantity, Long quantitySold) {}
+    @Schema(description = "The product's identifier.", example = "1") Long productId,
+    @Schema(description = "The product's display name.", example = "Wireless Mouse")
+        String productName,
+    @Schema(description = "Current units in stock.", example = "50") Integer stockQuantity,
+    @Schema(description = "Units sold within the look-back window; zero when never sold.", example = "0")
+        Long quantitySold) {}

@@ -12,7 +12,7 @@
 package com.nthn.storevision.service.employee.impl;
 
 import com.nthn.storevision.constant.message.EmployeeMessageCode;
-import com.nthn.storevision.dto.EmployeeDTO;
+import com.nthn.storevision.dto.employee.EmployeeDTO;
 import com.nthn.storevision.entity.EmployeeEntity;
 import com.nthn.storevision.exception.EntityNotFoundException;
 import com.nthn.storevision.mapper.EntityMapperConfig;

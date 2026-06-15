@@ -11,7 +11,7 @@
 
 package com.nthn.storevision.service.notification;
 
-import com.nthn.storevision.dto.InventoryDTO;
+import com.nthn.storevision.dto.inventory.InventoryDTO;
 import org.jspecify.annotations.NonNull;
 
 /**

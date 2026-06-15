@@ -11,7 +11,7 @@
 
 package com.nthn.storevision.service.voucher.impl;
 
-import com.nthn.storevision.dto.VoucherDTO;
+import com.nthn.storevision.dto.voucher.VoucherDTO;
 import com.nthn.storevision.entity.VoucherEntity;
 import com.nthn.storevision.exception.voucher.VoucherExpiredException;
 import com.nthn.storevision.exception.voucher.VoucherInactiveException;

@@ -11,8 +11,8 @@
 
 package com.nthn.storevision.service.employee.impl;
 
-import com.nthn.storevision.dto.EmployeeDTO;
-import com.nthn.storevision.dto.UserDTO;
+import com.nthn.storevision.dto.employee.EmployeeDTO;
+import com.nthn.storevision.dto.user.UserDTO;
 import com.nthn.storevision.entity.EmployeeEntity;
 import com.nthn.storevision.mapper.EntityMapperConfig;
 import com.nthn.storevision.repository.EmployeeRepository;

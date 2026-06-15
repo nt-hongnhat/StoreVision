@@ -2,23 +2,23 @@
  * Copyright (c) 2026 Hong Nhat. All rights reserved.
  *
  * Project: Store Vision
- * Module: Store Vision Main
+ * Module: StoreVision.main
  * File: NotificationControllerV1.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-14 15:47:14
+ * Last Modified: 2026-06-15 21:55:06
  */
 
 package com.nthn.storevision.controller.v1;
 
 import com.nthn.storevision.constant.api.*;
 import com.nthn.storevision.controller.NotificationController;
-import com.nthn.storevision.dto.NotificationDTO;
+import com.nthn.storevision.dto.notification.NotificationDTO;
 import com.nthn.storevision.dto.request.NotificationReadRequest;
 import com.nthn.storevision.dto.response.PageDTO;
 import com.nthn.storevision.service.notification.NotificationRetrievalService;
 import com.nthn.storevision.service.notification.NotificationUpdateService;
-import com.nthn.storevision.service.notification.SseEmitterService;
+import com.nthn.storevision.service.notification.impl.SseEmitterServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -44,7 +44,7 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 public class NotificationControllerV1 implements NotificationController {
 
   private final NotificationRetrievalService retrievalService;
-  private final SseEmitterService sseEmitterService;
+  private final SseEmitterServiceImpl sseEmitterService;
   private final NotificationUpdateService updateService;
 
   /** {@inheritDoc} */

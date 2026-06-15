@@ -6,7 +6,7 @@
  * File: VoucherValidationServiceImplTest.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-15 21:40:22
+ * Last Modified: 2026-06-15 21:52:00
  */
 
 package com.nthn.storevision.service.voucher.impl;
@@ -15,8 +15,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
-import com.nthn.storevision.constant.DiscountType;
-import com.nthn.storevision.dto.VoucherDTO;
+import com.nthn.storevision.constant.voucher.DiscountType;
+import com.nthn.storevision.dto.voucher.VoucherDTO;
 import com.nthn.storevision.entity.VoucherEntity;
 import com.nthn.storevision.exception.voucher.VoucherExpiredException;
 import com.nthn.storevision.exception.voucher.VoucherInactiveException;

@@ -11,7 +11,7 @@
 
 package com.nthn.storevision.service.inventory;
 
-import com.nthn.storevision.dto.InventoryDTO;
+import com.nthn.storevision.dto.inventory.InventoryDTO;
 import com.nthn.storevision.dto.request.InventoryAdjustmentRequest;
 import org.jspecify.annotations.NonNull;
 

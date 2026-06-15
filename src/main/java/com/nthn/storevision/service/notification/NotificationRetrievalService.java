@@ -11,7 +11,7 @@
 
 package com.nthn.storevision.service.notification;
 
-import com.nthn.storevision.dto.NotificationDTO;
+import com.nthn.storevision.dto.notification.NotificationDTO;
 import com.nthn.storevision.dto.response.PageDTO;
 import com.nthn.storevision.entity.NotificationEntity;
 import com.nthn.storevision.service.generic.Readable;

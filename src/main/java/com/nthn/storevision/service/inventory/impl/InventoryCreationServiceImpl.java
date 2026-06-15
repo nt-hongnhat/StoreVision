@@ -2,18 +2,18 @@
  * Copyright (c) 2026 Hong Nhat. All rights reserved.
  *
  * Project: Store Vision
- * Module: Store Vision Main
+ * Module: StoreVision.main
  * File: InventoryCreationServiceImpl.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-12 17:17:44
+ * Last Modified: 2026-06-15 21:51:59
  */
 
 package com.nthn.storevision.service.inventory.impl;
 
-import com.nthn.storevision.constant.StockMovementType;
+import com.nthn.storevision.constant.stock_movement.StockMovementType;
 import com.nthn.storevision.constant.message.InventoryMessageCode;
-import com.nthn.storevision.dto.StockReceiptDTO;
+import com.nthn.storevision.dto.stock_movement.StockReceiptDTO;
 import com.nthn.storevision.dto.request.StockReceiptRequest;
 import com.nthn.storevision.entity.ProductEntity;
 import com.nthn.storevision.entity.StockMovementEntity;

@@ -2,23 +2,23 @@
  * Copyright (c) 2026 Hong Nhat. All rights reserved.
  *
  * Project: Store Vision
- * Module: Store Vision Main
+ * Module: StoreVision.main
  * File: OrderCreationServiceImpl.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-13 16:20:29
+ * Last Modified: 2026-06-15 21:51:59
  */
 
 package com.nthn.storevision.service.order.impl;
 
-import com.nthn.storevision.constant.DiscountType;
-import com.nthn.storevision.constant.LoyaltyTier;
-import com.nthn.storevision.constant.OrderStatus;
+import com.nthn.storevision.constant.voucher.DiscountType;
+import com.nthn.storevision.constant.loyalty_point.LoyaltyTier;
+import com.nthn.storevision.constant.order.OrderStatus;
 import com.nthn.storevision.constant.message.CustomerMessageCode;
 import com.nthn.storevision.constant.message.ProductMessageCode;
-import com.nthn.storevision.dto.OrderDTO;
-import com.nthn.storevision.dto.OrderItemDTO;
-import com.nthn.storevision.dto.VoucherDTO;
+import com.nthn.storevision.dto.order.OrderDTO;
+import com.nthn.storevision.dto.order_item.OrderItemDTO;
+import com.nthn.storevision.dto.voucher.VoucherDTO;
 import com.nthn.storevision.dto.request.OrderCreationRequest;
 import com.nthn.storevision.dto.request.OrderItemCreationRequest;
 import com.nthn.storevision.entity.CustomerEntity;

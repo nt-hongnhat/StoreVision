@@ -2,16 +2,16 @@
  * Copyright (c) 2026 Hong Nhat. All rights reserved.
  *
  * Project: Store Vision
- * Module: Store Vision Main
+ * Module: StoreVision.main
  * File: StockMovementRepositoryImpl.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-13 14:06:43
+ * Last Modified: 2026-06-15 21:51:59
  */
 
 package com.nthn.storevision.repository.impl;
 
-import com.nthn.storevision.constant.StockMovementType;
+import com.nthn.storevision.constant.stock_movement.StockMovementType;
 import com.nthn.storevision.entity.StockMovementEntity;
 import com.nthn.storevision.repository.StockMovementRepository;
 import com.nthn.storevision.repository.jpa.JpaStockMovementRepository;

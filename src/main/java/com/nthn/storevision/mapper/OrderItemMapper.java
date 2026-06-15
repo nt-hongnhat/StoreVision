@@ -11,7 +11,7 @@
 
 package com.nthn.storevision.mapper;
 
-import com.nthn.storevision.dto.OrderItemDTO;
+import com.nthn.storevision.dto.order_item.OrderItemDTO;
 import com.nthn.storevision.entity.OrderEntity;
 import com.nthn.storevision.entity.OrderItemEntity;
 import com.nthn.storevision.entity.ProductEntity;

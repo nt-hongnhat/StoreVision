@@ -13,8 +13,8 @@ package com.nthn.storevision.service.customer.impl;
 
 import com.nthn.storevision.constant.message.CustomerMessageCode;
 import com.nthn.storevision.constant.message.LocalizedMessageCode;
-import com.nthn.storevision.dto.CustomerDTO;
-import com.nthn.storevision.dto.OrderDTO;
+import com.nthn.storevision.dto.customer.CustomerDTO;
+import com.nthn.storevision.dto.order.OrderDTO;
 import com.nthn.storevision.dto.response.PageDTO;
 import com.nthn.storevision.entity.CustomerEntity;
 import com.nthn.storevision.exception.EntityNotFoundException;

@@ -2,16 +2,16 @@
  * Copyright (c) 2026 Hong Nhat. All rights reserved.
  *
  * Project: Store Vision
- * Module: Store Vision Main
+ * Module: StoreVision.main
  * File: Employee.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-02 21:44:06
+ * Last Modified: 2026-06-15 21:51:59
  */
 
 package com.nthn.storevision.model;
 
-import com.nthn.storevision.constant.EmployeeRole;
+import com.nthn.storevision.constant.employee.EmployeeRole;
 
 /** Represents an employee (staff member) in the StoreVision domain. */
 public interface Employee extends CustomAuditable<Long> {

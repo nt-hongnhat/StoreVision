@@ -2,17 +2,17 @@
  * Copyright (c) 2026 Hong Nhat. All rights reserved.
  *
  * Project: Store Vision
- * Module: Store Vision Main
+ * Module: StoreVision.main
  * File: Order.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-02 21:44:02
+ * Last Modified: 2026-06-15 21:51:59
  */
 
 package com.nthn.storevision.model;
 
-import com.nthn.storevision.constant.OrderChannel;
-import com.nthn.storevision.constant.OrderStatus;
+import com.nthn.storevision.constant.order.OrderChannel;
+import com.nthn.storevision.constant.order.OrderStatus;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 

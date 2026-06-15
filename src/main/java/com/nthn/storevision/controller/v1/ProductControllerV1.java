@@ -13,7 +13,7 @@ package com.nthn.storevision.controller.v1;
 
 import com.nthn.storevision.constant.api.*;
 import com.nthn.storevision.controller.ProductController;
-import com.nthn.storevision.dto.ProductDTO;
+import com.nthn.storevision.dto.product.ProductDTO;
 import com.nthn.storevision.dto.request.ProductRestoreRequest;
 import com.nthn.storevision.dto.response.PageDTO;
 import com.nthn.storevision.service.product.ProductCreationService;

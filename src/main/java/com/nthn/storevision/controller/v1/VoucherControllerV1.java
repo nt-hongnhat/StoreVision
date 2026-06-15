@@ -13,7 +13,7 @@ package com.nthn.storevision.controller.v1;
 
 import com.nthn.storevision.constant.api.*;
 import com.nthn.storevision.controller.VoucherController;
-import com.nthn.storevision.dto.VoucherDTO;
+import com.nthn.storevision.dto.voucher.VoucherDTO;
 import com.nthn.storevision.dto.request.VoucherRestoreRequest;
 import com.nthn.storevision.dto.response.PageDTO;
 import com.nthn.storevision.service.voucher.VoucherCreationService;

@@ -11,7 +11,7 @@
 
 package com.nthn.storevision.service.user.impl;
 
-import com.nthn.storevision.dto.UserDTO;
+import com.nthn.storevision.dto.user.UserDTO;
 import com.nthn.storevision.entity.UserEntity;
 import com.nthn.storevision.mapper.EntityMapperConfig;
 import com.nthn.storevision.model.User;
