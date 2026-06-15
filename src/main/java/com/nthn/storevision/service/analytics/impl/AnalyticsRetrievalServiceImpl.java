@@ -6,7 +6,7 @@
  * File: AnalyticsRetrievalServiceImpl.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-15 21:51:59
+ * Last Modified: 2026-06-15 22:47:43
  */
 
 package com.nthn.storevision.service.analytics.impl;
@@ -17,7 +17,7 @@ import com.nthn.storevision.constant.analytics.RevenueGroupBy;
 import com.nthn.storevision.dto.analytics.InventoryValuationDTO;
 import com.nthn.storevision.dto.analytics.InventoryValuationItemDTO;
 import com.nthn.storevision.dto.analytics.OrderStatusCountDTO;
-import com.nthn.storevision.dto.analytics.OrderSummaryDTO;
+import com.nthn.storevision.dto.order.OrderSummaryDTO;
 import com.nthn.storevision.dto.analytics.ProductCostDTO;
 import com.nthn.storevision.dto.analytics.ProductSalesDTO;
 import com.nthn.storevision.dto.analytics.ProfitDTO;

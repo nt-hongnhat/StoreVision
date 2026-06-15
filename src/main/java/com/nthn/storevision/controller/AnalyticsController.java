@@ -6,7 +6,7 @@
  * File: AnalyticsController.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-15 21:52:00
+ * Last Modified: 2026-06-15 22:52:32
  */
 
 package com.nthn.storevision.controller;
@@ -14,7 +14,7 @@ package com.nthn.storevision.controller;
 import com.nthn.storevision.constant.analytics.AnalyticsPeriod;
 import com.nthn.storevision.constant.analytics.RevenueGroupBy;
 import com.nthn.storevision.dto.analytics.InventoryValuationDTO;
-import com.nthn.storevision.dto.analytics.OrderSummaryDTO;
+import com.nthn.storevision.dto.order.OrderSummaryDTO;
 import com.nthn.storevision.dto.analytics.ProfitDTO;
 import com.nthn.storevision.dto.analytics.RevenuePointDTO;
 import com.nthn.storevision.dto.analytics.SlowMovingProductDTO;
@@ -79,7 +79,7 @@ public interface AnalyticsController {
    *
    * @param limit maximum number of rows
    * @param period the rolling look-back window
-   * @return best sellers, highest quantity first
+   * @return bestsellers, the highest quantity first
    */
   List<TopSellingProductDTO> getTopSellingProducts(int limit, AnalyticsPeriod period);
 
@@ -87,7 +87,7 @@ public interface AnalyticsController {
    * Lists the customers with the highest accumulated lifetime spending.
    *
    * @param limit maximum number of rows
-   * @return top spenders, biggest first
+   * @return top spenders, the biggest first
    */
   List<TopSpendingCustomerDTO> getTopSpendingCustomers(int limit);
 }

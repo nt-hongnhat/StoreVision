@@ -6,7 +6,7 @@
  * File: AnalyticsControllerV1.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-15 21:52:00
+ * Last Modified: 2026-06-15 22:47:43
  */
 
 package com.nthn.storevision.controller.v1;
@@ -16,7 +16,7 @@ import com.nthn.storevision.constant.analytics.RevenueGroupBy;
 import com.nthn.storevision.constant.api.*;
 import com.nthn.storevision.controller.AnalyticsController;
 import com.nthn.storevision.dto.analytics.InventoryValuationDTO;
-import com.nthn.storevision.dto.analytics.OrderSummaryDTO;
+import com.nthn.storevision.dto.order.OrderSummaryDTO;
 import com.nthn.storevision.dto.analytics.ProfitDTO;
 import com.nthn.storevision.dto.analytics.RevenuePointDTO;
 import com.nthn.storevision.dto.analytics.SlowMovingProductDTO;
