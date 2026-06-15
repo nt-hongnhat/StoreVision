@@ -2,11 +2,11 @@
  * Copyright (c) 2026 Hong Nhat. All rights reserved.
  *
  * Project: Store Vision
- * Module: Store Vision Main
+ * Module: StoreVision.test
  * File: NotificationRetrievalServiceImplTest.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-13 15:00:00
+ * Last Modified: 2026-06-15 22:54:59
  */
 
 package com.nthn.storevision.service.notification.impl;
@@ -37,7 +37,7 @@ import org.springframework.data.domain.Pageable;
 @ExtendWith(MockitoExtension.class)
 class NotificationRetrievalServiceImplTest {
 
-  private static final Long NOTIFICATION_ID = 1L;
+  private static final long NOTIFICATION_ID = 1L;
 
   @Mock private NotificationMapper notificationMapper;
   @Mock private NotificationRepository notificationRepository;
