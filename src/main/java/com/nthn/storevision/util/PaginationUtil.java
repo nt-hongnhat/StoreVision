@@ -2,17 +2,16 @@
  * Copyright (c) 2026 Hong Nhat. All rights reserved.
  *
  * Project: Store Vision
- * Module: Store Vision Main
+ * Module: StoreVision.main
  * File: PaginationUtil.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-14 15:46:52
+ * Last Modified: 2026-06-15 22:01:06
  */
 
 package com.nthn.storevision.util;
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
+import lombok.experimental.UtilityClass;
 import org.jspecify.annotations.NonNull;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -23,14 +22,14 @@ import org.springframework.data.domain.Sort;
  * rejected: a negative page becomes the first page, and the size is bounded to [1, {@value
  * #MAX_SIZE}].
  */
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
-public enum PaginationUtil {
-  ;
+@UtilityClass
+public class PaginationUtil {
 
   /** Upper bound for the page size to protect the database from oversized requests. */
-  private static final int MAX_SIZE = 100;
+  private final int MAX_SIZE = 100;
 
-  private static final int MIN_SIZE = 1;
+  /** Lower bound for the page size to protect the database from oversized requests. */
+  private final int MIN_SIZE = 1;
 
   /**
    * Builds an unsorted {@link Pageable} from raw request parameters, clamping out-of-range values.
@@ -40,7 +39,7 @@ public enum PaginationUtil {
    * @return the resulting {@link Pageable}; never {@code null}
    */
   @NonNull
-  public static Pageable toPageRequest(final int page, final int size) {
+  public Pageable toPageRequest(final int page, final int size) {
     return toPageRequest(page, size, Sort.unsorted());
   }
 
@@ -53,7 +52,7 @@ public enum PaginationUtil {
    * @return the resulting {@link Pageable}; never {@code null}
    */
   @NonNull
-  public static Pageable toPageRequest(final int page, final int size, final Sort sort) {
+  public Pageable toPageRequest(final int page, final int size, final Sort sort) {
     return PageRequest.of(Math.max(page, 0), Math.clamp(size, MIN_SIZE, MAX_SIZE), sort);
   }
 }
