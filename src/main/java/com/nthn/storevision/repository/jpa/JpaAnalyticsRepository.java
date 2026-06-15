@@ -70,8 +70,9 @@ public interface JpaAnalyticsRepository extends JpaRepository<OrderEntity, Long>
    * @return one row per active product; never {@code null}
    */
   @Query(
-      "SELECT new com.nthn.storevision.dto.analytics.ProductStockDTO(p.id, p.name, p.stockQuantity)"
-          + " FROM ProductEntity p WHERE p.deletedDate IS NULL")
+          """
+                  SELECT new com.nthn.storevision.dto.analytics.ProductStockDTO(p.id, p.name, p.stockQuantity)
+                   FROM ProductEntity p WHERE p.deletedDate IS NULL""")
   List<ProductStockDTO> findActiveProductStocks();
 
   /**
@@ -82,12 +83,13 @@ public interface JpaAnalyticsRepository extends JpaRepository<OrderEntity, Long>
    * @return one row per product sold in the range; never {@code null}
    */
   @Query(
-      "SELECT new com.nthn.storevision.dto.analytics.ProductSalesDTO(oi.product.id, SUM(oi.quantity))"
-          + " FROM OrderItemEntity oi"
-          + " WHERE oi.order.status = com.nthn.storevision.constant.OrderStatus.COMPLETED"
-          + " AND oi.order.deletedDate IS NULL"
-          + " AND oi.order.orderDate >= :from AND oi.order.orderDate < :to"
-          + " GROUP BY oi.product.id")
+      """
+                  SELECT new com.nthn.storevision.dto.analytics.ProductSalesDTO(oi.product.id, SUM(oi.quantity))
+                   FROM OrderItemEntity oi
+                   WHERE oi.order.status = com.nthn.storevision.constant.OrderStatus.COMPLETED
+                   AND oi.order.deletedDate IS NULL
+                   AND oi.order.orderDate >= :from AND oi.order.orderDate < :to
+                   GROUP BY oi.product.id""")
   List<ProductSalesDTO> findProductSales(
       @Param("from") LocalDateTime from, @Param("to") LocalDateTime to);
 
@@ -111,9 +113,7 @@ public interface JpaAnalyticsRepository extends JpaRepository<OrderEntity, Long>
               + " GROUP BY period ORDER BY period",
       nativeQuery = true)
   List<RevenuePointView> findRevenueGroupedBy(
-      @Param("unit") String unit,
-      @Param("from") LocalDateTime from,
-      @Param("to") LocalDateTime to);
+      @Param("unit") String unit, @Param("from") LocalDateTime from, @Param("to") LocalDateTime to);
 
   /**
    * BR-A01: top products by units sold through active COMPLETED orders since {@code from}.
