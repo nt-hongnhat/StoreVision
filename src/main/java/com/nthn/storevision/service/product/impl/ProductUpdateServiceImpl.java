@@ -16,7 +16,7 @@ import com.nthn.storevision.dto.ProductDTO;
 import com.nthn.storevision.entity.ProductEntity;
 import com.nthn.storevision.exception.EntityNotFoundException;
 import com.nthn.storevision.exception.InsufficientStockException;
-import com.nthn.storevision.exception.ProductNameAlreadyExistsException;
+import com.nthn.storevision.exception.product.ProductNameAlreadyExistsException;
 import com.nthn.storevision.mapper.EntityMapperConfig;
 import com.nthn.storevision.repository.ProductRepository;
 import com.nthn.storevision.service.common.AbstractUpdatable;

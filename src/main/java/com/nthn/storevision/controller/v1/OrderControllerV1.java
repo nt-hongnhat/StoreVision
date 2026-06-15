@@ -18,7 +18,7 @@ import com.nthn.storevision.dto.OrderDTO;
 import com.nthn.storevision.dto.request.OrderCreationRequest;
 import com.nthn.storevision.dto.request.OrderStatusUpdateRequest;
 import com.nthn.storevision.dto.response.PageDTO;
-import com.nthn.storevision.exception.InvalidOrderStatusTransitionException;
+import com.nthn.storevision.exception.order.InvalidOrderStatusTransitionException;
 import com.nthn.storevision.service.order.OrderCreationService;
 import com.nthn.storevision.service.order.OrderDeletionService;
 import com.nthn.storevision.service.order.OrderRetrievalService;

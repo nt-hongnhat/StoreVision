@@ -9,9 +9,10 @@
  * Last Modified: 2026-06-12 17:09:31
  */
 
-package com.nthn.storevision.exception;
+package com.nthn.storevision.exception.product;
 
 import com.nthn.storevision.constant.message.ProductMessageCode;
+import com.nthn.storevision.exception.ApplicationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 

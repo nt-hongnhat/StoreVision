@@ -9,10 +9,12 @@
  * Last Modified: 2026-06-12
  */
 
-package com.nthn.storevision.exception;
+package com.nthn.storevision.exception.voucher;
 
 import com.nthn.storevision.constant.message.VoucherMessageCode;
 import java.math.BigDecimal;
+
+import com.nthn.storevision.exception.ApplicationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 

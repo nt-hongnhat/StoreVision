@@ -12,6 +12,7 @@
 package com.nthn.storevision.service.order;
 
 import com.nthn.storevision.dto.OrderDTO;
+import com.nthn.storevision.exception.order.InvalidOrderStateException;
 import com.nthn.storevision.service.generic.Updatable;
 import org.jspecify.annotations.NonNull;
 
@@ -30,7 +31,7 @@ public interface OrderUpdateService extends Updatable<OrderDTO, Long> {
    * @param orderId the order to cancel; must not be {@code null}
    * @return the cancelled order as a {@link OrderDTO}; never {@code null}
    * @throws com.nthn.storevision.exception.EntityNotFoundException if the order does not exist
-   * @throws com.nthn.storevision.exception.InvalidOrderStateException if the order is not in
+   * @throws InvalidOrderStateException if the order is not in
    *     {@code PENDING} status (BR-O02)
    */
   OrderDTO cancel(@NonNull Long orderId);
@@ -44,7 +45,7 @@ public interface OrderUpdateService extends Updatable<OrderDTO, Long> {
    * @param orderId the order to complete; must not be {@code null}
    * @return the completed order as a {@link OrderDTO}; never {@code null}
    * @throws com.nthn.storevision.exception.EntityNotFoundException if the order does not exist
-   * @throws com.nthn.storevision.exception.InvalidOrderStateException if the order is not in
+   * @throws InvalidOrderStateException if the order is not in
    *     {@code PENDING} status
    * @throws com.nthn.storevision.exception.InsufficientStockException if any item's stock is
    *     insufficient at completion time (BR-O01)

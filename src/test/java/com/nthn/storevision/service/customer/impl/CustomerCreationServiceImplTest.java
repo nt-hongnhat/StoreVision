@@ -20,7 +20,7 @@ import static org.mockito.Mockito.when;
 
 import com.nthn.storevision.dto.CustomerDTO;
 import com.nthn.storevision.entity.CustomerEntity;
-import com.nthn.storevision.exception.CustomerEmailAlreadyExistsException;
+import com.nthn.storevision.exception.customer.CustomerEmailAlreadyExistsException;
 import com.nthn.storevision.mapper.CustomerMapper;
 import com.nthn.storevision.repository.CustomerRepository;
 import org.junit.jupiter.api.BeforeEach;

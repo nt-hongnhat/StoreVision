@@ -16,7 +16,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.nthn.storevision.exception.CustomerHasPendingOrdersException;
+import com.nthn.storevision.exception.customer.CustomerHasPendingOrdersException;
 import com.nthn.storevision.repository.CustomerRepository;
 import com.nthn.storevision.service.order.OrderRetrievalService;
 import org.junit.jupiter.api.BeforeEach;

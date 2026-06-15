@@ -13,6 +13,8 @@ package com.nthn.storevision.service.voucher;
 
 import com.nthn.storevision.dto.VoucherDTO;
 import java.math.BigDecimal;
+
+import com.nthn.storevision.exception.voucher.*;
 import org.jspecify.annotations.NonNull;
 
 /**
@@ -31,14 +33,14 @@ public interface VoucherValidationService {
    * @param voucherCode the code of the voucher to validate; must not be {@code null}
    * @param orderAmount the order amount the voucher is applied to; must not be {@code null}
    * @return the validated voucher as a {@link VoucherDTO}; never {@code null}
-   * @throws com.nthn.storevision.exception.VoucherNotFoundException if no active voucher matches
+   * @throws VoucherNotFoundException if no active voucher matches
    *     the code
-   * @throws com.nthn.storevision.exception.VoucherExpiredException if the voucher expired (BR-V01)
-   * @throws com.nthn.storevision.exception.VoucherInactiveException if the voucher is deactivated
+   * @throws VoucherExpiredException if the voucher expired (BR-V01)
+   * @throws VoucherInactiveException if the voucher is deactivated
    *     (BR-V02)
-   * @throws com.nthn.storevision.exception.VoucherUsageLimitReachedException if the voucher
+   * @throws VoucherUsageLimitReachedException if the voucher
    *     reached its usage limit (BR-V03)
-   * @throws com.nthn.storevision.exception.VoucherMinOrderAmountNotMetException if the order
+   * @throws VoucherMinOrderAmountNotMetException if the order
    *     amount is below the voucher minimum (BR-V04)
    */
   VoucherDTO validate(@NonNull String voucherCode, @NonNull BigDecimal orderAmount);

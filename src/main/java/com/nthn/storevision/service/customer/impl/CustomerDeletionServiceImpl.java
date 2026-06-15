@@ -12,7 +12,7 @@
 package com.nthn.storevision.service.customer.impl;
 
 import com.nthn.storevision.entity.CustomerEntity;
-import com.nthn.storevision.exception.CustomerHasPendingOrdersException;
+import com.nthn.storevision.exception.customer.CustomerHasPendingOrdersException;
 import com.nthn.storevision.repository.CustomerRepository;
 import com.nthn.storevision.service.common.AbstractDeletable;
 import com.nthn.storevision.service.customer.CustomerDeletionService;

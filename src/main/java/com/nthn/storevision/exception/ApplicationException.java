@@ -34,7 +34,7 @@ public class ApplicationException extends RuntimeException {
    * @param messageKey the error code associated with the exception
    * @param args optional arguments providing additional context for the exception
    */
-  ApplicationException(final LocalizedMessageCode messageKey, final Object... args) {
+  protected ApplicationException(final LocalizedMessageCode messageKey, final Object... args) {
     this.args = args;
     this.messageKey = messageKey;
   }

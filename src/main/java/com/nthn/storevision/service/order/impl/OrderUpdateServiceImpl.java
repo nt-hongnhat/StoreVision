@@ -19,7 +19,7 @@ import com.nthn.storevision.entity.OrderItemEntity;
 import com.nthn.storevision.entity.ProductEntity;
 import com.nthn.storevision.exception.EntityNotFoundException;
 import com.nthn.storevision.exception.InsufficientStockException;
-import com.nthn.storevision.exception.InvalidOrderStateException;
+import com.nthn.storevision.exception.order.InvalidOrderStateException;
 import com.nthn.storevision.mapper.EntityMapperConfig;
 import com.nthn.storevision.repository.OrderRepository;
 import com.nthn.storevision.service.common.AbstractUpdatable;

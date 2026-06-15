@@ -13,11 +13,11 @@ package com.nthn.storevision.service.voucher.impl;
 
 import com.nthn.storevision.dto.VoucherDTO;
 import com.nthn.storevision.entity.VoucherEntity;
-import com.nthn.storevision.exception.VoucherExpiredException;
-import com.nthn.storevision.exception.VoucherInactiveException;
-import com.nthn.storevision.exception.VoucherMinOrderAmountNotMetException;
-import com.nthn.storevision.exception.VoucherNotFoundException;
-import com.nthn.storevision.exception.VoucherUsageLimitReachedException;
+import com.nthn.storevision.exception.voucher.VoucherExpiredException;
+import com.nthn.storevision.exception.voucher.VoucherInactiveException;
+import com.nthn.storevision.exception.voucher.VoucherMinOrderAmountNotMetException;
+import com.nthn.storevision.exception.voucher.VoucherNotFoundException;
+import com.nthn.storevision.exception.voucher.VoucherUsageLimitReachedException;
 import com.nthn.storevision.mapper.VoucherMapper;
 import com.nthn.storevision.repository.VoucherRepository;
 import com.nthn.storevision.service.voucher.VoucherValidationService;
