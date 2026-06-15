@@ -13,11 +13,8 @@ package com.nthn.storevision.dto.inventory;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.math.BigDecimal;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+
+import lombok.*;
 
 /**
  * Stock-level summary for a single product. Used by GET /inventory (including the {@code
@@ -29,6 +26,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@ToString
 public class InventoryDTO {
 
   @Schema(description = "Category the product belongs to.", example = "Electronics")

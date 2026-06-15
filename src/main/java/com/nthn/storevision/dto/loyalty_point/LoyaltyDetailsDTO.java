@@ -15,11 +15,8 @@ import com.nthn.storevision.constant.loyalty_point.LoyaltyTier;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.math.BigDecimal;
 import java.util.List;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+
+import lombok.*;
 
 /**
  * Data Transfer Object for a customer's loyalty overview: current tier, point balance, accumulated
@@ -31,6 +28,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@ToString
 public class LoyaltyDetailsDTO {
 
   /** The customer this overview belongs to. */
