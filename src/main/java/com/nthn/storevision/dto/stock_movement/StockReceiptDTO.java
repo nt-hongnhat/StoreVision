@@ -6,20 +6,16 @@
  * File: StockReceiptDTO.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-15 21:55:06
+ * Last Modified: 2026-06-15 22:47:43
  */
 
 package com.nthn.storevision.dto.stock_movement;
 
+import com.nthn.storevision.dto.response.HasIdentifier;
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-
-import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 /** Response for POST /inventory/receipts and items in GET /inventory/receipts. */
 @Schema(description = "A single stock receipt record for a product.")
@@ -28,7 +24,8 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class StockReceiptDTO {
+@ToString
+public class StockReceiptDTO implements HasIdentifier<Long> {
 
   @Schema(description = "Auto-assigned primary key.", example = "1")
   private Long id;

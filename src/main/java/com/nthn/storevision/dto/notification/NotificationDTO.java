@@ -6,19 +6,17 @@
  * File: NotificationDTO.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-15 21:51:59
+ * Last Modified: 2026-06-15 22:44:25
  */
 
 package com.nthn.storevision.dto.notification;
 
 import com.nthn.storevision.constant.notification.NotificationType;
+import com.nthn.storevision.dto.response.HasIdentifier;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDateTime;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+
+import lombok.*;
 
 /**
  * Data Transfer Object for an internal {@link com.nthn.storevision.entity.NotificationEntity}.
@@ -30,7 +28,8 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class NotificationDTO {
+@ToString
+public class NotificationDTO implements HasIdentifier<Long> {
 
   /** Response-only: timestamp when this notification was created. */
   @Schema(
@@ -53,12 +52,15 @@ public class NotificationDTO {
   private String message;
 
   /** Whether this notification has been read by its recipient. */
-  @Schema(description = "Whether this notification has been read by its recipient.", example = "false")
+  @Schema(
+      description = "Whether this notification has been read by its recipient.",
+      example = "false")
   private boolean read;
 
   /** Identifier of the related entity (e.g. a product id), or {@code null} when none applies. */
   @Schema(
-      description = "Identifier of the related entity (e.g. a product id), or null when none applies.",
+      description =
+          "Identifier of the related entity (e.g. a product id), or null when none applies.",
       example = "1")
   private Long referenceId;
 

@@ -6,20 +6,18 @@
  * File: StockMovementDTO.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-15 21:55:06
+ * Last Modified: 2026-06-15 22:47:45
  */
 
 package com.nthn.storevision.dto.stock_movement;
 
 import com.nthn.storevision.constant.stock_movement.StockMovementType;
+import com.nthn.storevision.dto.response.HasIdentifier;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+
+import lombok.*;
 
 /** Full movement record returned by GET /inventory/{productId}/movements. */
 @Schema(description = "A single stock movement record for a product.")
@@ -28,7 +26,8 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class StockMovementDTO {
+@ToString
+public class StockMovementDTO  implements HasIdentifier<Long> {
 
   @Schema(description = "Auto-assigned primary key.", example = "1")
   private Long id;

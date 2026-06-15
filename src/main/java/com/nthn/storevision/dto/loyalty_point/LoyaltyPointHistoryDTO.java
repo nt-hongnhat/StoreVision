@@ -6,19 +6,17 @@
  * File: LoyaltyPointHistoryDTO.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-15 21:51:59
+ * Last Modified: 2026-06-15 22:45:03
  */
 
 package com.nthn.storevision.dto.loyalty_point;
 
 import com.nthn.storevision.constant.loyalty_point.LoyaltyPointType;
+import com.nthn.storevision.dto.response.HasIdentifier;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDateTime;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+
+import lombok.*;
 
 /**
  * Data Transfer Object for a single loyalty point transaction. Response-only — the history is
@@ -30,7 +28,8 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class LoyaltyPointHistoryDTO {
+@ToString
+public class LoyaltyPointHistoryDTO implements HasIdentifier<Long> {
 
   /** Point balance right after this transaction. */
   @Schema(description = "Point balance right after this transaction.", example = "1200")

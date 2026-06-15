@@ -6,22 +6,20 @@
  * File: CustomerDTO.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-15 21:51:59
+ * Last Modified: 2026-06-15 22:47:43
  */
 
 package com.nthn.storevision.dto.customer;
 
 import com.nthn.storevision.constant.loyalty_point.LoyaltyTier;
+import com.nthn.storevision.dto.response.HasIdentifier;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+
+import lombok.*;
 
 /**
  * Data Transfer Object for Customer. Used to transfer customer data between layers, often for API
@@ -33,9 +31,12 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class CustomerDTO {
+@ToString
+public class CustomerDTO implements HasIdentifier<Long> {
 
-  @Schema(description = "Customer's mailing address.", example = "123 Le Loi, District 1, Ho Chi Minh City")
+  @Schema(
+      description = "Customer's mailing address.",
+      example = "123 Le Loi, District 1, Ho Chi Minh City")
   private String address;
 
   /** Date of birth, used for birthday benefits; may be {@code null}. */
@@ -44,7 +45,9 @@ public class CustomerDTO {
       example = "1995-08-20")
   private LocalDate dateOfBirth;
 
-  @Schema(description = "Customer's email address; must be unique (BR-C01).", example = "customer@example.com")
+  @Schema(
+      description = "Customer's email address; must be unique (BR-C01).",
+      example = "customer@example.com")
   @NotBlank(message = "{CSM008}")
   @Email(message = "{CSM009}")
   private String email;

@@ -6,7 +6,7 @@
  * File: OrderDTO.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-15 21:51:59
+ * Last Modified: 2026-06-15 22:43:26
  */
 
 package com.nthn.storevision.dto.order;
@@ -14,13 +14,10 @@ package com.nthn.storevision.dto.order;
 import com.nthn.storevision.constant.order.OrderChannel;
 import com.nthn.storevision.constant.order.OrderStatus;
 import com.nthn.storevision.dto.order_item.OrderItemDTO;
+import com.nthn.storevision.dto.response.HasIdentifier;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -36,7 +33,8 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class OrderDTO {
+@ToString
+public class OrderDTO implements HasIdentifier<Long> {
   @Schema(
       description = "Auto-assigned primary key.",
       example = "1",

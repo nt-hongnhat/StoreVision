@@ -6,21 +6,18 @@
  * File: EmployeeDTO.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-15 21:51:59
+ * Last Modified: 2026-06-15 22:45:30
  */
 
 package com.nthn.storevision.dto.employee;
 
 import com.nthn.storevision.constant.employee.EmployeeRole;
+import com.nthn.storevision.dto.response.HasIdentifier;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 /**
  * Data Transfer Object for Employee. Used to transfer employee data between layers, often for API
@@ -32,7 +29,8 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class EmployeeDTO {
+@ToString
+public class EmployeeDTO implements HasIdentifier<Long> {
 
   @Schema(description = "Employee's email address.", example = "employee@example.com")
   @NotBlank(message = "{employee.email.required}")

@@ -6,20 +6,17 @@
  * File: UserDTO.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-15 21:55:06
+ * Last Modified: 2026-06-15 22:42:01
  */
 
 package com.nthn.storevision.dto.user;
 
+import com.nthn.storevision.dto.response.HasIdentifier;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 /**
  * Data Transfer Object for {@link com.nthn.storevision.model.User}. Used to transfer user data
@@ -31,7 +28,8 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class UserDTO {
+@ToString
+public class UserDTO implements HasIdentifier<Long> {
 
   @Schema(description = "User's email address.", example = "user@example.com")
   @NotBlank(message = "{user.email.required}")

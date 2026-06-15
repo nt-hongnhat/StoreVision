@@ -6,33 +6,33 @@
  * File: VoucherDTO.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-15 21:52:00
+ * Last Modified: 2026-06-15 22:48:03
  */
 
 package com.nthn.storevision.dto.voucher;
 
 import com.nthn.storevision.constant.voucher.DiscountType;
+import com.nthn.storevision.dto.response.HasIdentifier;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+
+import lombok.*;
 
 /**
  * Data Transfer Object for {@link com.nthn.storevision.model.Voucher}. Used to carry validated
  * voucher data between domains — e.g., from the voucher validation service to the order creation
  * flow.
  */
-@Schema(description = "Voucher details, including its discount rule, validity window and usage limits.")
+@Schema(
+    description = "Voucher details, including its discount rule, validity window and usage limits.")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class VoucherDTO {
+@ToString
+public class VoucherDTO implements HasIdentifier<Long> {
 
   /** Whether the voucher is currently activated (BR-V02). */
   @Schema(description = "Whether the voucher is currently activated (BR-V02).", example = "true")
@@ -70,9 +70,7 @@ public class VoucherDTO {
   private BigDecimal maxDiscountAmount;
 
   /** Total number of times the voucher may be used (BR-V03). */
-  @Schema(
-      description = "Total number of times the voucher may be used (BR-V03).",
-      example = "100")
+  @Schema(description = "Total number of times the voucher may be used (BR-V03).", example = "100")
   private Integer maxUsage;
 
   /** Minimum order amount required to apply the voucher; {@code null} when none (BR-V04). */

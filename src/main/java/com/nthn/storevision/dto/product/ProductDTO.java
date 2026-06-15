@@ -6,11 +6,12 @@
  * File: ProductDTO.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-15 21:48:32
+ * Last Modified: 2026-06-15 22:54:05
  */
 
 package com.nthn.storevision.dto.product;
 
+import com.nthn.storevision.dto.response.HasIdentifier;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Min;
@@ -23,7 +24,8 @@ import lombok.*;
 
 /**
  * Data Transfer Object for Product. Used for both API request payloads and response bodies.
- * Response-only fields (id, createdBy, createdDate, lastModifiedDate) are null in request context.
+ * Response-only fields (id, createdBy, createdDate, lastModifiedDate) are null in the request
+ * context.
  */
 @Schema(description = "Product catalog entry, including pricing, stock and dynamic attributes.")
 @Getter
@@ -31,11 +33,15 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ProductDTO {
+@ToString
+public class ProductDTO implements HasIdentifier<Long> {
 
-  /** Response-only: dynamic product attributes stored as JSONB (e.g. {"color":"Đỏ","size":"XL"}). */
+  /**
+   * Response-only: dynamic product attributes stored as JSONB (e.g. {"color":"Đỏ","size":"XL"}).
+   */
   @Schema(
-      description = "Dynamic product attributes stored as JSONB (e.g. {\"color\":\"Red\",\"size\":\"XL\"}).",
+      description =
+          "Dynamic product attributes stored as JSONB (e.g. {\"color\":\"Red\",\"size\":\"XL\"}).",
       example = "{\"color\": \"Red\", \"size\": \"XL\"}",
       accessMode = Schema.AccessMode.READ_ONLY)
   private Map<String, String> attributes;
@@ -76,12 +82,16 @@ public class ProductDTO {
       accessMode = Schema.AccessMode.READ_ONLY)
   private LocalDateTime lastModifiedDate;
 
-  @Schema(description = "Display name of the product; must be unique within its category (BR-P01).", example = "Wireless Mouse")
+  @Schema(
+      description = "Display name of the product; must be unique within its category (BR-P01).",
+      example = "Wireless Mouse")
   @NotBlank(message = "{PRM003}")
   private String name;
 
-  /** BR-P02: price must be strictly greater than zero. */
-  @Schema(description = "Selling price of the product; must be greater than zero (BR-P02).", example = "299000")
+  /** BR-P02: the price must be strictly greater than zero. */
+  @Schema(
+      description = "Selling price of the product; must be greater than zero (BR-P02).",
+      example = "299000")
   @NotNull(message = "{PRM004}")
   @DecimalMin(value = "0.01", message = "{PRM005}")
   private BigDecimal price;
