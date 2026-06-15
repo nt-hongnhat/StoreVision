@@ -176,7 +176,7 @@ The conversion boundary between Entity and DTO is **always the Service layer**:
 |--------------|--------------------------------------------------------------|---------------------------------------------------------------------|
 | `Repository` | `Entity`, `Optional<Entity>`, `List<Entity>`, `Page<Entity>` | DTO, request/response objects                                       |
 | `Service`    | `DTO`, `Optional<DTO>`, `List<DTO>`, `Page<DTO>`             | raw `Entity` (unless internal private helper within the same class) |
-| `Controller` | raw `DTO` or `void`                                          | `Entity`, `ResponseEntity<>`                                        |
+| `Controller` | raw `DTO`, `Page<DTO>`, or `void`                             | `Entity`, `ResponseEntity<>`, custom pagination wrapper DTOs        |
 
 ```java
 // correct — Repository returns Entity
@@ -202,6 +202,36 @@ public Customer getById(Long id) { ...}  // ❌ (exposes persistence detail to c
 - Cross-domain service calls (e.g., `OrderCreationService` calling
   `CustomerRetrievalService`) must use the **DTO** returned by the other
   domain's service — never reach into another domain's repository directly.
+
+#### Pagination
+
+- Use `org.springframework.data.domain.Page<T>` (the interface) directly as the
+  return type for every paginated `*RetrievalService` method and the
+  corresponding controller endpoint. **Never** create a custom pagination
+  envelope DTO (e.g., a `PageDTO<T>` record) — Spring Data's Jackson
+  `PageModule` already serializes `Page`/`PageImpl` into a stable
+  `{content, page: {size, number, totalElements, totalPages}}` JSON envelope.
+- In the service implementation, build the page with
+  `repository.findXxx(PaginationUtil.toPageRequest(page, size, sort))` (returns
+  `Page<Entity>`) and convert it with `.map(xxxMapper::toDTO)`, which returns
+  `Page<DTO>` directly — no manual unwrapping or re-wrapping.
+- The controller method returns the `Page<DTO>` from the service unchanged;
+  `ApiResponseHandler` wraps it like any other return value.
+
+```java
+// correct — service
+public Page<ProductDTO> findProductsPage(final int page, final int size, ...) {
+  return getRepository()
+      .searchActive(name, category, PaginationUtil.toPageRequest(page, size, DEFAULT_SORT))
+      .map(productMapper::toDTO);
+}
+
+// correct — controller interface & impl
+Page<ProductDTO> getAllProducts(int page, int size, String name, String category);
+
+// wrong — custom pagination envelope
+PageDTO<ProductDTO> getAllProducts(...);  // ❌
+```
 
 #### Mapper architecture (`mapper/`)
 
