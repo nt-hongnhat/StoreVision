@@ -1,12 +1,12 @@
 /*
- * Copyright (c) 2025 Hong Nhat. All rights reserved.
+ * Copyright (c) 2026 Hong Nhat. All rights reserved.
  *
- * Project: Book Thymeleaf
- * Module: Book Thymeleaf Main
+ * Project: Store Vision
+ * Module: StoreVision.main
  * File: DeletedBy.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 14:38, 30/03/2025
+ * Last Modified: 2026-06-15 21:33:52
  */
 
 package com.nthn.storevision.annotation;
