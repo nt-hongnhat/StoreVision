@@ -15,7 +15,6 @@ import com.nthn.storevision.constant.api.*;
 import com.nthn.storevision.controller.ProductController;
 import com.nthn.storevision.dto.product.ProductDTO;
 import com.nthn.storevision.dto.request.ProductRestoreRequest;
-import com.nthn.storevision.dto.response.PageDTO;
 import com.nthn.storevision.service.product.ProductCreationService;
 import com.nthn.storevision.service.product.ProductDeletionService;
 import com.nthn.storevision.service.product.ProductRetrievalService;
@@ -27,6 +26,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -101,7 +101,7 @@ public class ProductControllerV1 implements ProductController {
   @PreAuthorize("isAuthenticated()")
   @GetMapping
   @Override
-  public PageDTO<ProductDTO> getAllProducts(
+  public Page<ProductDTO> getAllProducts(
       @Parameter(description = ParameterDescription.PAGE_INDEX)
           @RequestParam(defaultValue = DefaultRequestParam.DEFAULT_PAGE)
           final int page,

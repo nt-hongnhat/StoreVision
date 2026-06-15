@@ -14,7 +14,6 @@ package com.nthn.storevision.service.order.impl;
 import com.nthn.storevision.constant.message.LocalizedMessageCode;
 import com.nthn.storevision.constant.message.OrderMessageCode;
 import com.nthn.storevision.dto.order.OrderDTO;
-import com.nthn.storevision.dto.response.PageDTO;
 import com.nthn.storevision.entity.OrderEntity;
 import com.nthn.storevision.mapper.OrderMapper;
 import com.nthn.storevision.repository.OrderRepository;
@@ -23,6 +22,7 @@ import com.nthn.storevision.service.order.OrderRetrievalService;
 import com.nthn.storevision.util.PaginationUtil;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -102,12 +102,11 @@ public class OrderRetrievalServiceImpl extends AbstractReadable<OrderEntity, Lon
 
   @Override
   @Transactional(readOnly = true)
-  public PageDTO<OrderDTO> findOrdersPage(final int page, final int size) {
+  public Page<OrderDTO> findOrdersPage(final int page, final int size) {
     log.debug("Fetching orders page: page={}, size={}", page, size);
-    return PageDTO.from(
-        getRepository()
-            .findAllActive(PaginationUtil.toPageRequest(page, size, DEFAULT_SORT))
-            .map(orderMapper::toDTO));
+    return getRepository()
+        .findAllActive(PaginationUtil.toPageRequest(page, size, DEFAULT_SORT))
+        .map(orderMapper::toDTO);
   }
 
   @Override

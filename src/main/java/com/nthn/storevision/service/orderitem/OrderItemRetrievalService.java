@@ -12,9 +12,9 @@
 package com.nthn.storevision.service.orderitem;
 
 import com.nthn.storevision.dto.order_item.OrderItemDTO;
-import com.nthn.storevision.dto.response.PageDTO;
 import com.nthn.storevision.entity.OrderItemEntity;
 import com.nthn.storevision.service.generic.Readable;
+import org.springframework.data.domain.Page;
 
 /**
  * Service interface for retrieving {@link OrderItemEntity} entities.
@@ -41,5 +41,5 @@ public interface OrderItemRetrievalService extends Readable<OrderItemEntity, Lon
    *     for all orders
    * @return the requested page of {@link OrderItemDTO}s; never {@code null}
    */
-  PageDTO<OrderItemDTO> findOrderItemsPage(int page, int size, Long orderId);
+  Page<OrderItemDTO> findOrderItemsPage(int page, int size, Long orderId);
 }

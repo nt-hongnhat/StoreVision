@@ -18,7 +18,6 @@ import com.nthn.storevision.dto.stock_movement.StockMovementDTO;
 import com.nthn.storevision.dto.stock_movement.StockReceiptDTO;
 import com.nthn.storevision.dto.request.InventoryAdjustmentRequest;
 import com.nthn.storevision.dto.request.StockReceiptRequest;
-import com.nthn.storevision.dto.response.PageDTO;
 import com.nthn.storevision.service.inventory.InventoryAdjustmentService;
 import com.nthn.storevision.service.inventory.InventoryCreationService;
 import com.nthn.storevision.service.inventory.InventoryRetrievalService;
@@ -31,6 +30,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -151,7 +151,7 @@ public class InventoryControllerV1 implements InventoryController {
   @PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
   @GetMapping(EndpointDefinitions.RECEIPTS)
   @Override
-  public PageDTO<StockReceiptDTO> getReceiptHistory(
+  public Page<StockReceiptDTO> getReceiptHistory(
       @Parameter(description = ResponseDescription.INVENTORY_RECEIPT_FROM_DATE)
           @RequestParam(required = false)
           final LocalDateTime from,

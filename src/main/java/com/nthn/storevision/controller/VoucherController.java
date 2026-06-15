@@ -13,8 +13,8 @@ package com.nthn.storevision.controller;
 
 import com.nthn.storevision.dto.voucher.VoucherDTO;
 import com.nthn.storevision.dto.request.VoucherRestoreRequest;
-import com.nthn.storevision.dto.response.PageDTO;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
 
 /**
  * API contract for voucher management endpoints.
@@ -38,7 +38,7 @@ public interface VoucherController {
    * @param size page size
    * @return the requested page of vouchers
    */
-  PageDTO<VoucherDTO> getAllVouchers(int page, int size);
+  Page<VoucherDTO> getAllVouchers(int page, int size);
 
   /**
    * Retrieves a voucher by ID.

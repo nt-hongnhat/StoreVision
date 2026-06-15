@@ -12,8 +12,8 @@
 package com.nthn.storevision.controller;
 
 import com.nthn.storevision.dto.employee.EmployeeDTO;
-import com.nthn.storevision.dto.response.PageDTO;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
 
 /**
  * API contract for employee management endpoints.
@@ -44,7 +44,7 @@ public interface EmployeeController {
    * @param size requested page size; clamped to the range [1, 100]
    * @return the requested page of employees
    */
-  PageDTO<EmployeeDTO> getAllEmployees(int page, int size);
+  Page<EmployeeDTO> getAllEmployees(int page, int size);
 
   /**
    * Retrieves an employee by ID.

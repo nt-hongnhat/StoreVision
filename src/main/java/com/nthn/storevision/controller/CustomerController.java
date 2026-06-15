@@ -16,9 +16,9 @@ import com.nthn.storevision.dto.loyalty_point.LoyaltyDetailsDTO;
 import com.nthn.storevision.dto.order.OrderDTO;
 import com.nthn.storevision.dto.voucher.VoucherDTO;
 import com.nthn.storevision.dto.request.RedeemPointsRequest;
-import com.nthn.storevision.dto.response.PageDTO;
 import jakarta.validation.Valid;
 import java.util.List;
+import org.springframework.data.domain.Page;
 
 /**
  * API contract for customer management and loyalty endpoints.
@@ -50,7 +50,7 @@ public interface CustomerController {
    * @param size page size
    * @return the requested page of customers
    */
-  PageDTO<CustomerDTO> getAllCustomers(int page, int size);
+  Page<CustomerDTO> getAllCustomers(int page, int size);
 
   /**
    * Retrieves a customer by ID.

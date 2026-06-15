@@ -12,9 +12,9 @@
 package com.nthn.storevision.service.notification;
 
 import com.nthn.storevision.dto.notification.NotificationDTO;
-import com.nthn.storevision.dto.response.PageDTO;
 import com.nthn.storevision.entity.NotificationEntity;
 import com.nthn.storevision.service.generic.Readable;
+import org.springframework.data.domain.Page;
 
 /**
  * Service interface for retrieving {@link NotificationEntity} entities.
@@ -41,5 +41,5 @@ public interface NotificationRetrievalService extends Readable<NotificationEntit
    * @param size page size; clamped to the range [1, 100]
    * @return the requested page of notifications as {@link NotificationDTO}; never {@code null}
    */
-  PageDTO<NotificationDTO> findNotifications(int page, int size);
+  Page<NotificationDTO> findNotifications(int page, int size);
 }

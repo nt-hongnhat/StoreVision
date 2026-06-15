@@ -15,7 +15,6 @@ import com.nthn.storevision.constant.api.*;
 import com.nthn.storevision.controller.VoucherController;
 import com.nthn.storevision.dto.voucher.VoucherDTO;
 import com.nthn.storevision.dto.request.VoucherRestoreRequest;
-import com.nthn.storevision.dto.response.PageDTO;
 import com.nthn.storevision.service.voucher.VoucherCreationService;
 import com.nthn.storevision.service.voucher.VoucherDeletionService;
 import com.nthn.storevision.service.voucher.VoucherRetrievalService;
@@ -28,6 +27,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -75,7 +75,7 @@ public class VoucherControllerV1 implements VoucherController {
   @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)
   @GetMapping
   @Override
-  public PageDTO<VoucherDTO> getAllVouchers(
+  public Page<VoucherDTO> getAllVouchers(
       @Parameter(description = ParameterDescription.PAGE_INDEX)
           @RequestParam(defaultValue = DefaultRequestParam.DEFAULT_PAGE)
           final int page,

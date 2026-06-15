@@ -15,7 +15,6 @@ import com.nthn.storevision.constant.message.CustomerMessageCode;
 import com.nthn.storevision.constant.message.LocalizedMessageCode;
 import com.nthn.storevision.dto.customer.CustomerDTO;
 import com.nthn.storevision.dto.order.OrderDTO;
-import com.nthn.storevision.dto.response.PageDTO;
 import com.nthn.storevision.entity.CustomerEntity;
 import com.nthn.storevision.exception.EntityNotFoundException;
 import com.nthn.storevision.mapper.CustomerMapper;
@@ -28,6 +27,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -109,12 +109,11 @@ public class CustomerRetrievalServiceImpl
   /** {@inheritDoc} */
   @Override
   @Transactional(readOnly = true)
-  public PageDTO<CustomerDTO> findCustomersPage(final int page, final int size) {
+  public Page<CustomerDTO> findCustomersPage(final int page, final int size) {
     log.debug("Fetching customers page: page={}, size={}", page, size);
-    return PageDTO.from(
-        getRepository()
-            .findAllActive(PaginationUtil.toPageRequest(page, size, DEFAULT_SORT))
-            .map(customerMapper::toDTO));
+    return getRepository()
+        .findAllActive(PaginationUtil.toPageRequest(page, size, DEFAULT_SORT))
+        .map(customerMapper::toDTO);
   }
 
   /** {@inheritDoc} */

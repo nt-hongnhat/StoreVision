@@ -17,7 +17,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import com.nthn.storevision.dto.notification.NotificationDTO;
-import com.nthn.storevision.dto.response.PageDTO;
 import com.nthn.storevision.entity.NotificationEntity;
 import com.nthn.storevision.exception.EntityNotFoundException;
 import com.nthn.storevision.mapper.NotificationMapper;
@@ -29,6 +28,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -73,10 +73,10 @@ class NotificationRetrievalServiceImplTest {
         .thenReturn(new PageImpl<>(List.of(entity), pageable, 1));
     when(notificationMapper.toDTO(entity)).thenReturn(dto);
 
-    final PageDTO<NotificationDTO> result = service.findNotifications(0, 20);
+    final Page<NotificationDTO> result = service.findNotifications(0, 20);
 
-    assertThat(result.content()).containsExactly(dto);
-    assertThat(result.totalElements()).isEqualTo(1);
+    assertThat(result.getContent()).containsExactly(dto);
+    assertThat(result.getTotalElements()).isEqualTo(1);
   }
 
   @BeforeEach

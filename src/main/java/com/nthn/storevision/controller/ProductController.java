@@ -13,8 +13,8 @@ package com.nthn.storevision.controller;
 
 import com.nthn.storevision.dto.product.ProductDTO;
 import com.nthn.storevision.dto.request.ProductRestoreRequest;
-import com.nthn.storevision.dto.response.PageDTO;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
 
 /**
  * API contract for product management endpoints.
@@ -51,7 +51,7 @@ public interface ProductController {
    * @param category exact category filter, or {@code null} to skip
    * @return the requested page of products
    */
-  PageDTO<ProductDTO> getAllProducts(int page, int size, String name, String category);
+  Page<ProductDTO> getAllProducts(int page, int size, String name, String category);
 
   /**
    * Retrieves a product by ID.

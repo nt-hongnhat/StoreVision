@@ -16,10 +16,10 @@ import com.nthn.storevision.dto.stock_movement.StockMovementDTO;
 import com.nthn.storevision.dto.stock_movement.StockReceiptDTO;
 import com.nthn.storevision.dto.request.InventoryAdjustmentRequest;
 import com.nthn.storevision.dto.request.StockReceiptRequest;
-import com.nthn.storevision.dto.response.PageDTO;
 import jakarta.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.List;
+import org.springframework.data.domain.Page;
 
 /**
  * Version-agnostic contract for inventory management endpoints.
@@ -85,6 +85,6 @@ public interface InventoryController {
    * @return the requested page of matching receipts
    * @see com.nthn.storevision.controller.v1.InventoryControllerV1#getReceiptHistory
    */
-  PageDTO<StockReceiptDTO> getReceiptHistory(
+  Page<StockReceiptDTO> getReceiptHistory(
       LocalDateTime from, LocalDateTime to, int page, int size);
 }

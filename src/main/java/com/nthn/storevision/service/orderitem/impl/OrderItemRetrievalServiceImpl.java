@@ -14,7 +14,6 @@ package com.nthn.storevision.service.orderitem.impl;
 import com.nthn.storevision.constant.message.LocalizedMessageCode;
 import com.nthn.storevision.constant.message.OrderItemMessageCode;
 import com.nthn.storevision.dto.order_item.OrderItemDTO;
-import com.nthn.storevision.dto.response.PageDTO;
 import com.nthn.storevision.entity.OrderItemEntity;
 import com.nthn.storevision.mapper.OrderItemMapper;
 import com.nthn.storevision.repository.OrderItemRepository; // Changed from JpaOrderItemRepository
@@ -22,6 +21,7 @@ import com.nthn.storevision.service.common.AbstractReadable;
 import com.nthn.storevision.service.orderitem.OrderItemRetrievalService;
 import com.nthn.storevision.util.PaginationUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -75,12 +75,11 @@ public class OrderItemRetrievalServiceImpl
    */
   @Override
   @Transactional(readOnly = true)
-  public PageDTO<OrderItemDTO> findOrderItemsPage(final int page, final int size, final Long orderId) {
+  public Page<OrderItemDTO> findOrderItemsPage(final int page, final int size, final Long orderId) {
     log.debug("Fetching order items page — page: {}, size: {}, orderId: {}", page, size, orderId);
-    return PageDTO.from(
-        getRepository()
-            .searchByOrderId(orderId, PaginationUtil.toPageRequest(page, size, DEFAULT_SORT))
-            .map(orderItemMapper::toDTO));
+    return getRepository()
+        .searchByOrderId(orderId, PaginationUtil.toPageRequest(page, size, DEFAULT_SORT))
+        .map(orderItemMapper::toDTO);
   }
 
   /**

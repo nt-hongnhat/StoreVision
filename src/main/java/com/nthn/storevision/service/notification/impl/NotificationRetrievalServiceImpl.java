@@ -14,7 +14,6 @@ package com.nthn.storevision.service.notification.impl;
 import com.nthn.storevision.constant.message.LocalizedMessageCode;
 import com.nthn.storevision.constant.message.NotificationMessageCode;
 import com.nthn.storevision.dto.notification.NotificationDTO;
-import com.nthn.storevision.dto.response.PageDTO;
 import com.nthn.storevision.entity.NotificationEntity;
 import com.nthn.storevision.mapper.NotificationMapper;
 import com.nthn.storevision.repository.NotificationRepository;
@@ -22,6 +21,7 @@ import com.nthn.storevision.service.common.AbstractReadable;
 import com.nthn.storevision.service.notification.NotificationRetrievalService;
 import com.nthn.storevision.util.PaginationUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -62,10 +62,10 @@ public class NotificationRetrievalServiceImpl
   /** {@inheritDoc} */
   @Override
   @Transactional(readOnly = true)
-  public PageDTO<NotificationDTO> findNotifications(final int page, final int size) {
+  public Page<NotificationDTO> findNotifications(final int page, final int size) {
     log.debug("Fetching notifications: page={}, size={}", page, size);
     final var pageable = PaginationUtil.toPageRequest(page, size, Sort.by(Sort.Direction.DESC, "createdDate"));
-    return PageDTO.from(getRepository().findAllActive(pageable).map(notificationMapper::toDTO));
+    return getRepository().findAllActive(pageable).map(notificationMapper::toDTO);
   }
 
   /** {@inheritDoc} */

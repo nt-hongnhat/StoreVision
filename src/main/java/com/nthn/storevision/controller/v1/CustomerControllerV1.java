@@ -18,7 +18,6 @@ import com.nthn.storevision.dto.loyalty_point.LoyaltyDetailsDTO;
 import com.nthn.storevision.dto.order.OrderDTO;
 import com.nthn.storevision.dto.voucher.VoucherDTO;
 import com.nthn.storevision.dto.request.RedeemPointsRequest;
-import com.nthn.storevision.dto.response.PageDTO;
 import com.nthn.storevision.service.customer.CustomerCreationService;
 import com.nthn.storevision.service.customer.CustomerDeletionService;
 import com.nthn.storevision.service.customer.CustomerRetrievalService;
@@ -32,6 +31,7 @@ import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -99,7 +99,7 @@ public class CustomerControllerV1 implements CustomerController {
   @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)
   @GetMapping
   @Override
-  public PageDTO<CustomerDTO> getAllCustomers(
+  public Page<CustomerDTO> getAllCustomers(
       @Parameter(description = ParameterDescription.PAGE_INDEX)
           @RequestParam(defaultValue = DefaultRequestParam.DEFAULT_PAGE)
           final int page,

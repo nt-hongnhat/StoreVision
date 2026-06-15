@@ -17,7 +17,6 @@ import com.nthn.storevision.controller.OrderController;
 import com.nthn.storevision.dto.order.OrderDTO;
 import com.nthn.storevision.dto.request.OrderCreationRequest;
 import com.nthn.storevision.dto.request.OrderStatusUpdateRequest;
-import com.nthn.storevision.dto.response.PageDTO;
 import com.nthn.storevision.exception.order.InvalidOrderStatusTransitionException;
 import com.nthn.storevision.service.order.OrderCreationService;
 import com.nthn.storevision.service.order.OrderDeletionService;
@@ -30,6 +29,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -93,7 +93,7 @@ public class OrderControllerV1 implements OrderController {
   @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)
   @GetMapping
   @Override
-  public PageDTO<OrderDTO> getAllOrders(
+  public Page<OrderDTO> getAllOrders(
       @Parameter(description = ParameterDescription.PAGE_INDEX)
           @RequestParam(defaultValue = DefaultRequestParam.DEFAULT_PAGE)
           final int page,

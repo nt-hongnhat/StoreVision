@@ -13,8 +13,8 @@ package com.nthn.storevision.controller;
 
 import com.nthn.storevision.dto.notification.NotificationDTO;
 import com.nthn.storevision.dto.request.NotificationReadRequest;
-import com.nthn.storevision.dto.response.PageDTO;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 /**
@@ -32,7 +32,7 @@ public interface NotificationController {
    * @return the requested page of notifications; never {@code null}
    * @see com.nthn.storevision.controller.v1.NotificationControllerV1#getNotifications
    */
-  PageDTO<NotificationDTO> getNotifications(int page, int size);
+  Page<NotificationDTO> getNotifications(int page, int size);
 
   /**
    * Marks a notification as read.

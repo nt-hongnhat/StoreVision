@@ -15,7 +15,6 @@ import com.nthn.storevision.dto.inventory.InventoryDTO;
 import com.nthn.storevision.dto.product.ProductDTO;
 import com.nthn.storevision.dto.stock_movement.StockMovementDTO;
 import com.nthn.storevision.dto.stock_movement.StockReceiptDTO;
-import com.nthn.storevision.dto.response.PageDTO;
 import com.nthn.storevision.mapper.StockMovementMapper;
 import com.nthn.storevision.repository.StockMovementRepository;
 import com.nthn.storevision.service.inventory.InventoryRetrievalService;
@@ -27,6 +26,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -89,16 +89,14 @@ public class InventoryRetrievalServiceImpl implements InventoryRetrievalService 
 
   @Override
   @Transactional(readOnly = true)
-  public PageDTO<StockReceiptDTO> findReceiptHistory(
+  public Page<StockReceiptDTO> findReceiptHistory(
       final LocalDateTime from, final LocalDateTime to, final int page, final int size) {
     log.debug(
         "Fetching receipt history — from: {}, to: {}, page: {}, size: {}", from, to, page, size);
     // Ordering is fixed inside the repository query (movementDate DESC) — pass an unsorted page.
-    return PageDTO.from(
-        stockMovementRepository
-            .findReceiptsBetween(
-                from, to, PaginationUtil.toPageRequest(page, size, Sort.unsorted()))
-            .map(stockMovementMapper::toReceiptDTO));
+    return stockMovementRepository
+        .findReceiptsBetween(from, to, PaginationUtil.toPageRequest(page, size, Sort.unsorted()))
+        .map(stockMovementMapper::toReceiptDTO);
   }
 
   private static InventoryDTO toInventoryDTO(final @NonNull ProductDTO dto) {

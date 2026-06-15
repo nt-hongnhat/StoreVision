@@ -12,11 +12,11 @@
 package com.nthn.storevision.service.employee;
 
 import com.nthn.storevision.dto.employee.EmployeeDTO;
-import com.nthn.storevision.dto.response.PageDTO;
 import com.nthn.storevision.entity.EmployeeEntity;
 import com.nthn.storevision.service.generic.Readable;
 import java.util.Optional;
 import java.util.function.Function;
+import org.springframework.data.domain.Page;
 
 /**
  * Service interface for retrieving {@link EmployeeEntity} entities.
@@ -52,5 +52,5 @@ public interface EmployeeRetrievalService extends Readable<EmployeeEntity, Long>
    * @param size requested page size; clamped to the range [1, 100]
    * @return the requested page of {@link EmployeeDTO}s; never {@code null}
    */
-  PageDTO<EmployeeDTO> findEmployeesPage(int page, int size);
+  Page<EmployeeDTO> findEmployeesPage(int page, int size);
 }

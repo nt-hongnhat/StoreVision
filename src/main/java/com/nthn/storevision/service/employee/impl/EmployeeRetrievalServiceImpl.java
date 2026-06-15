@@ -14,7 +14,6 @@ package com.nthn.storevision.service.employee.impl;
 import com.nthn.storevision.constant.message.EmployeeMessageCode;
 import com.nthn.storevision.constant.message.LocalizedMessageCode;
 import com.nthn.storevision.dto.employee.EmployeeDTO;
-import com.nthn.storevision.dto.response.PageDTO;
 import com.nthn.storevision.entity.EmployeeEntity;
 import com.nthn.storevision.mapper.EmployeeMapper;
 import com.nthn.storevision.repository.EmployeeRepository; // Changed from JpaEmployeeRepository
@@ -24,6 +23,7 @@ import com.nthn.storevision.util.PaginationUtil;
 import java.util.Optional;
 import java.util.function.Function;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -96,12 +96,11 @@ public class EmployeeRetrievalServiceImpl
    */
   @Override
   @Transactional(readOnly = true)
-  public PageDTO<EmployeeDTO> findEmployeesPage(final int page, final int size) {
+  public Page<EmployeeDTO> findEmployeesPage(final int page, final int size) {
     log.debug("Fetching employees page — page: {}, size: {}", page, size);
-    return PageDTO.from(
-        getRepository()
-            .findAllActive(PaginationUtil.toPageRequest(page, size, DEFAULT_SORT))
-            .map(employeeMapper::toDTO));
+    return getRepository()
+        .findAllActive(PaginationUtil.toPageRequest(page, size, DEFAULT_SORT))
+        .map(employeeMapper::toDTO);
   }
 
   /**

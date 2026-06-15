@@ -2,24 +2,23 @@
  * Copyright (c) 2026 Hong Nhat. All rights reserved.
  *
  * Project: Store Vision
- * Module: Store Vision Main
+ * Module: StoreVision.main
  * File: CustomerRetrievalService.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-12 23:24:30
+ * Last Modified: 2026-06-15 22:50:34
  */
 
 package com.nthn.storevision.service.customer;
 
 import com.nthn.storevision.dto.customer.CustomerDTO;
 import com.nthn.storevision.dto.order.OrderDTO;
-import com.nthn.storevision.dto.response.PageDTO;
 import com.nthn.storevision.entity.CustomerEntity;
 import com.nthn.storevision.service.generic.Readable;
-
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
+import org.springframework.data.domain.Page;
 
 /**
  * Service interface for retrieving {@link CustomerEntity} entities.
@@ -64,7 +63,7 @@ public interface CustomerRetrievalService extends Readable<CustomerEntity, Long>
    * @param size page size; clamped to a sane maximum
    * @return the requested page of customers; never {@code null}
    */
-  PageDTO<CustomerDTO> findCustomersPage(int page, int size);
+  Page<CustomerDTO> findCustomersPage(int page, int size);
 
   /**
    * Retrieves the order history of a customer, most recent first. The customer must exist —

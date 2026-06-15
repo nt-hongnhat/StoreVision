@@ -15,7 +15,6 @@ import com.nthn.storevision.constant.api.*;
 import com.nthn.storevision.controller.NotificationController;
 import com.nthn.storevision.dto.notification.NotificationDTO;
 import com.nthn.storevision.dto.request.NotificationReadRequest;
-import com.nthn.storevision.dto.response.PageDTO;
 import com.nthn.storevision.service.notification.NotificationRetrievalService;
 import com.nthn.storevision.service.notification.NotificationUpdateService;
 import com.nthn.storevision.service.notification.impl.SseEmitterServiceImpl;
@@ -26,6 +25,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -54,7 +54,7 @@ public class NotificationControllerV1 implements NotificationController {
   @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)
   @GetMapping
   @Override
-  public PageDTO<NotificationDTO> getNotifications(
+  public Page<NotificationDTO> getNotifications(
       @Parameter(description = ParameterDescription.PAGE_INDEX)
           @RequestParam(defaultValue = DefaultRequestParam.DEFAULT_PAGE)
           final int page,

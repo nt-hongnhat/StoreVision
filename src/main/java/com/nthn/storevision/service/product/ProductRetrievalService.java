@@ -12,10 +12,10 @@
 package com.nthn.storevision.service.product;
 
 import com.nthn.storevision.dto.product.ProductDTO;
-import com.nthn.storevision.dto.response.PageDTO;
 import com.nthn.storevision.entity.ProductEntity;
 import com.nthn.storevision.service.generic.Readable;
 import java.util.List;
+import org.springframework.data.domain.Page;
 
 /**
  * Service interface for retrieving {@link ProductEntity} entities.
@@ -61,5 +61,5 @@ public interface ProductRetrievalService extends Readable<ProductEntity, Long> {
    * @param category exact category to match, or {@code null} to skip
    * @return the requested page of matching products; never {@code null}
    */
-  PageDTO<ProductDTO> findProductsPage(int page, int size, String name, String category);
+  Page<ProductDTO> findProductsPage(int page, int size, String name, String category);
 }

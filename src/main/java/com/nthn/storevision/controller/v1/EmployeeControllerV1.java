@@ -14,7 +14,6 @@ package com.nthn.storevision.controller.v1;
 import com.nthn.storevision.constant.api.*;
 import com.nthn.storevision.controller.EmployeeController;
 import com.nthn.storevision.dto.employee.EmployeeDTO;
-import com.nthn.storevision.dto.response.PageDTO;
 import com.nthn.storevision.service.employee.EmployeeCreationService;
 import com.nthn.storevision.service.employee.EmployeeDeletionService;
 import com.nthn.storevision.service.employee.EmployeeRetrievalService;
@@ -26,6 +25,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -86,7 +86,7 @@ public class EmployeeControllerV1 implements EmployeeController {
   @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)
   @GetMapping
   @Override
-  public PageDTO<EmployeeDTO> getAllEmployees(
+  public Page<EmployeeDTO> getAllEmployees(
       @Parameter(description = ParameterDescription.PAGE_INDEX)
           @RequestParam(defaultValue = DefaultRequestParam.DEFAULT_PAGE)
           final int page,

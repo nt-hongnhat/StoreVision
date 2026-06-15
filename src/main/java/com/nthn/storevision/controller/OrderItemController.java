@@ -12,8 +12,8 @@
 package com.nthn.storevision.controller;
 
 import com.nthn.storevision.dto.order_item.OrderItemDTO;
-import com.nthn.storevision.dto.response.PageDTO;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
 
 /**
  * API contract for order-item management endpoints.
@@ -46,7 +46,7 @@ public interface OrderItemController {
    *     all orders
    * @return the requested page of order items
    */
-  PageDTO<OrderItemDTO> getAllOrderItems(int page, int size, Long orderId);
+  Page<OrderItemDTO> getAllOrderItems(int page, int size, Long orderId);
 
   /**
    * Retrieves an order item by ID.

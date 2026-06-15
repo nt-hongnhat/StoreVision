@@ -14,9 +14,9 @@ package com.nthn.storevision.service.inventory;
 import com.nthn.storevision.dto.inventory.InventoryDTO;
 import com.nthn.storevision.dto.stock_movement.StockMovementDTO;
 import com.nthn.storevision.dto.stock_movement.StockReceiptDTO;
-import com.nthn.storevision.dto.response.PageDTO;
 import java.time.LocalDateTime;
 import java.util.List;
+import org.springframework.data.domain.Page;
 
 /** Service interface for reading inventory state and movement history. */
 public interface InventoryRetrievalService {
@@ -63,6 +63,6 @@ public interface InventoryRetrievalService {
    * @param size page size; clamped to a sane maximum
    * @return the requested page of matching receipts; never {@code null}
    */
-  PageDTO<StockReceiptDTO> findReceiptHistory(
+  Page<StockReceiptDTO> findReceiptHistory(
       LocalDateTime from, LocalDateTime to, int page, int size);
 }

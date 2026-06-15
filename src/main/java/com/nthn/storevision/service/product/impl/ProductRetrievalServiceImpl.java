@@ -14,7 +14,6 @@ package com.nthn.storevision.service.product.impl;
 import com.nthn.storevision.constant.message.LocalizedMessageCode;
 import com.nthn.storevision.constant.message.ProductMessageCode;
 import com.nthn.storevision.dto.product.ProductDTO;
-import com.nthn.storevision.dto.response.PageDTO;
 import com.nthn.storevision.entity.ProductEntity;
 import com.nthn.storevision.mapper.ProductMapper;
 import com.nthn.storevision.repository.ProductRepository;
@@ -23,6 +22,7 @@ import com.nthn.storevision.service.product.ProductRetrievalService;
 import com.nthn.storevision.util.PaginationUtil;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -70,7 +70,7 @@ public class ProductRetrievalServiceImpl
 
   @Override
   @Transactional(readOnly = true)
-  public PageDTO<ProductDTO> findProductsPage(
+  public Page<ProductDTO> findProductsPage(
       final int page, final int size, final String name, final String category) {
     log.debug(
         "Fetching products page: page={}, size={}, name={}, category={}",
@@ -78,10 +78,9 @@ public class ProductRetrievalServiceImpl
         size,
         name,
         category);
-    return PageDTO.from(
-        getRepository()
-            .searchActive(name, category, PaginationUtil.toPageRequest(page, size, DEFAULT_SORT))
-            .map(productMapper::toDTO));
+    return getRepository()
+        .searchActive(name, category, PaginationUtil.toPageRequest(page, size, DEFAULT_SORT))
+        .map(productMapper::toDTO);
   }
 
   @Override
