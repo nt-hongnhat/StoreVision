@@ -2,11 +2,11 @@
  * Copyright (c) 2026 Hong Nhat. All rights reserved.
  *
  * Project: Store Vision
- * Module: Store Vision Main
+ * Module: StoreVision.main
  * File: CustomerEmailAlreadyExistsException.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-12 21:54:07
+ * Last Modified: 2026-06-15 21:39:29
  */
 
 package com.nthn.storevision.exception.customer;

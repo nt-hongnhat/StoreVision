@@ -2,11 +2,11 @@
  * Copyright (c) 2026 Hong Nhat. All rights reserved.
  *
  * Project: Store Vision
- * Module: Store Vision Main
+ * Module: StoreVision.main
  * File: VoucherDTO.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-12 21:20:54
+ * Last Modified: 2026-06-15 21:39:29
  */
 
 package com.nthn.storevision.dto;
@@ -21,8 +21,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
- * Data Transfer Object for Voucher. Used to carry validated voucher data between domains — e.g.
- * from the voucher validation service to the order creation flow.
+ * Data Transfer Object for {@link com.nthn.storevision.model.Voucher}. Used to carry validated
+ * voucher data between domains — e.g., from the voucher validation service to the order creation
+ * flow.
  */
 @Getter
 @Setter
