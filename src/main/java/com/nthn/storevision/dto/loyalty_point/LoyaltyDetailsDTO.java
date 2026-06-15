@@ -6,7 +6,7 @@
  * File: LoyaltyDetailsDTO.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-15 21:52:00
+ * Last Modified: 2026-06-15 22:44:25
  */
 
 package com.nthn.storevision.dto.loyalty_point;

@@ -6,7 +6,7 @@
  * File: InventoryDTO.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-15 21:48:52
+ * Last Modified: 2026-06-15 22:45:16
  */
 
 package com.nthn.storevision.dto.inventory;
