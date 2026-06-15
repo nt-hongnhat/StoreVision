@@ -12,7 +12,7 @@
 package com.nthn.storevision.dto.analytics;
 
 /**
- * Internal projection: average RECEIPT unit cost of a product, used as the cost basis for the
+ * Internal projection: the average RECEIPT unit cost of a product, used as the cost basis for the
  * profit and inventory valuation reports. JPQL {@code AVG} yields a {@code Double}; the service
  * layer converts it to {@code BigDecimal}.
  *

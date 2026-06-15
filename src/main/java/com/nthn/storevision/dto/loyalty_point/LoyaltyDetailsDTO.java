@@ -20,9 +20,11 @@ import lombok.*;
 
 /**
  * Data Transfer Object for a customer's loyalty overview: current tier, point balance, accumulated
- * spending and the full transaction history. Backs GET /customers/'{'id'}'/loyalty.
+ * spending, and the full transaction history. Backs GET /customers/'{'id'}'/loyalty.
  */
-@Schema(description = "Customer's loyalty program overview: tier, point balance, spending and transaction history.")
+@Schema(
+    description =
+        "Customer's loyalty program overview: tier, point balance, spending and transaction history.")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -36,7 +38,9 @@ public class LoyaltyDetailsDTO {
   private Long customerId;
 
   /** Point transactions, most recent first; never {@code null} (BR-C05 — immutable history). */
-  @Schema(description = "Point transactions, most recent first; never null (BR-C05 — immutable history).")
+  @Schema(
+      description =
+          "Point transactions, most recent first; never null (BR-C05 — immutable history).")
   private List<LoyaltyPointHistoryDTO> histories;
 
   /** Current point balance; never negative (BR-C03). */
@@ -48,6 +52,8 @@ public class LoyaltyDetailsDTO {
   private LoyaltyTier loyaltyTier;
 
   /** Accumulated lifetime spending; never resets (BR-C04). */
-  @Schema(description = "Accumulated lifetime spending; never resets (BR-C04).", example = "7500000")
+  @Schema(
+      description = "Accumulated lifetime spending; never resets (BR-C04).",
+      example = "7500000")
   private BigDecimal totalSpending;
 }
