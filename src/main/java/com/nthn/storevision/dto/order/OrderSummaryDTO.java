@@ -6,7 +6,7 @@
  * File: OrderSummaryDTO.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-15 22:47:43
+ * Last Modified: 2026-06-15 22:57:48
  */
 
 package com.nthn.storevision.dto.order;
@@ -23,7 +23,7 @@ import java.time.LocalDate;
  * @param totalOrders all active orders created in the range
  * @param pendingOrders orders still in PENDING status
  * @param completedOrders orders confirmed as paid
- * @param cancelledOrders orders cancelled before payment
+ * @param cancelledOrders orders canceled before payment
  * @param totalRevenue revenue of completed orders; never {@code null}
  */
 @Schema(description = "Aggregated order statistics over a date range.")
@@ -36,7 +36,6 @@ public record OrderSummaryDTO(
         long totalOrders,
     @Schema(description = "Orders still in PENDING status.", example = "5") long pendingOrders,
     @Schema(description = "Orders confirmed as paid.", example = "100") long completedOrders,
-    @Schema(description = "Orders cancelled before payment.", example = "15")
-        long cancelledOrders,
+    @Schema(description = "Orders cancelled before payment.", example = "15") long cancelledOrders,
     @Schema(description = "Revenue of completed orders (BR-A01).", example = "55000000")
         BigDecimal totalRevenue) {}
