@@ -139,17 +139,17 @@ the aggregator. The aggregator must remain a pure delegator.
 @Override
 @Transactional
 public void markAsDeleted(final Long id) {
-  if (orderRetrievalService.existsPendingOrderForProduct(id)) {
-    log.warn("BR-P04: product id {} has PENDING orders — soft-deleting anyway;...", id);
-  }
-  super.markAsDeleted(id);
+    if (orderRetrievalService.existsPendingOrderForProduct(id)) {
+        log.warn("BR-P04: product id {} has PENDING orders — soft-deleting anyway;...", id);
+    }
+    super.markAsDeleted(id);
 }
 
 // wrong — business rule buried in aggregator, invisible to direct callers
 @Override
 public void delete(final Long id) {
-  if (orderRetrievalService.existsPendingOrderForProduct(id)) { ...}  // ❌
-  deletionService.markAsDeleted(id);
+    if (orderRetrievalService.existsPendingOrderForProduct(id)) { ...}  // ❌
+    deletionService.markAsDeleted(id);
 }
 ```
 
@@ -168,6 +168,38 @@ public void delete(final Long id) {
   `@ResponseStatus(HttpStatus.NO_CONTENT)` on controller methods to declare
   non-200 status codes without constructing `ResponseEntity`.
 
+#### `@Schema` annotations on DTOs
+
+- DTOs that are returned by (or accepted from) a controller endpoint **must**
+  carry SpringDoc `@Schema` annotations — a class-level
+  `@Schema(description = ...)` plus a per-field `@Schema(description = ...)` —
+  so the Swagger UI at `/swagger-ui.html` stays accurate.
+- DTOs, whose Javadoc starts with "Internal projection" — records used only to
+  carry data from `Repository` to `Service` (or between private helper
+  methods) and never returned from a controller — **must not** carry `@Schema`
+  annotations or the `io.swagger.v3.oas.annotations.media.Schema` import. They
+  are not part of the public API surface, so the annotations are dead weight.
+- If a DTO's exposure changes (an internal projection starts being returned by
+  a controller, or a previously exposed DTO becomes internal-only), add or
+  remove its `@Schema` annotations to match.
+
+```java
+// correct — internal projection, never returned by a controller
+
+/**
+ * Internal projection: units of a product sold through COMPLETED orders (BR-A01) within a date
+ * range. Used by the slow-moving and profit reports.
+ */
+public record ProductSalesDTO(Long productId, Long quantitySold) {
+}
+
+// correct — returned by AnalyticsControllerV1#getSlowMovingProducts
+@Schema(description = "One row of the slow-moving products report.")
+public record SlowMovingProductDTO(
+        @Schema(description = "Product identifier") Long productId, ...) {
+}
+```
+
 #### Repository → Service → Controller data flow (mandatory)
 
 The conversion boundary between Entity and DTO is **always the Service layer**:
@@ -176,7 +208,7 @@ The conversion boundary between Entity and DTO is **always the Service layer**:
 |--------------|--------------------------------------------------------------|---------------------------------------------------------------------|
 | `Repository` | `Entity`, `Optional<Entity>`, `List<Entity>`, `Page<Entity>` | DTO, request/response objects                                       |
 | `Service`    | `DTO`, `Optional<DTO>`, `List<DTO>`, `Page<DTO>`             | raw `Entity` (unless internal private helper within the same class) |
-| `Controller` | raw `DTO`, `Page<DTO>`, or `void`                             | `Entity`, `ResponseEntity<>`, custom pagination wrapper DTOs        |
+| `Controller` | raw `DTO`, `Page<DTO>`, or `void`                            | `Entity`, `ResponseEntity<>`, custom pagination wrapper DTOs        |
 
 ```java
 // correct — Repository returns Entity
@@ -184,9 +216,9 @@ Optional<Customer> findById(Long id);   // CustomerRepository
 
 // correct — Service converts Entity → DTO before returning
 public CustomerDTO getById(Long id) {
-  Customer entity = customerRepository.findById(id)
-      .orElseThrow(() -> new EntityNotFoundException(...));
-  return customerMapper.toDTO(entity);  // conversion happens here, in the service
+    Customer entity = customerRepository.findById(id)
+            .orElseThrow(() -> new EntityNotFoundException(...));
+    return customerMapper.toDTO(entity);  // conversion happens here, in the service
 }
 
 // wrong — never return DTO from Repository
@@ -221,9 +253,9 @@ public Customer getById(Long id) { ...}  // ❌ (exposes persistence detail to c
 ```java
 // correct — service
 public Page<ProductDTO> findProductsPage(final int page, final int size, ...) {
-  return getRepository()
-      .searchActive(name, category, PaginationUtil.toPageRequest(page, size, DEFAULT_SORT))
-      .map(productMapper::toDTO);
+    return getRepository()
+            .searchActive(name, category, PaginationUtil.toPageRequest(page, size, DEFAULT_SORT))
+            .map(productMapper::toDTO);
 }
 
 // correct — controller interface & impl
@@ -266,11 +298,11 @@ public interface CustomerMapper extends EntityMapper<CustomerDTO, Long, Customer
 // correct — with domain-specific field mapping overrides
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING, config = BaseEntityMapperConfig.class)
 public interface OrderMapper extends EntityMapper<OrderDTO, Long, OrderEntity> {
-  @Mapping(source = "customer.id", target = "customerId")
-  OrderDTO toDTO(OrderEntity order);
+    @Mapping(source = "customer.id", target = "customerId")
+    OrderDTO toDTO(OrderEntity order);
 
-  @Mapping(target = "customer", expression = "java(mapCustomerIdToCustomerEntity(dto.getCustomerId()))")
-  OrderEntity toEntity(OrderDTO dto);
+    @Mapping(target = "customer", expression = "java(mapCustomerIdToCustomerEntity(dto.getCustomerId()))")
+    OrderEntity toEntity(OrderDTO dto);
 }
 ```
 
@@ -537,15 +569,15 @@ controller/
 ```java
 // controller/CustomerController.java — correct
 public interface CustomerController {
-  CustomerDTO createCustomer(@Valid CustomerDTO dto);   // @Valid ✅, raw DTO return ✅
+    CustomerDTO createCustomer(@Valid CustomerDTO dto);   // @Valid ✅, raw DTO return ✅
 
-  void deleteCustomer(Long id);
+    void deleteCustomer(Long id);
 
-  List<CustomerDTO> getAllCustomers();
+    List<CustomerDTO> getAllCustomers();
 
-  CustomerDTO getCustomerById(Long id);
+    CustomerDTO getCustomerById(Long id);
 
-  CustomerDTO updateCustomer(Long id, @Valid CustomerDTO dto);
+    CustomerDTO updateCustomer(Long id, @Valid CustomerDTO dto);
 }
 
 // controller/v1/CustomerControllerV1.java — implementation
@@ -553,7 +585,7 @@ public interface CustomerController {
 @PostMapping
 @Override
 public CustomerDTO createCustomer(@Valid @RequestBody final CustomerDTO dto) {
-  return customerService.create(dto);  // ApiResponseHandler wraps this automatically
+    return customerService.create(dto);  // ApiResponseHandler wraps this automatically
 }
 ```
 
@@ -575,8 +607,8 @@ fields in a controller class:
 - **HTTP response codes** (e.g., `"200"`, `"409"`) → `constant/api/ResponseCode`
 - **Every `@ApiResponse(description = ...)` string** → `public static final
   String` in `constant/api/ResponseDescription`. This includes generic
-  descriptions (e.g., `"Resource not found"`) **and** operation-/business-rule
-  -specific descriptions unique to a single controller (e.g., a conflict
+  descriptions (e.g., `"Resource not found"`) **and** operation-/business-rule-specific descriptions unique to a single
+  controller (e.g., a conflict
   message for BR-P01). There is no "controller-local" exception — all of these
   live in `ResponseDescription`, in alphabetical order.
 - **Every `@Parameter(description = ...)` string** → `public static final
@@ -595,7 +627,7 @@ fields in a controller class:
   Javadoc block that documents the operation's behavior and the business rules
   it enforces in prose; the constant's string value itself stays terse and
   Swagger-facing. `@Operation(summary = ...)` is a short one-liner and stays
-  inline as a string literal — it is not extracted to either constants class.
+  inline as a string literal — it is not extracted to either constant class.
 
 ```java
 // correct — domain ID uses ParameterDescription constant
@@ -611,21 +643,22 @@ final int page
 
 // correct — operation-/business-rule-specific description lives in ResponseDescription
 @ApiResponse(
-    responseCode = ResponseCode.CONFLICT,
-    description = ResponseDescription.PRODUCT_NAME_EXISTS_IN_CATEGORY)
+        responseCode = ResponseCode.CONFLICT,
+        description = ResponseDescription.PRODUCT_NAME_EXISTS_IN_CATEGORY)
 
 // correct — long-form @Operation description lives in OperationDescription,
 // summary stays inline as a short literal
 @Operation(
-    summary = "Soft-delete a customer by ID",
-    description = OperationDescription.CUSTOMER_DELETION)
+        summary = "Soft-delete a customer by ID",
+        description = OperationDescription.CUSTOMER_DELETION)
 
 // wrong — inline strings flagged by linter as duplicates
 @Parameter(description = "Product ID")
 @PathVariable
 final Long id   // ❌
 @ApiResponse(responseCode = "409", description = "Conflict")          // ❌
-@RequestParam(defaultValue = "0") final int page                      // ❌
+@RequestParam(defaultValue = "0")
+final int page                      // ❌
 
 // wrong — no private constants in controllers, not even for one-off descriptions
 private static final String CONFLICT_DESC = "Product name already exists in the same category"; // ❌
@@ -713,8 +746,8 @@ comment. This is enforced by the project's checkstyle/linter configuration.
 - Do **not** write trivial "Gets the X" / "Sets the X" Javadocs that add no
   information — but do include `@param` and `@return` even when the summary is
   minimal.
-- Describe the **null policy** for every parameter and return value: either "
-  must not be {@code null}" or "may be {@code null}; returns/accepts null if …".
+- Describe the **null policy** for every parameter and return value: either "must not be {@code null}" or "may be {@code
+  null}; returns/accepts null if …".
 
 ---
 
@@ -779,8 +812,8 @@ The following **must** be provided at runtime (never hardcode in a source):
 
 ```yaml
 spring:
-  profiles:
-    active: local, authentication, logging, swagger, thymeleaf
+    profiles:
+        active: local, authentication, logging, swagger, thymeleaf
 ```
 
 ---
