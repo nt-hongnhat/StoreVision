@@ -26,8 +26,8 @@ public class ProductNameAlreadyExistsException extends ApplicationException {
   /**
    * Constructs a new {@code ProductNameAlreadyExistsException} with the specified product name and
    * category. This constructor creates an exception indicating that a product with the given name
-   * already exists in the specified category, violating business rule BR-P01 which requires product
-   * name and category combinations to be unique among active records.
+   * already exists in the specified category, violating business rule BR-P01, which requires
+   * product name and category combinations to be unique among active records.
    *
    * @param name the name of the product that already exists
    * @param category the category in which the product name conflict occurred
