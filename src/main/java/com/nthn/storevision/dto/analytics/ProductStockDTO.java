@@ -2,18 +2,18 @@
  * Copyright (c) 2026 Hong Nhat. All rights reserved.
  *
  * Project: Store Vision
- * Module: Store Vision Main
+ * Module: StoreVision.main
  * File: ProductStockDTO.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-12
+ * Last Modified: 2026-06-15 23:00:15
  */
 
 package com.nthn.storevision.dto.analytics;
 
 /**
- * Internal projection: identity and current stock of an active product. Used by the slow-moving
- * and inventory valuation reports.
+ * Internal projection: identity and current stock of an active product. Used by the slow-moving and
+ * inventory valuation reports.
  *
  * @param productId the product's identifier
  * @param productName the product's display name
