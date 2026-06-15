@@ -2,19 +2,21 @@
  * Copyright (c) 2026 Hong Nhat. All rights reserved.
  *
  * Project: Store Vision
- * Module: Store Vision Main
+ * Module: StoreVision.main
  * File: ApiErrorResponseFactory.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-02 21:34:51
+ * Last Modified: 2026-06-15 21:44:24
  */
 
-package com.nthn.storevision.factory;
+package com.nthn.storevision.factory.response.impl;
 
 import com.nthn.storevision.dto.response.ApiErrorResponse;
 import com.nthn.storevision.dto.response.ApiResponse;
 import com.nthn.storevision.dto.response.Error;
 import java.util.Optional;
+
+import com.nthn.storevision.factory.response.ApiResponseFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 

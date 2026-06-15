@@ -2,14 +2,14 @@
  * Copyright (c) 2026 Hong Nhat. All rights reserved.
  *
  * Project: Store Vision
- * Module: Store Vision Main
+ * Module: StoreVision.main
  * File: ApiResponseFactory.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-05-10 13:09:13
+ * Last Modified: 2026-06-15 21:44:24
  */
 
-package com.nthn.storevision.factory;
+package com.nthn.storevision.factory.response;
 
 import com.nthn.storevision.dto.response.ApiResponse;
 
