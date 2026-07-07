@@ -2,22 +2,20 @@
  * Copyright (c) 2026 Hong Nhat. All rights reserved.
  *
  * Project: Store Vision
- * Module: StoreVision.main
+ * Module: Store Vision Main
  * File: OrderControllerV1.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-15 21:51:59
+ * Last Modified: 2026-07-07 11:26:17
  */
 
 package com.nthn.storevision.controller.v1;
 
 import com.nthn.storevision.constant.api.*;
-import com.nthn.storevision.constant.order.OrderStatus;
 import com.nthn.storevision.controller.OrderController;
 import com.nthn.storevision.dto.order.OrderDTO;
 import com.nthn.storevision.dto.request.OrderCreationRequest;
 import com.nthn.storevision.dto.request.OrderStatusUpdateRequest;
-import com.nthn.storevision.exception.order.InvalidOrderStatusTransitionException;
 import com.nthn.storevision.service.order.OrderCreationService;
 import com.nthn.storevision.service.order.OrderDeletionService;
 import com.nthn.storevision.service.order.OrderRetrievalService;
@@ -71,8 +69,18 @@ public class OrderControllerV1 implements OrderController {
   @PostMapping
   @Override
   public OrderDTO createOrder(@Valid @RequestBody final OrderCreationRequest request) {
-    log.debug("POST /orders — customerId: {}", request.getCustomerId());
-    return creationService.createOrder(request);
+    log.debug(
+        "Received request to create a new order with {} order items and voucher provided={}",
+        request.getItems().size(),
+        null != request.getVoucherCode() && !request.getVoucherCode().isBlank());
+    try {
+      final OrderDTO createdOrder = creationService.createOrder(request);
+      log.debug("Order creation request completed successfully and a new order was persisted");
+      return createdOrder;
+    } catch (final RuntimeException exception) {
+      log.error("Order creation request failed due to an unexpected error", exception);
+      throw exception;
+    }
   }
 
   @Operation(
@@ -85,8 +93,14 @@ public class OrderControllerV1 implements OrderController {
   @Override
   public void deleteOrder(
       @Parameter(description = ParameterDescription.ORDER_ID) @PathVariable final Long id) {
-    log.debug("DELETE /orders/{}", id);
-    deletionService.markAsDeleted(id);
+    log.debug("Received request to soft-delete an existing order");
+    try {
+      deletionService.markAsDeleted(id);
+      log.debug("Order soft-delete request completed successfully");
+    } catch (final RuntimeException exception) {
+      log.error("Order soft-delete request failed due to an unexpected error", exception);
+      throw exception;
+    }
   }
 
   @Operation(summary = "Retrieve orders (paginated)", description = OperationDescription.ORDER_LIST)
@@ -97,11 +111,26 @@ public class OrderControllerV1 implements OrderController {
       @Parameter(description = ParameterDescription.PAGE_INDEX)
           @RequestParam(defaultValue = DefaultRequestParam.DEFAULT_PAGE)
           final int page,
-      @Parameter(description = DefaultRequestParam.DEFAULT_SIZE)
+      @Parameter(description = ParameterDescription.PAGE_SIZE)
           @RequestParam(defaultValue = DefaultRequestParam.DEFAULT_SIZE)
           final int size) {
-    log.debug("GET /orders — page: {}, size: {}", page, size);
-    return retrievalService.findOrdersPage(page, size);
+    log.debug("Received request to retrieve a paginated order list: page={}, size={}", page, size);
+    if (0 > page || 0 >= size) {
+      log.warn(
+          "Pagination request contains unusual values that may be rejected downstream: page={}, size={}",
+          page,
+          size);
+    }
+    try {
+      final Page<OrderDTO> orderPage = retrievalService.findOrdersPage(page, size);
+      log.debug(
+          "Paginated order retrieval completed with {} records in the current page",
+          orderPage.getNumberOfElements());
+      return orderPage;
+    } catch (final RuntimeException exception) {
+      log.error("Paginated order retrieval failed due to an unexpected error", exception);
+      throw exception;
+    }
   }
 
   @Operation(
@@ -113,8 +142,15 @@ public class OrderControllerV1 implements OrderController {
   @Override
   public OrderDTO getOrderById(
       @Parameter(description = ParameterDescription.ORDER_ID) @PathVariable final Long id) {
-    log.debug("GET /orders/{}", id);
-    return retrievalService.findOrderDTOById(id);
+    log.debug("Received request to retrieve order details by identifier");
+    try {
+      final OrderDTO order = retrievalService.findOrderDTOById(id);
+      log.debug("Order detail retrieval completed successfully");
+      return order;
+    } catch (final RuntimeException exception) {
+      log.error("Order detail retrieval failed due to an unexpected error", exception);
+      throw exception;
+    }
   }
 
   @Operation(summary = "Update an order by ID", description = OperationDescription.ORDER_UPDATE)
@@ -128,8 +164,15 @@ public class OrderControllerV1 implements OrderController {
   public OrderDTO updateOrder(
       @Parameter(description = ParameterDescription.ORDER_ID) @PathVariable final Long id,
       @Valid @RequestBody final OrderDTO dto) {
-    log.debug("PUT /orders/{}", id);
-    return updateService.update(id, dto);
+    log.debug("Received request to update an existing order");
+    try {
+      final OrderDTO updatedOrder = updateService.update(id, dto);
+      log.debug("Order update request completed successfully");
+      return updatedOrder;
+    } catch (final RuntimeException exception) {
+      log.error("Order update request failed due to an unexpected error", exception);
+      throw exception;
+    }
   }
 
   /** {@inheritDoc} */
@@ -156,11 +199,20 @@ public class OrderControllerV1 implements OrderController {
   public OrderDTO updateOrderStatus(
       @Parameter(description = ParameterDescription.ORDER_ID) @PathVariable final Long id,
       @Valid @RequestBody final OrderStatusUpdateRequest request) {
-    log.debug("PATCH /orders/{} — status: {}", id, request.getStatus());
-    return switch (request.getStatus()) {
-      case COMPLETED -> updateService.complete(id);
-      case CANCELLED -> updateService.cancel(id);
-      case PENDING -> throw new InvalidOrderStatusTransitionException(OrderStatus.PENDING);
-    };
+    log.debug(
+        "Received request to transition order status to target state={}", request.getStatus());
+    try {
+      final OrderDTO transitionedOrder = updateService.transitionStatus(id, request.getStatus());
+      log.debug(
+          "Order status transition request completed successfully for target state={}",
+          request.getStatus());
+      return transitionedOrder;
+    } catch (final RuntimeException exception) {
+      log.error(
+          "Order status transition request failed for target state={} due to an unexpected error",
+          request.getStatus(),
+          exception);
+      throw exception;
+    }
   }
 }
