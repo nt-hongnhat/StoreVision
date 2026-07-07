@@ -37,6 +37,13 @@ modifying, or reviewing code.
   `factory`, `util`)
 - **Classes**: `PascalCase` (e.g., `OrderCreationService`, `CustomerMapper`)
 - **Methods & variables**: `camelCase`
+- **Method-parameter & local-variable names**: `camelCase` matching
+  `[a-z][A-Za-z\d]*` and **at most 20 characters long**. The IntelliJ
+  `ParameterNamingConvention` and `LocalVariableNamingConvention` inspections
+  (both `WARNING`, `m_maxLength=20` in
+  `.idea/inspectionProfiles/Project_Default.xml`) flag any longer name. Choose a
+  concise name (e.g. `discountPct` over `discountPercentageValue`) rather than
+  suppressing the inspection; loop indices (`i`, `j`) are exempt.
 - **Constants**: `UPPER_SNAKE_CASE`
 - **API versioning**: place versioned controllers under `controller/v1/` and
   name them `<Domain>ControllerV1`
