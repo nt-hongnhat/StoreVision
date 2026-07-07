@@ -1145,39 +1145,41 @@ refer to the pairs `QuotaController` / `QuotaControllerV1` and
 ### Package Structure
 
 ```
-src/main/java/com/citynow/quao/
+src/main/java/com/nthn/storevision/
+├── advice/                 # Global response/error handling
+├── annotation/             # Custom annotations (security, validation, AOP hooks)
+├── component/              # Reusable business components
+│   └── audit/              # Auditing-related components
+├── config/                 # Spring @Configuration and app config classes
+├── constant/               # Application-wide constants grouped by domain
 ├── controller/             # REST controller interfaces (contract + Javadoc)
 │   └── v1/                 # Versioned controller impls (<Name>ControllerV1)
-├── service/                # Business service interfaces
-│   ├── */impl/             # Service implementations
-│   ├── validation/         # CodeValidationService, CircuitOptimizer
-│   ├── analytics/          # AnalyticsAggregationService, CostAnalysisService
-│   └── streaming/          # Streaming-related services
+├── dto/                    # Request / Response DTOs
+├── entity/                 # JPA entities (suffix: *Entity)
+├── exception/              # Domain-specific exceptions
+├── factory/                # Factory classes for response/user object creation
+├── mapper/                 # MapStruct mappers
+├── model/                  # Domain models — non-JPA POJOs
 ├── repository/             # Business repository interfaces (domain models only)
 │   ├── impl/               # Repository implementations (mapper + JPA delegate)
 │   └── jpa/                # Spring Data JPA repositories (Jpa* prefix)
-├── component/              # AI providers, reusable business components
-│   ├── impl/               # ClaudeProvider, OpenAIProvider, AzureOpenAIProvider, LocalModelProvider
-│   └── security/scanner/   # CodeSecurityScanner
-├── handler/                # MCP protocol handlers
-│   │                       # McpProtocolHandler, SessionMethodHandler, GenerateMethodHandler
-├── model/                  # Domain models — non-JPA POJOs
-├── entity/                 # JPA entities (suffix: *Entity)
-├── dto/                    # Request / Response DTOs
-├── configuration/          # @Configuration classes grouped by concern
-│   ├── cache/
-│   └── security/
-├── constants/              # Application-wide constants (McpMethodConstants, McpProtocolConstants…)
-└── security/               # Auth pipeline — ISOLATED, not mixed into component/
-    ├── filter/             # AuditContextFilter and other servlet filters
-    └── context/            # AuditContextHolder (ThreadLocal userId + workspaceId)
+├── scheduler/              # Scheduled jobs/tasks
+├── security/               # Authentication/authorization and security pipeline
+│   ├── context/            # Security context holders
+│   ├── filter/             # Servlet/security filters
+│   └── config/             # Security configuration
+├── service/                # Business service interfaces
+│   ├── */impl/             # Service implementations
+│   └── <domain>/           # Domain service contracts (order, product, voucher, ...)
+├── util/                   # Stateless helper utilities
+└── validator/              # Validation helpers/validators
 ```
 
 **Package rules:**
 
 - `security/filter/` and `security/context/` must stay isolated — do **not**
   move them into the generic `component/` package.
-- `constants/` classes are pure `public static final` holders — no Spring
+- `constant/` classes are pure `public static final` holders — no Spring
   annotations.
 - Utility helpers with only static methods belong in a dedicated `util/`
   package, never in `component/`.
