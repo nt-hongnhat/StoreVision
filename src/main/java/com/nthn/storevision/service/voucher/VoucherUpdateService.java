@@ -6,7 +6,7 @@
  * File: VoucherUpdateService.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-07-07 09:32:46
+ * Last Modified: 2026-07-07 09:32:56
  */
 
 package com.nthn.storevision.service.voucher;
@@ -16,5 +16,12 @@ import com.nthn.storevision.entity.VoucherEntity;
 import com.nthn.storevision.service.generic.Updatable;
 
 /** Service interface for updating {@link VoucherEntity} instances. */
-@FunctionalInterface
-public interface VoucherUpdateService extends Updatable<VoucherDTO, Long> {}
+public interface VoucherUpdateService extends Updatable<VoucherDTO, Long> {
+
+  /**
+   * Increments voucher usage count by one while respecting the configured usage limit.
+   *
+   * @param id voucher identifier
+   */
+  void incrementUsage(Long id);
+}

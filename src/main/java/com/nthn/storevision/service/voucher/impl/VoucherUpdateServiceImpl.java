@@ -6,7 +6,7 @@
  * File: VoucherUpdateServiceImpl.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-07-07 09:29:31
+ * Last Modified: 2026-07-07 09:36:35
  */
 
 package com.nthn.storevision.service.voucher.impl;
@@ -15,6 +15,7 @@ import com.nthn.storevision.constant.message.VoucherMessageCode;
 import com.nthn.storevision.dto.voucher.VoucherDTO;
 import com.nthn.storevision.entity.VoucherEntity;
 import com.nthn.storevision.exception.EntityNotFoundException;
+import com.nthn.storevision.exception.voucher.VoucherUsageLimitReachedException;
 import com.nthn.storevision.mapper.EntityMapperConfig;
 import com.nthn.storevision.repository.VoucherRepository;
 import com.nthn.storevision.service.common.AbstractUpdatable;
@@ -22,8 +23,8 @@ import com.nthn.storevision.service.voucher.VoucherUpdateService;
 import org.springframework.stereotype.Service;
 
 /**
- * Default implementation of {@link VoucherUpdateService} that extends {@link AbstractUpdatable}
- * to update {@link VoucherEntity} instances via {@link VoucherRepository}.
+ * Default implementation of {@link VoucherUpdateService} that extends {@link AbstractUpdatable} to
+ * update {@link VoucherEntity} instances via {@link VoucherRepository}.
  */
 @Service
 public class VoucherUpdateServiceImpl
@@ -34,6 +35,15 @@ public class VoucherUpdateServiceImpl
       final EntityMapperConfig<VoucherDTO, Long, VoucherEntity> mapper,
       final VoucherRepository repository) {
     super(mapper, repository);
+  }
+
+  @Override
+  public void incrementUsage(final Long id) {
+    final VoucherEntity voucher = getById(id);
+    final boolean incremented = getRepository().incrementUsageIfBelowLimit(id);
+    if (!incremented) {
+      throw new VoucherUsageLimitReachedException(voucher.getCode());
+    }
   }
 
   @Override
