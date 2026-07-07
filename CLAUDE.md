@@ -363,6 +363,30 @@ Do **not** repeat `unmappedTargetPolicy = IGNORE` or the audit-field
 
 - Define all custom exceptions in the `exception/` package, extending
   `ApplicationException`.
+- **Never throw a generic `RuntimeException`** — nor `Exception`, `Throwable`,
+  or `Error`. The IntelliJ `ProhibitedExceptionThrown` inspection reports these
+  as `Prohibited exception 'RuntimeException' thrown`. Throw a specific
+  exception that extends `ApplicationException` (e.g. `EntityNotFoundException`,
+  `InvalidOrderStateException`, `InsufficientStockException`) carrying a coded
+  i18n message, so the global handler in `advice/` can map it to the correct
+  HTTP status. This prohibits `throw new RuntimeException(...)` and wrapping a
+  cause in a bare `RuntimeException`/`IllegalStateException`. **Rethrowing** an
+  exception already caught in a `catch` block (`catch (final RuntimeException e)
+  { log.error(...); throw e; }`) does not create a new prohibited exception and
+  remains allowed.
+
+```java
+// wrong — throws a generic RuntimeException, flagged by ProhibitedExceptionThrown
+if (order.getStatus() != OrderStatus.PENDING) {
+    throw new RuntimeException("Order is not pending");   // ❌
+}
+
+// correct — throws a typed domain exception with a coded message
+if (order.getStatus() != OrderStatus.PENDING) {
+    throw new InvalidOrderStateException(orderId, order.getStatus());
+}
+```
+
 - **Never** use `System.out.println()` for logging or error output.
 - All exceptions must be caught and handled by the global exception handler in
   `advice/`.
