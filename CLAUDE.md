@@ -1062,6 +1062,325 @@ Evidence that behavior is unchanged: existing tests still pass, additional tests
 
 ---
 
+## Code Style & Architecture Guidelines
+
+### Layer Architecture (Strict — Never Skip Layers)
+
+```mermaid
+flowchart TD
+    A["Controller (DTO)\nHTTP, validation only"] -->|" domain Model "| B["Service (Model)\nBusiness logic"]
+    B -->|" domain Model "| C["Repository Interface (Model)\nBusiness contract"]
+    C -->|" domain Model "| D["RepositoryImpl\nMapper + JPA delegate"]
+    D -->|" MapStruct ↔ "| E["JPA Repository (Entity)\nSpring Data"]
+    E -->|SQL| F[("PostgreSQL")]
+    style A fill: #dbeafe, stroke: #3b82f6
+    style B fill: #dcfce7, stroke: #22c55e
+    style C fill: #dcfce7, stroke: #22c55e
+    style D fill: #fef9c3, stroke: #eab308
+    style E fill: #fef9c3, stroke: #eab308
+    style F fill: #f3e8ff, stroke: #a855f7
+```
+
+- **Controllers** handle HTTP concerns and DTO validation only. Zero business
+  logic.
+- **Services** operate exclusively on domain models (`model/`). Never touch JPA
+  entities.
+- **RepositoryImpl** is the only layer allowed to reference JPA entities and
+  call JPA repositories.
+- **Never** inject `Jpa*Repository` directly into a Service. Always go through
+  the business interface.
+- **Never** expose JPA entities outside the `repository/` layer.
+
+### Controller Pattern — Interface Contract + Versioned Impl (Mandatory)
+
+Every REST controller must be split into **2 files**: an interface defining the
+contract and a versioned implementation. This is the project's standard pattern —
+refer to the pairs `QuotaController` / `QuotaControllerV1` and
+`DashboardAnalyticsController` / `DashboardAnalyticsControllerV1`.
+
+| File               | Location                                | Responsibility                                                                                                                             |
+|--------------------|-----------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------|
+| **Interface**      | `controller/<Name>Controller.java`      | Declares the contract: method signatures + **complete Javadoc** (description, `@param`, `@return`). No Spring/Swagger annotations.         |
+| **Implementation** | `controller/v1/<Name>ControllerV1.java` | `implements <Name>Controller`. Contains all HTTP, security, Swagger, and rate-limit annotations plus thin logic delegating to the Service. |
+
+**Rules for the Interface (`controller/<Name>Controller.java`):**
+
+- It is a plain `public interface`, placed directly in the `controller/` package (not `v1/`).
+- Every method **must** have Javadoc describing its behavior, including `@param` for
+  each parameter and `@return` describing the response.
+- Parameters that may be `null` must be annotated `@Nullable` (following the general Null Safety rules).
+- Annotate the interface with `@SuppressWarnings("unused")` because methods are invoked over HTTP,
+  not through a Java call-site.
+- **Do not** place Spring annotations (`@GetMapping`, `@PreAuthorize`, …) or Swagger
+  annotations (`@Operation`, `@ApiResponse`) on the interface — they belong to the impl.
+
+**Rules for the Implementation (`controller/v1/<Name>ControllerV1.java`):**
+
+- Class name `<Name>ControllerV1`, placed in `controller/v1/`, `implements <Name>Controller`.
+- Class-level: `@RestController`, `@RequestMapping(EndpointCategory.BasePath.*)`,
+  `@Tag`, `@SecurityRequirement(name = OpenApiConfig.BEARER_AUTH)`,
+  `@RequiredArgsConstructor`, `@Slf4j`.
+- DI via **constructor injection** (`@RequiredArgsConstructor` + `private final`) —
+  no `@Autowired` fields.
+- Every overriding method **must** have `@Override` and the full set of annotations in this order:
+  `@Operation` → `@ApiResponse` (the various codes) → `@GetMapping`/`@PostMapping`/… (using constants
+  from `ApiEndpoint.Path`) → `@PreAuthorize("hasPrivilege(...)")` (constants from `McpPrivilege.Constants`)
+  → `@RateLimited` → `@Override`.
+- The Controller only handles HTTP + DTO validation (`@Valid`, `@ModelAttribute`,
+  `@RequestParam`). **Zero business logic** — always delegated to the Service.
+- Path/privilege/base-path are taken from constants (`ApiEndpoint.Path`, `EndpointCategory.BasePath`,
+  `McpPrivilege.Constants`); **never** hardcode strings.
+- **Return type**: `controller/advice/ApiResponseAdvice` (`ResponseBodyAdvice`) already
+  automatically wraps and standardizes every response body according to the HTTP status. Therefore:
+    - When the response is just a normal `200 OK` → **return `T` directly** (object/DTO/`Page<T>`),
+      **do not** wrap it in `ResponseEntity`. A method with nobody → `void`.
+    - **Only** use `ResponseEntity<T>` (or `@ResponseStatus`) when a special status is needed:
+      `201 Created`, `204 No Content` (e.g., an empty `Optional`/`Page`), `400`, custom headers…
+    - For errors (`403`/`404`/`409`/`429`…) throw an exception and let the global `@RestControllerAdvice`
+      handle it — **do not** build a `ResponseEntity` for the error branch yourself if you can throw an exception.
+
+> The old `Mcp*Controller` controllers are standalone (no interface, 4-space indent)
+> — **legacy, do not replicate**. New code must follow the interface + `V1` impl pattern.
+
+### Package Structure
+
+```
+src/main/java/com/citynow/quao/
+├── controller/             # REST controller interfaces (contract + Javadoc)
+│   └── v1/                 # Versioned controller impls (<Name>ControllerV1)
+├── service/                # Business service interfaces
+│   ├── */impl/             # Service implementations
+│   ├── validation/         # CodeValidationService, CircuitOptimizer
+│   ├── analytics/          # AnalyticsAggregationService, CostAnalysisService
+│   └── streaming/          # Streaming-related services
+├── repository/             # Business repository interfaces (domain models only)
+│   ├── impl/               # Repository implementations (mapper + JPA delegate)
+│   └── jpa/                # Spring Data JPA repositories (Jpa* prefix)
+├── component/              # AI providers, reusable business components
+│   ├── impl/               # ClaudeProvider, OpenAIProvider, AzureOpenAIProvider, LocalModelProvider
+│   └── security/scanner/   # CodeSecurityScanner
+├── handler/                # MCP protocol handlers
+│   │                       # McpProtocolHandler, SessionMethodHandler, GenerateMethodHandler
+├── model/                  # Domain models — non-JPA POJOs
+├── entity/                 # JPA entities (suffix: *Entity)
+├── dto/                    # Request / Response DTOs
+├── configuration/          # @Configuration classes grouped by concern
+│   ├── cache/
+│   └── security/
+├── constants/              # Application-wide constants (McpMethodConstants, McpProtocolConstants…)
+└── security/               # Auth pipeline — ISOLATED, not mixed into component/
+    ├── filter/             # AuditContextFilter and other servlet filters
+    └── context/            # AuditContextHolder (ThreadLocal userId + workspaceId)
+```
+
+**Package rules:**
+
+- `security/filter/` and `security/context/` must stay isolated — do **not**
+  move them into the generic `component/` package.
+- `constants/` classes are pure `public static final` holders — no Spring
+  annotations.
+- Utility helpers with only static methods belong in a dedicated `util/`
+  package, never in `component/`.
+- **A class annotated `@Component` lives in the `component/` package, never in
+  `service/`.** `service/` is reserved for business `*Service` interfaces and
+  their `*ServiceImpl` (annotated `@Service`). A reusable, injectable collaborator
+  (formatter, fetcher, catalog, classifier, retriever…) that is not a top-level
+  business service is a `@Component` and belongs under `component/<domain>/`
+  (interface) + `component/<domain>/impl/` (impl). Stateless-only static helpers
+  stay in `util/` (no annotation, no interface).
+
+### Interface–Implementation Split (Mandatory for component / service / controller)
+
+**Every `component`, `service`, and `controller` class must follow the
+interface + implementation pattern** — no bare concrete `@Component` / `@Service`
+/ controller classes.
+
+| Layer          | Interface location               | Implementation location + name                                                                                                              |
+|----------------|----------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------|
+| **Controller** | `controller/<Name>Controller`    | `controller/v1/<Name>ControllerV1` (see *Controller Pattern*)                                                                               |
+| **Service**    | `service/<domain>/<Name>Service` | `service/<domain>/impl/<Name>ServiceImpl`                                                                                                   |
+| **Component**  | `component/<domain>/<Name>`      | `component/<domain>/impl/<Name>Impl` (or a descriptive `<Strategy>` name when several impls of one interface exist, e.g. a Strategy family) |
+
+Rules:
+
+- The **interface** carries the contract + complete Javadoc; it holds **no**
+  Spring annotations and lives in the parent (non-`impl`) package.
+- The **implementation** is the only place with `@Component` / `@Service`,
+  `@RequiredArgsConstructor`, `@Slf4j`, and lives in the `impl/` sub-package.
+- **Always depend on the interface**, never the concrete impl — inject the
+  interface type via constructor injection.
+- A `@FunctionalInterface` is acceptable for single-method collaborators.
+- Exception: pure `util/` static helpers, `constants/`, `model/`/`dto/`/`entity/`
+  POJOs & records, `configuration/` `@Configuration` classes, and MapStruct
+  mappers do **not** need an interface.
+
+### Dependency Injection
+
+Always use **Constructor Injection** via Lombok `@RequiredArgsConstructor`.
+Field-level `@Autowired` is **prohibited**.
+
+```java
+// CORRECT
+@Service
+@RequiredArgsConstructor
+public class McpSessionServiceImpl implements McpSessionService {
+    private final McpSessionRepository mcpSessionRepository;
+    private final SessionMapper sessionMapper;
+}
+
+// PROHIBITED
+@Service
+public class McpSessionServiceImpl implements McpSessionService {
+    @Autowired  // ← never
+    private McpSessionRepository mcpSessionRepository;
+}
+```
+
+### Null Safety
+
+- Every method that may return `null` **must** annotate its return type with `@Nullable`.
+- Every parameter that accepts `null` **must** be annotated with `@Nullable`.
+- Use `@NonNull` to assert a non-null contract at the API boundary.
+
+```java
+// CORRECT
+private static @Nullable String normalizeQuery(final @Nullable String raw) {
+    if (raw == null) return null;
+    // ...
+}
+
+// PROHIBITED — the ReturnNull inspection (level ERROR) will flag this
+private static String normalizeQuery(final String raw) {
+    if (raw == null) return null;  // ← returns null without @Nullable
+    // ...
+}
+```
+
+> The `ReturnNull` inspection is configured at the **ERROR** level in
+`Project_Default.xml`.
+> Violations will be flagged in every code review.
+
+### Exception Handling
+
+- All API error responses must flow through the global `@RestControllerAdvice`
+  handler.
+- Throw specific domain exceptions from Service layer — do **not** scatter
+  `try-catch` for flow control inside services.
+- `catch (final Throwable t)` is **prohibited** (Checkstyle enforced — breaks
+  the build). Use `RuntimeException` or specific checked exceptions instead.
+
+### Logging
+
+- Use `@Slf4j` on every class that logs.
+- Log all data-mutating operations at `INFO` with structured fields.
+- **No bracket-style prefixes** — `[ClassName]` is **prohibited** (Checkstyle
+  enforced).
+- For public methods that need traceability, add contextual debug logs:
+  - Use `log.debug()` for normal flow, `log.warn()` for abnormal/invalid input,
+    and `log.error()` when an exception occurs.
+  - At method entry, describe the ongoing business action and only key,
+    non-sensitive parameters.
+  - At method exit, describe the resulting outcome (for example: found/not
+    found, item count, affected resource).
+  - For branch paths (`if/else`, guard clauses, early returns), log which branch
+    was taken.
+  - Write descriptive, contextual sentences for developers; do not use generic
+    `start/end` wording or only method-name echoing.
+  - Never log sensitive values: token, password, cookie value, customer ID,
+    payment amount.
+
+```java
+// CORRECT
+log.info("operation=createSession userId={} workspaceId={}",userId,
+         workspaceId);
+
+// PROHIBITED — breaks Checkstyle
+log.info("[McpSessionService] Session created for user: "+userId);
+```
+
+### MapStruct Mappers
+
+- All Entity ↔ Model and Model ↔ DTO conversions must use MapStruct mappers.
+- No manual field-by-field copy code outside mappers.
+- Mappers live alongside the layer they serve (e.g., `repository/impl/` for
+  Entity ↔ Model).
+
+### Checkstyle — Build-Breaking Rules
+
+| Rule           | Detail                                                                              |
+|----------------|-------------------------------------------------------------------------------------|
+| No `Throwable` | `catch (final Throwable t)` prohibited — use `RuntimeException` or typed exceptions |
+| Lambda size    | Max 17 non-comment statements — extract longer bodies to private static methods     |
+| Log prefix     | No `[ClassName]` bracket prefixes in log messages                                   |
+
+### Testing
+
+- **Unit tests** (`./gradlew test`): `spring.profiles.active=test`, Mockito
+  mocks for all deps. `@ExtendWith(MockitoExtension.class)`. Excludes repository and controller tests.
+- **Integration tests** (`./gradlew integrationTest`): `@SpringBootTest` +
+  Testcontainers (real PostgreSQL). Covers JPA repositories and controllers.
+- Test method naming: `methodName_givenCondition_thenExpectedOutcome`.
+
+```java
+@Test
+void generate_givenUnsupportedFramework_thenThrowIllegalArgumentException() { ... }
+```
+
+### Naming Conventions
+
+| Artifact            | Pattern                | Example                    |
+|---------------------|------------------------|----------------------------|
+| JPA Entity          | `<Name>Entity`         | `McpSessionEntity`         |
+| Domain Model        | Plain class            | `McpSession`               |
+| Request DTO         | `<Action>Request`      | `GenerateCodeRequest`      |
+| Response DTO        | `<Action>Response`     | `GenerateCodeResponse`     |
+| Service Interface   | `<Name>Service`        | `McpSessionService`        |
+| Service Impl        | `<Name>ServiceImpl`    | `McpSessionServiceImpl`    |
+| Business Repository | `<Name>Repository`     | `McpSessionRepository`     |
+| Repository Impl     | `<Name>RepositoryImpl` | `McpSessionRepositoryImpl` |
+| JPA Repository      | `Jpa<Name>Repository`  | `JpaMcpSessionRepository`  |
+| Controller Contract | `<Name>Controller`     | `QuotaController`          |
+| Controller Impl     | `<Name>ControllerV1`   | `QuotaControllerV1`        |
+| Constants class     | `<Domain>Constants`    | `McpMethodConstants`       |
+
+### No Magic Numbers or Strings
+
+**Never use raw numeric or string literals inline — always introduce a named constant.**
+This rule applies everywhere: production code, test code, and configuration.
+
+```java
+// correct — intent is explicit
+private static final int MAX_RETRY_ATTEMPTS = 3;
+private static final long DEFAULT_WORKSPACE_ID = 1L;
+private static final String ADMIN_ROLE = "ADMIN";
+
+if (attempts > MAX_RETRY_ATTEMPTS) { ... }
+
+// in tests — same rule
+private static final Long USER_ID = 10L;
+private static final int EXPECTED_RESULT_SIZE = 2;
+
+assertThat(result).hasSize(EXPECTED_RESULT_SIZE);
+given(service.findById(USER_ID)).willReturn(...);
+
+// wrong — raw literals scattered everywhere
+if (attempts > 3) { ... }
+assertThat(result).hasSize(2);
+given(service.findById(10L)).willReturn(...);
+```
+
+Placement rules:
+
+- **Production class**: declare `private static final` at the top of the class that owns the value.
+- **Test class**: declare `private static final` at the top of the test class; never share test constants via a separate
+  utility class unless the same value is used across 3+ test classes.
+- **Shared domain constant** (e.g., quota limits, tier thresholds): declare in the relevant domain constant class (e.g.
+  `QuotaConstants`, `BillingConstants`) under `src/main/java/.../constant/`.
+- Exceptions: loop indices (`i`, `j`), `0`/`1` used as boolean-equivalent checks, HTTP status codes passed directly to
+  `ResponseEntity.status(200)` — these are self-documenting and need no constant.
+
+---
+
 
 
 ## Operational Instructions
