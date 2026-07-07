@@ -760,6 +760,36 @@ private static final String CONFLICT_DESC = "Product name already exists in the 
   `@NotNull`, `@NotBlank`, etc.) at the controller boundary.
 - Factory classes in `factory/` must be used for constructing response objects —
   do not construct `ApiResponse` subclasses inline.
+- **Lambda body length**: the IntelliJ `OverlyLongLambda` inspection (enabled at
+  the `WARNING` level in `.idea/inspectionProfiles/Project_Default.xml`) limits a
+  lambda body to **3 non-comment statements**. A body of 4+ statements is
+  flagged. Keep lambdas to a single expression where possible; when the body
+  grows past the limit, **extract it into a named `private` method** and have the
+  lambda delegate to that method. Do not silence the inspection.
+
+```java
+// wrong — 4-statement lambda body, flagged by OverlyLongLambda
+requestedPerProduct.forEach(
+    (productId, requested) -> {
+        final Product product = products.get(productId);
+        if (product.getStockQuantity() < requested) {
+            log.warn("Insufficient stock for product id={}", productId);
+            throw new InsufficientStockException(product.getName(), product.getStockQuantity(), requested);
+        }
+    });  // ❌
+
+// correct — lambda delegates to an extracted private method
+requestedPerProduct.forEach(
+    (productId, requested) -> verifyProductStock(productId, products.get(productId), requested));
+
+private void verifyProductStock(final Long productId, final Product product, final int requested) {
+    if (product.getStockQuantity() >= requested) {
+        return;
+    }
+    log.warn("Insufficient stock for product id={}", productId);
+    throw new InsufficientStockException(product.getName(), product.getStockQuantity(), requested);
+}
+```
 
 ### 15. Javadoc Requirements
 
