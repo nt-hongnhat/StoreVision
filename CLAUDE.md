@@ -228,12 +228,49 @@ Optional<CustomerDTO> findById(Long id);  // ❌
 public Customer getById(Long id) { ...}  // ❌ (exposes persistence detail to controller)
 ```
 
-- Internal helper methods within a service implementation may pass `Entity`
-  objects between private methods — the rule applies to **public method
-  signatures** on service interfaces.
+- Internal helper methods within a service implementation may pass domain
+  objects between private methods, but must type them against the `model/`
+  interface rather than the concrete `*Entity` (see *Entity vs. Model boundary*
+  below) — the return-type rule applies to **public method signatures** on
+  service interfaces.
 - Cross-domain service calls (e.g., `OrderCreationService` calling
   `CustomerRetrievalService`) must use the **DTO** returned by the other
   domain's service — never reach into another domain's repository directly.
+
+#### Entity vs. Model boundary (mandatory)
+
+Concrete JPA entity types (`*Entity`, e.g. `ProductEntity`, `OrderEntity`) are a
+**persistence detail** and may only be referenced by name in the `repository/`
+(interface + `impl/` + `jpa/`), `entity/`, and `mapper/` layers. Every `*Entity`
+implements a matching `model/` interface (`ProductEntity implements Product`,
+`OrderEntity implements Order`, …), so all higher layers work through the
+interface instead of the concrete class.
+
+| Layer                                            | May name `*Entity` | Uses `model/` interface |
+|--------------------------------------------------|:------------------:|:-----------------------:|
+| `repository/` (interface, `impl/`, `jpa/`)       |         ✅          |            ✅            |
+| `entity/`, `mapper/`                             |         ✅          |            ✅            |
+| `service/`, `component/`, `util/`, `controller/` |         ❌          |            ✅            |
+
+- In `service/`, `component/`, `util/`, and `controller/` code, declare every
+  parameter, local variable, and return type against the `model/` interface
+  (`Product`, `Order`, `OrderItem`, …) — never the concrete `*Entity`.
+- A repository call still hands back a concrete `*Entity`; assign it to a
+  `model/` interface reference immediately and pass that reference around.
+- **Single exception**: a service impl that must build an entity to hand to
+  `repository.save(...)` may name the concrete `*Entity` for that construction
+  only — it is a persistence operation. The concrete type must not leak out of
+  the class (never returned, never accepted on a public/interface signature).
+
+```java
+// correct — util programs against the Product model interface
+public void verify(
+        final List<? extends OrderItemCreationRequest> items,
+        final Map<Long, ? extends Product> products) { ... }
+
+// wrong — util names the concrete entity
+public void verify(..., final Map<Long, ProductEntity> products) { ... }  // ❌
+```
 
 #### Pagination
 
