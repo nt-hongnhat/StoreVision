@@ -751,6 +751,319 @@ comment. This is enforced by the project's checkstyle/linter configuration.
 
 ---
 
+## Code Review Checklist (Mandatory)
+
+Every new piece of code and every MR must satisfy the entire checklist below before
+it can be approved. This is the team's general backend review standard — Claude Code
+must self-check it before committing and when reviewing an MR (in combination with the
+review process described in this document).
+Items that already have their own detailed rules link back to the corresponding section.
+
+### 1. Architecture & Design
+
+- Strict layering Controller → Service → Repository, **never skip a layer**
+  (see *Layered Architecture*).
+- The Controller **must not** contain business logic (see controller responsibilities in *Layered Architecture*).
+- **Do not** use a JPA Entity as a DTO returned from the API — the Entity must not leave `repository/`.
+- Follow SOLID, DRY, KISS; remove duplication via abstraction/strategy
+  (e.g., operation-specific services + shared abstract bases in `service/common/`).
+- **No** circular dependencies between modules/packages.
+
+### 2. Code Quality & Conventions
+
+- Variable/method/class names are clear, follow Java standards and the project's *Naming Conventions*.
+- Code has been run through the formatter (Spotless/Google Java Format) before committing.
+- **No** dead code, redundant comments, junk debug logs (stray `log.debug`), or dangling `TODO`s.
+- **No** hardcoding — extract into `constants/` (`*Constants`) or config; **no** magic numbers in logic.
+- Static analysis (Sonar/Checkstyle/PMD) has **no** remaining blocker/critical issues;
+  Checkstyle build-breaking rules must pass (see *Checkstyle*).
+
+### 3. Java Core Best Practices
+
+- Avoid NPE: use `Optional` or `@NonNull`/`@Nullable` (see *Null Safety* —
+  `ReturnNull` at the ERROR level).
+- **Do not** use `Optional` for object fields (only for return types).
+- Use `BigDecimal` for all monetary processing — **do not** use `double`/`float`.
+- Use `java.time` (`Instant`, `LocalDateTime`…) — **do not** use the legacy `Date`/`Calendar`.
+- Complete exception handling, **never swallow exceptions**; **no** `catch (Throwable)`
+  (see *Exception Handling*).
+- **Do not** overuse Streams in a way that hurts readability/performance; lambdas ≤ 17 statements.
+
+### 4. API (REST)
+
+- Conform to RESTful standards + correct HTTP method; accurate status codes (e.g. `204` for
+  an empty `Optional`/`Page`).
+- Validate input with `@Valid` + Bean Validation constraints on the DTO.
+- Responses are unified through the internal standard (`ApiResponseHandler` with `ApiResponse` wrapper types).
+- Errors always return a JSON error object via the global `@RestControllerAdvice` — **never** return HTML.
+- Pagination **must** cap the maximum `size` (to prevent overload requests).
+- Update Swagger/OpenAPI (`@Operation`, `@ApiResponse`, `@Schema`) for every API change.
+
+### 5. Spring Boot
+
+- **Constructor injection** via `@RequiredArgsConstructor` — field `@Autowired` is forbidden
+  (see *Dependency Injection*).
+- Externalize configuration in `application*.yml` per environment; use env vars.
+- **Absolutely never** commit secrets/tokens/passwords in code or config.
+- Centralized error handling via `@RestControllerAdvice`.
+- Place `@Transactional` at the correct layer (Service) and with the correct scope; be careful with readOnly.
+- Standard SLF4J logging (`@Slf4j`) — **no** `System.out.println`; no `[ClassName]`
+  prefix (see *Logging*).
+
+### 6. JPA / Hibernate / Database
+
+- Clear Entity mapping: `nullable`, `length`, `unique`, column types.
+- Minimize `FetchType.EAGER` — default to `LAZY`.
+- Check for and avoid **N+1 queries** (use `@EntityGraph`/`JOIN FETCH` when needed).
+- Queries use **parameter binding**, **never** string concatenation → prevents SQL injection.
+- **Do not** perform DB operations inside loops — use batch/bulk.
+- Schema changes must come with complete migration scripts (Flyway/Liquibase);
+  note `HIBERNATE_DDL_AUTO=validate`.
+- Add indexes for columns frequently used in filters/joins.
+
+### 7. Security
+
+- **Never** log sensitive data (passwords, tokens, OTPs, JWTs, PII).
+- Use HTTPS in production; CORS **must not** be `*` in production.
+- Tokens/JWTs must have expiry (`exp`) — never unlimited.
+- Validate input against XSS/Injection; use standard secure coding checks and dependency scanning where relevant.
+- Protect endpoints with `@PreAuthorize` and role-based rules from Spring Security configuration.
+- Store keys/secrets via a secret manager/env — never in source.
+
+### 8. Performance
+
+- **Do not** load a full table when pagination is possible.
+- Optimize queries: limit `LIKE '%...%'` leading wildcards, `ORDER BY` on non-indexed columns.
+- Clear cache strategy (key, TTL, invalidation); when caching is introduced, define clear invalidation with Spring Cache annotations.
+- **Do not** block threads unnecessarily in concurrent/background workloads.
+- Limit creating new objects in code that runs frequently (hot path).
+
+### 9. Logging & Observability
+
+- Correct log levels: `INFO` for data-mutating ops (with structured fields), `DEBUG` for detail,
+  `ERROR` for real errors.
+- Attach a Request ID / Correlation ID (MDC) when available and keep it consistent across request processing.
+- Log thoroughly when calling external services (OAuth providers, third-party APIs, infrastructure dependencies).
+- **Never** log sensitive data.
+- Monitor healthcheck/metrics via Spring Boot Actuator.
+
+### 10. Testing
+
+- Unit tests (`./gradlew test`, `test` profile, Mockito) cover the main logic;
+  name them `methodName_givenCondition_thenExpectedOutcome`.
+- Repository/Controller tests via integration tests (`./gradlew integrationTest`) +
+  Testcontainers (real PostgreSQL).
+- Cover both the happy case and edge cases.
+- Tests **must not** depend on the environment or system clock (inject a `Clock` when time is needed).
+- Mock external services (WireMock or Mockito) — never call real services.
+- Coverage meets the team's required threshold.
+
+### 11. CI/CD & Deployment
+
+- Reproducible build, clear versioning.
+- Scan dependency vulnerabilities.
+- Multi-stage Dockerfile, optimized layers.
+- Containers **must not** run as root.
+- Declare all required env variables when deploying (see *Environment Variables*).
+- Have a rollback strategy for failed deployments.
+
+---
+
+## Documentation Conventions (Mandatory)
+
+Every code change must come with the corresponding technical documentation file in `docs/`.
+Claude Code must create the doc file **before** creating the commit for a feature or bug fix.
+
+### `docs/` Directory Structure
+
+Every documentation file **must** reside in exactly one of the directories below. **Do not**
+leave a loose `.md` file directly at `docs/` (root) — always pick the appropriate directory.
+
+```
+docs/
+├── features/<ticket-id>/   # Feature/enhancement docs (tied to a Jira ticket)
+│   └── technical-doc.md
+├── fix/<ticket-id>/        # Bug fix docs (tied to a Jira ticket)
+│   └── root-cause.md
+├── refactoring/<slug>/     # Refactor docs (descriptive slug, or <ticket-id> if available)
+│   └── refactor-doc.md
+├── api/<category>/         # REST/WS endpoint docs, grouped by domain
+│                           # (analytics, session, provider, quota, streaming…)
+├── architecture/           # Internal overall design notes (NOT tied to a ticket)
+├── guides/                 # How-to, integration guides, reference docs,
+│                           # status reports — docs NOT tied to a specific ticket
+└── reference/              # Spec/protocol reference (e.g. MCP protocol, JSON-RPC)
+```
+
+### File Location and Naming
+
+| Documentation Type                      | Directory                    | Required File Name      |
+|-----------------------------------------|------------------------------|-------------------------|
+| New feature / enhancement (with ticket) | `docs/features/<ticket-id>/` | `technical-doc.md`      |
+| Bug fix (with ticket)                   | `docs/fix/<ticket-id>/`      | `root-cause.md`         |
+| Refactor (with or without ticket)       | `docs/refactoring/<slug>/`   | `refactor-doc.md`       |
+| REST/WebSocket endpoint doc             | `docs/api/<category>/`       | `<METHOD>_<path>.md`    |
+| Overall architecture note               | `docs/architecture/`         | `<kebab-case-title>.md` |
+| How-to / integration / status report    | `docs/guides/`               | `<kebab-case-title>.md` |
+| Spec / protocol reference               | `docs/reference/`            | `<kebab-case-title>.md` |
+
+`<ticket-id>` is the Jira ticket code, e.g. `PQF-20402`, `PQF-20178`.
+The `features/` and `fix/` directories **require** a `<ticket-id>`; if a document is not tied
+to a specific ticket (guide, reference, general architecture) → place it in `guides/`,
+`reference/`, or `architecture/`, and **do not** stuff it into `features/`/`fix/` with a made-up name.
+
+`refactoring/` specifically allows a kebab-case **`<slug>`** describing the refactor scope
+(e.g. `refactor-exception-advice`) when there is no ticket; if the refactor is tied to a ticket,
+use the `<ticket-id>` as the directory name. Each subdirectory contains exactly one `refactor-doc.md`.
+
+**Correct examples:**
+
+```
+docs/features/PQF-20100/technical-doc.md
+docs/fix/PQF-20402/root-cause.md
+docs/refactoring/refactor-exception-advice/refactor-doc.md
+docs/refactoring/PQF-21500/refactor-doc.md
+docs/api/session/POST_sessions_initialize.md
+docs/architecture/streaming-service.md
+docs/guides/ollama-basic-auth.md
+docs/reference/mcp-protocol.md
+```
+
+**Not acceptable:**
+
+```
+docs/my-feature.md                             ← loose file at root, no directory
+docs/features/my-feature.md                    ← missing ticket-id
+docs/features/dynamic-prompt-templates.md      ← doc not tied to a ticket → must go in guides/
+docs/fix/PQF-20402/solution.md                 ← wrong file name
+docs/fix/PQF-20402/root-cause-and-solution.md  ← wrong file name
+docs/refactoring/foo.md                        ← missing subdirectory + wrong file name
+docs/refactoring/foo/technical-doc.md          ← wrong file name (must be refactor-doc.md)
+```
+
+---
+
+### Required Structure — `technical-doc.md`
+
+```markdown
+# <Ticket-ID> – <Feature Title>
+
+## Overview
+
+A short description of what the feature does and why it needs to be built.
+
+## Background
+
+Context, motivation, related tickets.
+
+## Technical Design
+
+### Architecture / Data Flow
+
+### Component Changes
+
+List each changed file: full path and description of the change.
+
+## API Changes
+
+New or changed endpoints — method, path, request/response schema.
+
+## Database Changes
+
+New schema, added columns, migration script.
+
+## Implementation Notes
+
+Non-obvious decisions, tradeoffs, workarounds.
+
+## Testing
+
+Unit test and integration test coverage for this feature.
+
+## Rollout
+
+Feature flag, phased rollout, backward-compatibility.
+```
+
+---
+
+### Required Structure — `root-cause.md`
+
+```markdown
+# <Ticket-ID> – <Bug Title>
+
+## Bug Description
+
+Incorrect behavior, reproduction steps affected the environment.
+
+## Root Cause
+
+A step-by-step analysis of why the bug occurs.
+Include: file paths, method names, illustrative code snippets.
+
+## Fix
+
+### Changes Made
+
+Describe each changed file and the reason for the change.
+
+## Testing
+
+How to confirm the fix is correct — manual steps and/or test case names.
+
+## Summary
+
+| # | File | Problem | Fix |
+|---|------|---------|-----|
+```
+
+---
+
+### Required Structure — `refactor-doc.md`
+
+```markdown
+# <Slug | Ticket-ID> – <Refactor Title>
+
+## Motivation
+
+The reason for refactoring: technical debt, architecture violations, duplication, performance…
+Behavior **does not** change — state clearly that this is a refactored, not a feature/fix.
+
+## Scope
+
+The affected scope: related modules/packages/classes; what is NOT in the scope.
+
+## Before / After
+
+Compare the structure before and after (diagram, illustrative code snippet, or comparison table).
+
+## Changes Made
+
+List each changed file: full path and description of the change.
+
+## Risk & Compatibility
+
+Risks, breaking changes (if any), backward-compatibility, how to roll back.
+
+## Testing
+
+Evidence that behavior is unchanged: existing tests still pass, additional tests (if any).
+```
+
+---
+
+### Enforcement Rules
+
+- A PR missing the corresponding doc file → **cannot be approved**.
+- Claude Code must create the doc file **at the same time** as the code change, not afterward.
+- If a single change affects multiple tickets, each ticket must have its own file.
+- You must not add doc content to another file (e.g., writing into `architecture/`)
+  as a substitute for the required file.
+
+---
+
+
+
 ## Operational Instructions
 
 ### Build & Run Commands
