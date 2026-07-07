@@ -815,6 +815,38 @@ private void verifyProductStock(final Long productId, final Product product, fin
 }
 ```
 
+- **Stateless static helpers belong in `util/`, not as private methods of a
+  business class.** A `private static` method that performs generic, reusable
+  computation with no dependency on the enclosing class's state or collaborators
+  (date math, string/number formatting, presence/predicate checks, aggregation,
+  …) must be extracted into a `@UtilityClass` under `util/` and given a
+  domain-neutral name — e.g., a birthday check becomes
+  `DateUtil.isAnniversaryToday(...)`, not a `private static boolean isBirthday(...)`
+  living inside a `@Component`/`@Service`/controller. This keeps business classes
+  focused on their operation and makes the helper reusable and independently
+  testable. It does **not** apply to a `private` method that is merely an
+  extracted lambda/branch body coupled to this class's own logic (see the lambda
+  rule above) — those stay local.
+
+```java
+// wrong — generic date helper hidden as a private static method in a policy bean
+@Component
+public class BirthdayDiscountPolicy implements DiscountPolicy {
+    private static boolean isBirthday(final LocalDate dob) {          // ❌
+        final LocalDate today = LocalDate.now();
+        return dob.getMonth() == today.getMonth() && dob.getDayOfMonth() == today.getDayOfMonth();
+    }
+}
+
+// correct — extracted to a reusable, domain-neutral util
+@UtilityClass
+public class DateUtil {
+    public boolean isAnniversaryToday(final @NonNull LocalDate date) { ... }
+}
+// call site
+if (DateUtil.isAnniversaryToday(customer.getDateOfBirth())) { ... }
+```
+
 ### 15. Javadoc Requirements
 
 Every **public** method on any `interface` or `public class` must have a Javadoc
