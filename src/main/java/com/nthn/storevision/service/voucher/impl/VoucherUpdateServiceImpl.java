@@ -6,13 +6,15 @@
  * File: VoucherUpdateServiceImpl.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-13
+ * Last Modified: 2026-07-07 09:29:31
  */
 
 package com.nthn.storevision.service.voucher.impl;
 
+import com.nthn.storevision.constant.message.VoucherMessageCode;
 import com.nthn.storevision.dto.voucher.VoucherDTO;
 import com.nthn.storevision.entity.VoucherEntity;
+import com.nthn.storevision.exception.EntityNotFoundException;
 import com.nthn.storevision.mapper.EntityMapperConfig;
 import com.nthn.storevision.repository.VoucherRepository;
 import com.nthn.storevision.service.common.AbstractUpdatable;
@@ -25,12 +27,19 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class VoucherUpdateServiceImpl
-    extends AbstractUpdatable<VoucherDTO, VoucherEntity, VoucherRepository>
+    extends AbstractUpdatable<VoucherDTO, Long, VoucherEntity, VoucherRepository>
     implements VoucherUpdateService {
 
   protected VoucherUpdateServiceImpl(
-      final EntityMapperConfig<VoucherDTO, ?, VoucherEntity> mapper,
+      final EntityMapperConfig<VoucherDTO, Long, VoucherEntity> mapper,
       final VoucherRepository repository) {
     super(mapper, repository);
+  }
+
+  @Override
+  protected VoucherEntity getById(final Long id) {
+    return getRepository()
+        .findById(id)
+        .orElseThrow(() -> new EntityNotFoundException(VoucherMessageCode.NOT_FOUND, id));
   }
 }
