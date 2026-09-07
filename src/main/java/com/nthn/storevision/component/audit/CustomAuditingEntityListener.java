@@ -2,11 +2,11 @@
  * Copyright (c) 2026 Hong Nhat. All rights reserved.
  *
  * Project: Store Vision
- * Module: Store Vision Main
+ * Module: StoreVision.main
  * File: CustomAuditingEntityListener.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-12 17:13:03
+ * Last Modified: 2026-09-07 16:49:33
  */
 
 package com.nthn.storevision.component.audit;
@@ -27,6 +27,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -189,6 +190,39 @@ public class CustomAuditingEntityListener {
   }
 
   /**
+   * Resolves the public setter method named {@code setterName} on {@code targetClass} that accepts
+   * the given field's declared type. A field may be declared with a concrete type (e.g. {@code
+   * UserEntity}, required for JPA {@code @ManyToOne} mapping) while its setter is declared against
+   * a broader {@code model/} interface type (e.g. {@code User}), per the project's Entity-vs-Model
+   * boundary convention — so the lookup matches by assignability rather than requiring an exact
+   * parameter-type match.
+   *
+   * @param targetClass the class to search for the setter; must not be {@code null}
+   * @param setterName the setter method name; must not be {@code null}
+   * @param fieldType the field's declared type; must not be {@code null}
+   * @param fieldName the field name, used only for the error message; must not be {@code null}
+   * @return the matching setter method; never {@code null}
+   * @throws EntityAccessException if no matching setter method exists
+   */
+  private static @NonNull Method findSetter(
+      final @NonNull Class<?> targetClass,
+      final String setterName,
+      final Class<?> fieldType,
+      final String fieldName) {
+    return Arrays.stream(targetClass.getMethods())
+        .filter(method -> Objects.equals(setterName, method.getName()))
+        .filter(method -> 1 == method.getParameterCount())
+        .filter(method -> method.getParameterTypes()[0].isAssignableFrom(fieldType))
+        .findFirst()
+        .orElseThrow(
+            () -> {
+              log.error(
+                  "No setter found for field {} in class {}", fieldName, targetClass.getName());
+              return new EntityAccessException(AuditMessageCode.SETTER_NOT_FOUND, fieldName);
+            });
+  }
+
+  /**
    * Sets the value of the specified field on the provided target object using reflection. This
    * method attempts to invoke the appropriate setter method for the given field. If no suitable
    * setter is found or if an error occurs during invocation, an {@link EntityAccessException} is
@@ -202,22 +236,17 @@ public class CustomAuditingEntityListener {
    */
   private static void setFieldValue(
       @NonNull final Field field, @NonNull final Object target, final Object value) {
+    final String fieldName = field.getName();
+    final String setterName =
+        MessageFormat.format(
+            "set{0}{1}",
+            fieldName.substring(0, 1).toUpperCase(Locale.ROOT), fieldName.substring(1));
+    final Method setter = findSetter(target.getClass(), setterName, field.getType(), fieldName);
     try {
-      final String fieldName = field.getName();
-      final String setterName =
-          MessageFormat.format(
-              "set{0}{1}",
-              fieldName.substring(0, 1).toUpperCase(Locale.ROOT), fieldName.substring(1));
-      final Method setter = target.getClass().getMethod(setterName, field.getType());
       setter.invoke(target, value);
-    } catch (final NoSuchMethodException e) {
-      log.error(
-          "No setter found for field {} in class {}", field.getName(), target.getClass().getName());
-      throw new EntityAccessException(AuditMessageCode.SETTER_NOT_FOUND, e, field.getName());
     } catch (final IllegalAccessException | InvocationTargetException e) {
-      log.error("Failed to invoke setter for field {} on entity: {}", field.getName(), target, e);
-      throw new EntityAccessException(
-          AuditMessageCode.SETTER_INVOCATION_FAILED, e, field.getName());
+      log.error("Failed to invoke setter for field {} on entity: {}", fieldName, target, e);
+      throw new EntityAccessException(AuditMessageCode.SETTER_INVOCATION_FAILED, e, fieldName);
     }
   }
 
