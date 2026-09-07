@@ -92,7 +92,14 @@ public interface JpaProductRepository extends JpaRepository<ProductEntity, Long>
    * @return {@code true} if the name + category combination is unique among active products
    *     excluding the product with the given ID
    */
-  boolean isUniqueNameForCategoryExcludingId(String name, String category, Long id);
+  @Query(
+      """
+          SELECT CASE WHEN COUNT(p) > 0 THEN true ELSE false END
+           FROM ProductEntity p
+           WHERE p.name = :name AND p.category = :category
+           AND p.id <> :id AND p.deletedDate IS NULL""")
+  boolean isUniqueNameForCategoryExcludingId(
+      @Param("name") String name, @Param("category") String category, @Param("id") Long id);
 
   /**
    * BR-P01: checks uniqueness of name + category among active (non-soft-deleted) records.
@@ -101,7 +108,12 @@ public interface JpaProductRepository extends JpaRepository<ProductEntity, Long>
    * @param name the name to check; must not be {@code null}
    * @return {@code true} if the name + category combination is unique among active products
    */
-  boolean isUniqueNameInCategory(String name, String category);
+  @Query(
+      """
+          SELECT CASE WHEN COUNT(p) > 0 THEN true ELSE false END
+           FROM ProductEntity p
+           WHERE p.name = :name AND p.category = :category AND p.deletedDate IS NULL""")
+  boolean isUniqueNameInCategory(@Param("name") String name, @Param("category") String category);
 
   /**
    * Full-text–style search over active products. Both filter parameters are optional: passing
