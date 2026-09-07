@@ -52,7 +52,7 @@ spring:
 
 app:
   oauth2:
-    success-redirect-url: /
+    success-redirect-url: /store-vision/api/swagger-ui/index.html
   audit:
     default-admin-email: ${AUDIT_DEFAULT_ADMIN_EMAIL:admin@storevision.local}
   order:
