@@ -37,7 +37,7 @@ strictly follows the project format, then stop. The canonical reference is
    schema, error codes) must be extracted from the actual code. If something genuinely
    cannot be determined, state the assumption in your report rather than fabricating.
 3. **Doc content is English**, matching the reference file. Code identifiers stay verbatim.
-4. **Format is mandatory** — keep the exact section order and markdown table style of the
+4. **Format is mandatory** — keep the exact section order and Markdown table style of the
    reference file.
 
 ## Step 1 — Locate the source code (BẮT BUỘC đọc trước khi viết)

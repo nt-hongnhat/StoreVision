@@ -56,7 +56,7 @@ only if present): `docs/features/PQF-20586/technical-doc.md`,
    fabricating.
 3. **Doc content is English**, matching the reference files. Code identifiers stay verbatim.
 4. **Format is mandatory** — use the exact template for the doc type (heading order
-    + markdown table style of the reference file).
+    + Markdown table style of the reference file).
 
 ## Step 0 — Determine doc type, location and file name
 
@@ -76,7 +76,7 @@ Use `git` + Read/Grep/Glob (prefer these over `cat`/`grep`/`find`):
 - `git status` and `git diff develop...HEAD` (or the actual base branch) to get the
   changed-file list; `git log --oneline develop..HEAD` for commit intent.
 - Read each changed production class to describe exactly what was added/modified:
-  paths, class/method names, wiring. Do not summarise files you have not opened.
+  paths, class/method names, wiring. Do not summarize files you have not opened.
 - Resolve constants to their real values (e.g. `McpProtocolConstants.HEADER_WORKSPACE_ID`
   → `X-Tenant-ID`; privileges from `McpPrivilege.Constants`; paths from `ApiEndpoint.Path`).
 - Read the related tests under `src/test/...` so the Testing section names real
@@ -206,7 +206,7 @@ Evidence that behavior is unchanged: existing tests still pass, additional tests
   real columns/constraints only.
 - Illustrative code snippets must be copied/derived from the real code, not
   imagined signatures.
-- For refactor docs, always assert behaviour is unchanged and provide the
+- For refactor docs, always assert behavior is unchanged and provide the
   before/after comparison; the Testing section is the evidence (existing suites
   still green, added tests if any).
 - Create the doc under the correct directory with the exact file name; if the
