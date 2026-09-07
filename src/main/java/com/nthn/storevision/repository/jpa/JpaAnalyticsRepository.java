@@ -6,7 +6,7 @@
  * File: JpaAnalyticsRepository.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-15 22:51:48
+ * Last Modified: 2026-09-07 16:18:37
  */
 
 package com.nthn.storevision.repository.jpa;
@@ -59,7 +59,7 @@ public interface JpaAnalyticsRepository extends JpaRepository<OrderEntity, Long>
   @Query(
       "SELECT new com.nthn.storevision.dto.analytics.ProductCostDTO(sm.product.id, AVG(sm.unitCost))"
           + " FROM StockMovementEntity sm"
-          + " WHERE sm.type = com.nthn.storevision.constant.StockMovementType.RECEIPT"
+          + " WHERE sm.type = com.nthn.storevision.constant.stock_movement.StockMovementType.RECEIPT"
           + " AND sm.unitCost IS NOT NULL"
           + " GROUP BY sm.product.id")
   List<ProductCostDTO> findAverageReceiptCosts();
@@ -86,7 +86,7 @@ public interface JpaAnalyticsRepository extends JpaRepository<OrderEntity, Long>
       """
                   SELECT new com.nthn.storevision.dto.analytics.ProductSalesDTO(oi.product.id, SUM(oi.quantity))
                    FROM OrderItemEntity oi
-                   WHERE oi.order.status = com.nthn.storevision.constant.OrderStatus.COMPLETED
+                   WHERE oi.order.status = com.nthn.storevision.constant.order.OrderStatus.COMPLETED
                    AND oi.order.deletedDate IS NULL
                    AND oi.order.orderDate >= :from AND oi.order.orderDate < :to
                    GROUP BY oi.product.id""")
@@ -126,7 +126,7 @@ public interface JpaAnalyticsRepository extends JpaRepository<OrderEntity, Long>
       "SELECT new com.nthn.storevision.dto.analytics.TopSellingProductDTO("
           + "p.id, p.name, SUM(oi.quantity), SUM(oi.unitPrice * oi.quantity))"
           + " FROM OrderItemEntity oi JOIN oi.product p"
-          + " WHERE oi.order.status = com.nthn.storevision.constant.OrderStatus.COMPLETED"
+          + " WHERE oi.order.status = com.nthn.storevision.constant.order.OrderStatus.COMPLETED"
           + " AND oi.order.deletedDate IS NULL AND oi.order.orderDate >= :from"
           + " GROUP BY p.id, p.name"
           + " ORDER BY SUM(oi.quantity) DESC")
@@ -155,7 +155,7 @@ public interface JpaAnalyticsRepository extends JpaRepository<OrderEntity, Long>
    */
   @Query(
       "SELECT SUM(o.totalAmount) FROM OrderEntity o"
-          + " WHERE o.status = com.nthn.storevision.constant.OrderStatus.COMPLETED"
+          + " WHERE o.status = com.nthn.storevision.constant.order.OrderStatus.COMPLETED"
           + " AND o.deletedDate IS NULL AND o.orderDate >= :from AND o.orderDate < :to")
   BigDecimal sumCompletedRevenue(@Param("from") LocalDateTime from, @Param("to") LocalDateTime to);
 }
