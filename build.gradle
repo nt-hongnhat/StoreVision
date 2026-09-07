@@ -2,11 +2,11 @@
  * Copyright (c) 2026 Hong Nhat. All rights reserved.
  *
  * Project: Store Vision
- * Module: Store Vision Main
+ * Module: StoreVision
  * File: build.gradle
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-13 16:01:55
+ * Last Modified: 2026-09-07 15:52:46
  */
 
 plugins {
@@ -70,6 +70,9 @@ dependencies {
     // Springdoc OpenAPI
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.7.0'
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-api:2.7.0'
+
+    // Flowable Spring Boot Starter
+    implementation 'org.flowable:flowable-spring-boot-starter:8.0.0'
 
     // Devtools
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
