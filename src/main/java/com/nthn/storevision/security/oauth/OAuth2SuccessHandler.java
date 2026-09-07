@@ -2,11 +2,11 @@
  * Copyright (c) 2026 Hong Nhat. All rights reserved.
  *
  * Project: Store Vision
- * Module: Store Vision Main
+ * Module: StoreVision.main
  * File: OAuth2SuccessHandler.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-12 22:38:15
+ * Last Modified: 2026-09-07 17:13:43
  */
 
 package com.nthn.storevision.security.oauth;
@@ -136,7 +136,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
   private static void configureUserAuthentication(
       final Collection<? extends GrantedAuthority> authorities, final User persistUser) {
     final UserPrincipal userPrincipal = new UserPrincipal(authorities, persistUser);
-    final UsernamePasswordAuthenticationToken newAuth =
+    final Authentication newAuth =
         new UsernamePasswordAuthenticationToken(userPrincipal, null, authorities);
     SecurityContextHolder.getContext().setAuthentication(newAuth);
   }
