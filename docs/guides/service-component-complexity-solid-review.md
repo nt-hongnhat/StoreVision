@@ -2,7 +2,7 @@
 
 ## 1. Executive Summary
 
-- The project already has a clear layer contract (Controller -> Service -> Repository) and strong operation-specific service naming.
+- The project already has a clear layer contract (Controller → Service → Repository) and strong operation-specific service naming.
 - The main risk is **business-rule concentration** in several service classes, where calculation, validation, orchestration, and persistence concerns are mixed.
 - The most impactful improvement is to extract domain decision logic into dedicated policy/strategy components and keep services as orchestration-only coordinators.
 
@@ -56,7 +56,7 @@
   - Class owns loyalty balance updates, tier upgrade policy, voucher construction rules, and history persistence.
   - Redeem voucher generation and tier progression logic are embedded in the same transactional service.
 - SOLID pressure:
-  - **SRP**: loyalty accounting and voucher policy belong to different business sub-domains.
+  - **SRP**: loyalty accounting and voucher policy belong to different business subdomains.
   - **DIP**: policy behavior depends on concrete in-class logic instead of policy abstractions.
 
 ### 3.4 `InventoryAdjustmentServiceImpl`
@@ -66,7 +66,7 @@
   - `adjustStock(...)` (line ~55)
 - Symptoms:
   - Method includes user resolution, stock mutation path selection, movement event construction, and response retrieval.
-  - Quantity sign branching (`> 0`, `< 0`, `== 0`) directly drives workflow.
+  - Quantity sign branching (`> 0`, `< 0`, `== 0`) directly drives the workflow.
 - SOLID pressure:
   - **SRP**: stock command execution and movement/audit construction are coupled.
   - **OCP**: new adjustment modes (e.g., damage, reconciliation policy variants) will require method edits.
@@ -78,19 +78,19 @@
   - `updateOrderStatus(...)` (line ~156)
 - Symptoms:
   - Endpoint contains a status switch and status-specific service invocation decisions in the controller.
-  - Authorization expression mixes role logic and request-state dependency at annotation level.
+  - Authorization expression mixes role logic and request-state dependency at the annotation level.
 - SOLID pressure:
   - **SRP**: controller contains state-transition branching that can drift from domain transition rules.
 
 ## 4. SOLID Violation Matrix
 
-| Component | Main SOLID Risk | Evidence | Impact |
-|---|---|---|---|
-| `OrderCreationServiceImpl` | SRP, OCP | Mixed pricing + stock + persistence orchestration in one class | Harder feature extension, regression-prone pricing updates |
-| `AnalyticsRetrievalServiceImpl` | SRP, OCP | Aggregation, ranking, date policy, and formatting in one implementation | Report logic changes touch multiple methods |
-| `LoyaltyServiceImpl` | SRP, DIP | Points, tier policy, voucher policy, and history flow in one class | Hard to evolve loyalty rules independently |
-| `InventoryAdjustmentServiceImpl` | SRP, OCP | Branch-heavy stock workflow + movement construction in one method | New adjustment types require direct edits |
-| `OrderControllerV1` | SRP | Transition switch in controller endpoint | Domain transitions leak into API layer |
+| Component                        | Main SOLID Risk | Evidence                                                                | Impact                                                     |
+|----------------------------------|-----------------|-------------------------------------------------------------------------|------------------------------------------------------------|
+| `OrderCreationServiceImpl`       | SRP, OCP        | Mixed pricing + stock + persistence orchestration in one class          | Harder feature extension, regression-prone pricing updates |
+| `AnalyticsRetrievalServiceImpl`  | SRP, OCP        | Aggregation, ranking, date policy, and formatting in one implementation | Report logic changes touch multiple methods                |
+| `LoyaltyServiceImpl`             | SRP, DIP        | Points, tier policy, voucher policy, and history flow in one class      | Hard to evolve loyalty rules independently                 |
+| `InventoryAdjustmentServiceImpl` | SRP, OCP        | Branch-heavy stock workflow + movement construction in one method       | New adjustment types require direct edits                  |
+| `OrderControllerV1`              | SRP             | Transition switch in controller endpoint                                | Domain transitions leak into API layer                     |
 
 ## 5. Design Pattern Opportunities
 
@@ -114,7 +114,7 @@
 
 ### 5.3 Template Method (Medium Priority)
 
-- Apply to repeated CRUD-orchestration service skeletons where lifecycle is stable but details vary.
+- Apply to repeated CRUD-orchestration service skeletons where the lifecycle is stable but details vary.
 - Candidate areas:
   - operation-specific create/retrieve/update service flows
   - common read-transform-map steps in retrieval services
@@ -131,7 +131,7 @@
 
 ### 5.5 State (Targeted)
 
-- Apply to order lifecycle transitions now represented as switch branching at endpoint/service boundary.
+- Apply to order lifecycle transitions are now represented as switch branching at the endpoint / service boundary.
 - Candidate area:
   - order status transitions (`PENDING -> COMPLETED/CANCELLED`, invalid transitions)
 - Expected outcome: centralized transition rules and guard conditions, less controller coupling.
@@ -148,13 +148,13 @@
 ### Phase 1 (Stabilization)
 
 1. Extract `DiscountPolicy` strategies from `OrderCreationServiceImpl`.
-2. Move order status transition branching out of `OrderControllerV1` into dedicated transition service/state handler.
+2. Move order status transition branching out of `OrderControllerV1` into a dedicated transition service / state handler.
 3. Introduce specification components for voucher and stock eligibility checks.
 
 ### Phase 2 (Domain Isolation)
 
 1. Split `LoyaltyServiceImpl` into loyalty accounting policy + voucher issuing policy.
-2. Split analytics aggregation logic into strategy components by report type.
+2. Split analytics aggregation logic into strategy components by a report type.
 3. Extract stock adjustment command handling from `InventoryAdjustmentServiceImpl`.
 
 ### Phase 3 (Standardization)
@@ -172,6 +172,6 @@
 ## 8. Success Criteria for Follow-up Refactors
 
 - Reduced method/class complexity in current hotspots.
-- New business rules added by introducing new policy/specification classes with minimal edits to orchestration services.
-- Controller layer remains transport-focused with no domain transition branching.
+- New business rules are added by introducing new policy/specification classes with minimal edits to orchestration services.
+- The controller layer remains transport-focused with no domain transition branching.
 - Existing functional behavior and endpoint contracts remain backward-compatible.

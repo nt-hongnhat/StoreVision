@@ -9,7 +9,7 @@ The feature-level documentation is introduced to provide a single technical entr
 ## Technical Design
 ### Architecture / Data Flow
 - Client calls customer endpoints under `/api/v1/customers`.
-- Controller and service flow details are documented at endpoint level in `docs/api/customer/*.md`.
+- Controller and service flow details are documented at the endpoint level in `docs/api/customer/*.md`.
 - Responses follow the project-wide API response/error handling conventions documented in `docs/api/api-technical-reference.md`.
 
 ### Component Changes
@@ -52,7 +52,7 @@ No database schema or migration changes were introduced in this documentation ba
   - `docs/api/customer/*.md`
 
 ## Rollout
-- No feature flag required.
+- No feature flag is required.
 - No phased rollout required.
 - Backward compatibility is preserved because no runtime behavior or API contract changed.
-- No additional environment configuration required.
+- No additional environment configuration is required.

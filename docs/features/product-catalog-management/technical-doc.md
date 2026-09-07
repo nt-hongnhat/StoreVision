@@ -9,7 +9,7 @@ The feature-level document is added to centralize technical context for product 
 ## Technical Design
 ### Architecture / Data Flow
 - Client applications interact with `/api/v1/products` endpoints.
-- Request handling and business orchestration are documented at endpoint level in `docs/api/product/*.md`.
+- Request handling and business orchestration are documented at the endpoint level in `docs/api/product/*.md`.
 - Global response/error behavior follows `docs/api/api-technical-reference.md`.
 
 ### Component Changes
@@ -46,7 +46,7 @@ No database schema or migration changes were introduced in this documentation ba
 - Validation is based on documentation consistency between `docs/api/api-technical-reference.md` and `docs/api/product/*.md`.
 
 ## Rollout
-- No feature flag required.
+- No feature flag is required.
 - No phased rollout required.
 - Backward compatibility is preserved because no runtime behavior or API contract changed.
-- No additional environment configuration required.
+- No additional environment configuration is required.

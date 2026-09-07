@@ -23,8 +23,8 @@ Behavior **does not change**: existing order creation calculations, stock checks
 | Area                                | Before                                                                                    | After                                                                                            |
 |-------------------------------------|-------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------|
 | Discount decision in order creation | Inline methods and hardcoded `max(voucher, birthday)` logic in `OrderCreationServiceImpl` | Strategy-based discount policies (`DiscountPolicy`) are injected and aggregated in orchestration |
-| Voucher eligibility check           | Inline null/blank check in order service                                                  | `VoucherCodeUtil` (stateless helper) handles the presence predicate                             |
-| Stock sufficiency check at creation | Inline stock check implementation in order service                                        | `StockAvailabilityUtil` (stateless helper) encapsulates stock validation                        |
+| Voucher eligibility check           | Inline null/blank check in order service                                                  | `VoucherCodeUtil` (stateless helper) handles the presence predicate                              |
+| Stock sufficiency check at creation | Inline stock check implementation in order service                                        | `StockAvailabilityUtil` (stateless helper) encapsulates stock validation                         |
 | Order status transition endpoint    | Controller contains `switch` and status-specific dispatch                                 | Controller delegates to service; transition branching centralized in `OrderUpdateServiceImpl`    |
 
 ## Changes Made
@@ -32,9 +32,9 @@ Behavior **does not change**: existing order creation calculations, stock checks
 - `src/main/java/com/nthn/storevision/component/order/discount/DiscountPolicy.java`
   - Added strategy contract for order discount calculation.
 - `src/main/java/com/nthn/storevision/component/order/discount/impl/BirthdayDiscountPolicy.java`
-  - Extracted birthday loyalty-tier discount logic from order creation service.
+  - Extracted birthday loyalty-tier discount logic from an order creation service.
 - `src/main/java/com/nthn/storevision/component/order/discount/impl/VoucherDiscountPolicy.java`
-  - Extracted voucher discount logic (percentage/fixed with cap) from order creation service.
+  - Extracted voucher discount logic (percentage/fixed with cap) from the order creation service.
 - `src/main/java/com/nthn/storevision/util/VoucherCodeUtil.java`
   - Added stateless helper for the voucher-code presence predicate (no Spring bean, no instance state).
 - `src/main/java/com/nthn/storevision/util/StockAvailabilityUtil.java`
@@ -51,7 +51,7 @@ Behavior **does not change**: existing order creation calculations, stock checks
 ## Risk & Compatibility
 
 - Risks:
-  - Injection order of multiple `DiscountPolicy` beans could affect behavior if aggregation rule changes in future.
+  - Injection order of multiple `DiscountPolicy` beans could affect behavior if the aggregation rule changes in the future.
   - Transactional boundary should remain monitored for service-dispatch flow.
 - Compatibility:
   - No endpoint path/method changes.

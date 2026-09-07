@@ -46,7 +46,7 @@ No database schema or migration changes were introduced in this documentation ba
 - Validation is based on cross-checking endpoint links and names against `docs/api/inventory/*.md`.
 
 ## Rollout
-- No feature flag required.
+- No feature flag is required.
 - No phased rollout required.
 - Backward compatibility is preserved because no runtime behavior or API contract changed.
-- No additional environment configuration required.
+- No additional environment configuration is required.
