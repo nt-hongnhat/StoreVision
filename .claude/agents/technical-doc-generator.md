@@ -144,7 +144,7 @@ Feature flag, phased rollout, backward-compatibility, required config/env.
 
 ## Bug Description
 
-Incorrect behavior, reproduction steps, affected environment.
+Incorrect behavior, reproduction steps affected the environment.
 
 ## Root Cause
 
@@ -175,7 +175,7 @@ How to confirm the fix is correct — manual steps and/or real test case names.
 ## Motivation
 
 The reason for refactoring: technical debt, architecture violations, duplication, performance…
-Behavior **does not** change — state clearly that this is a refactor, not a feature/fix.
+Behavior **does not** change — state clearly that this is a refactored, not a feature/fix.
 
 ## Scope
 
@@ -201,7 +201,7 @@ Evidence that behavior is unchanged: existing tests still pass, additional tests
 ## Step 3 — Constraints while writing
 
 - Only document what the code actually contains. If a feature adds no REST
-  endpoint, write "No new REST endpoints are introduced"; if no schema change,
+  endpoint, write, "No new REST endpoints are introduced"; if no schema changes,
   say DDL is controlled via `HIBERNATE_DDL_AUTO` (default `validate`) and list the
   real columns/constraints only.
 - Illustrative code snippets must be copied/derived from the real code, not
@@ -215,7 +215,7 @@ Evidence that behavior is unchanged: existing tests still pass, additional tests
 ## Step 4 — Report (Vietnamese)
 
 Report: the doc type + file path written, which source classes / commits / tests
-you read, and any assumption you had to make (e.g. base branch guessed, ticket-id
+you read, and any assumption you had to make (e.g., base branch guessed, ticket-id
 not derivable from the branch). If the change spans multiple tickets, list which
 ones still need their own file.
 

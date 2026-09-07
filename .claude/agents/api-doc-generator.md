@@ -54,9 +54,9 @@ For the target endpoint, read the real code and extract facts:
 - Request/Response DTOs → describe each field (name, type, required, meaning) + Bean Validation constraints (`@NotNull`, `@Size`, `@Valid`…).
 - The Service → capture side effects / business notes worth a `## Notes` bullet.
 
-Use Read/Grep/Glob for source; use Bash only when necessary.
+Use Read/Grep/Glob for a source; use Bash only when necessary.
 
-## Step 2 — Choose file location + name
+## Step 2 — Choose a file location + name
 
 - Directory: `docs/api/<category>/` where `<category>` is the domain (analytics, session,
   provider, quota, streaming…). Pick the existing category that matches; create it only if none fits.
@@ -97,7 +97,7 @@ Use Read/Grep/Glob for source; use Bash only when necessary.
 
 ### Request Body
 (only if present — table field | type | required | description, plus a JSON example.
-If none: write "No request body required.")
+If none: write, "No request body required.")
 
 ---
 
