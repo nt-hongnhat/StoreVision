@@ -2,11 +2,11 @@
  * Copyright (c) 2026 Hong Nhat. All rights reserved.
  *
  * Project: Store Vision
- * Module: Store Vision Main
+ * Module: StoreVision.main
  * File: OrderController.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-12 23:28:00
+ * Last Modified: 2026-09-08 17:16:26
  */
 
 package com.nthn.storevision.controller;
@@ -22,7 +22,15 @@ import org.springframework.data.domain.Page;
  *
  * @see com.nthn.storevision.controller.v1.OrderControllerV1
  */
+@SuppressWarnings("unused")
 public interface OrderController {
+
+  /**
+   * Marks a packing task as complete for the specified task ID.
+   *
+   * @param taskId the unique identifier of the packing task to complete
+   */
+  void completePacking(String taskId);
 
   /**
    * Creates a new sales order in PENDING status. Stock is only verified, not deducted (BR-O01); the
@@ -57,6 +65,13 @@ public interface OrderController {
    * @return the matching order
    */
   OrderDTO getOrderById(Long id);
+
+  /**
+   * Initiates the order creation process for a specific product.
+   *
+   * @param productId the ID of the product for which the order is to be started
+   */
+  void startOrder(Long productId);
 
   /**
    * Updates an existing order.

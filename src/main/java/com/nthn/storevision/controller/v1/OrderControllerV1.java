@@ -2,11 +2,11 @@
  * Copyright (c) 2026 Hong Nhat. All rights reserved.
  *
  * Project: Store Vision
- * Module: Store Vision Main
+ * Module: StoreVision.main
  * File: OrderControllerV1.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-07-07 11:26:17
+ * Last Modified: 2026-09-08 17:17:08
  */
 
 package com.nthn.storevision.controller.v1;
@@ -16,17 +16,20 @@ import com.nthn.storevision.controller.OrderController;
 import com.nthn.storevision.dto.order.OrderDTO;
 import com.nthn.storevision.dto.request.OrderCreationRequest;
 import com.nthn.storevision.dto.request.OrderStatusUpdateRequest;
-import com.nthn.storevision.service.order.OrderCreationService;
-import com.nthn.storevision.service.order.OrderDeletionService;
-import com.nthn.storevision.service.order.OrderRetrievalService;
-import com.nthn.storevision.service.order.OrderUpdateService;
+import com.nthn.storevision.service.order.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.flowable.task.api.Task;
+import org.flowable.task.api.TaskInfo;
+import org.jspecify.annotations.NonNull;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -52,8 +55,27 @@ public class OrderControllerV1 implements OrderController {
 
   private final OrderCreationService creationService;
   private final OrderDeletionService deletionService;
+  private final OrderProcessService orderProcessService;
   private final OrderRetrievalService retrievalService;
   private final OrderUpdateService updateService;
+
+  /** {@inheritDoc} */
+  @Operation(
+      summary = "Complete packing task",
+      description = "Completes the packing task for the specified order")
+  @ApiResponse(responseCode = ResponseCode.OK, description = "Packing task completed successfully")
+  @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED, description = "Unauthorized access")
+  @ApiResponse(responseCode = ResponseCode.FORBIDDEN, description = "Forbidden access")
+  @ApiResponse(responseCode = ResponseCode.NOT_FOUND, description = "Order not found")
+  @Override
+  @PreAuthorize("hasRole('USER')")
+  @PostMapping("/warehouse/tasks/{taskId}")
+  @ResponseStatus(HttpStatus.OK)
+  public void completePacking(@PathVariable final String taskId) {
+    log.info("Complete packing task {}", taskId);
+    orderProcessService.completePacking(taskId);
+    log.info("Complete packing task {} done", taskId);
+  }
 
   /** {@inheritDoc} */
   @Operation(summary = "Create a new sales order", description = OperationDescription.CREATE_ORDER)
@@ -153,6 +175,24 @@ public class OrderControllerV1 implements OrderController {
     }
   }
 
+  /** {@inheritDoc} */
+  @Operation(
+      summary = "Start an order process",
+      description = "Starts an order process for the specified product")
+  @ApiResponse(responseCode = ResponseCode.OK, description = "Order process started successfully")
+  @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED, description = "Unauthorized access")
+  @ApiResponse(responseCode = ResponseCode.FORBIDDEN, description = "Forbidden access")
+  @ApiResponse(responseCode = ResponseCode.NOT_FOUND, description = "Product not found")
+  @ResponseStatus(HttpStatus.ACCEPTED)
+  @PreAuthorize("hasRole('USER')")
+  @PostMapping("/start")
+  @Override
+  public void startOrder(@RequestParam final Long productId) {
+    log.debug("Received request to start order process");
+    orderProcessService.startOrderProcess(productId);
+    log.debug("Order process started successfully");
+  }
+
   @Operation(summary = "Update an order by ID", description = OperationDescription.ORDER_UPDATE)
   @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)
   @ApiResponse(
@@ -214,5 +254,28 @@ public class OrderControllerV1 implements OrderController {
           exception);
       throw exception;
     }
+  }
+
+  /** {@inheritDoc} */
+  @Operation(
+      summary = "Retrieve tasks assigned to the current user",
+      description = "Fetches tasks assigned to the authenticated user.")
+  @ApiResponse(responseCode = ResponseCode.OK, description = "Tasks assigned to the current user")
+  @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED, description = "Unauthorized access")
+  @PreAuthorize("hasRole('USER')")
+  @GetMapping("warehouse/tasks")
+  public List<Map<String, Object>> getManagerTasks() {
+    final List<Task> tasks = orderProcessService.getWarehouseTasks();
+
+    return tasks.stream().map(OrderControllerV1::mapTaskToProperties).toList();
+  }
+
+  private static @NonNull Map<String, Object> mapTaskToProperties(final @NonNull TaskInfo task) {
+    final Map<String, Object> map = HashMap.newHashMap(4);
+    map.put("taskId", task.getId());
+    map.put("taskName", task.getName());
+    map.put("createTime", task.getCreateTime());
+    map.put("assignee", task.getAssignee());
+    return map;
   }
 }
