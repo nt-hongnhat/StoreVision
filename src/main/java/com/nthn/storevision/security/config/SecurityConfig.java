@@ -2,11 +2,11 @@
  * Copyright (c) 2026 Hong Nhat. All rights reserved.
  *
  * Project: Store Vision
- * Module: Store Vision Main
+ * Module: StoreVision.main
  * File: SecurityConfig.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-14 15:45:45
+ * Last Modified: 2026-09-08 17:06:24
  */
 
 package com.nthn.storevision.security.config;
@@ -103,6 +103,12 @@ public class SecurityConfig {
                     // listing and cancelling are ADMIN/MANAGER
                     .requestMatchers(HttpMethod.POST, EndpointDefinitions.ORDERS)
                     .hasAnyRole(ADMIN, MANAGER, STAFF)
+                    // Starting the order workflow is customer-initiated;
+                    // @PreAuthorize("hasRole('USER')") on the controller method
+                    // enforces the exact role — this matcher only needs to admit
+                    // any authenticated account past the URL-level check
+                    .requestMatchers("/orders/start/**", "/orders/warehouse/tasks/**")
+                    .authenticated()
                     // PATCH /orders/{id} (status transition): URL-level access is
                     // ADMIN/MANAGER/STAFF; @PreAuthorize on the controller method
                     // restricts STAFF to the COMPLETED transition only (cancelling
