@@ -6,18 +6,25 @@
  * File: NotificationType.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-09-09 15:48:49
+ * Last Modified: 2026-09-09 16:07:24
  */
 
 package com.nthn.storevision.constant.notification;
 
 /** Defines the category of an internal {@link com.nthn.storevision.entity.NotificationEntity}. */
-public enum NotificationType {
+public sealed interface NotificationType permits CommonNotificationType, OrderNotificationType {
+
   /**
-   * Rose for an active product whose stock quantity is at or below the configured low-stock
-   * threshold (BR-I04), as part of the scheduled low-stock alert job (section 3.2.3).
+   * Retrieves the message format associated with this notification type.
+   *
+   * @return a string representing the message format defined for the notification type.
    */
-  LOW_STOCK_ALERT,
-  /** Rose for an order that contains products that are out of stock. */
-  ORDER_OUT_OF_STOCK
+  String getMessageFormat();
+
+  /**
+   * Retrieves the title associated with this notification type.
+   *
+   * @return a string representing the title of the notification type.
+   */
+  String getTitle();
 }
