@@ -11,6 +11,9 @@
 
 package com.nthn.storevision.workflow.delegate;
 
+import com.nthn.storevision.dto.inventory.InventoryDTO;
+import com.nthn.storevision.service.inventory.InventoryRetrievalService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.flowable.engine.delegate.DelegateExecution;
 import org.flowable.engine.delegate.JavaDelegate;
@@ -33,16 +36,31 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @Slf4j
+@RequiredArgsConstructor
 class CheckStockDelegate implements JavaDelegate {
+  private static final String AVAILABLE = "available";
+  private static final String INSUFFICIENT = "insufficient";
+  private final InventoryRetrievalService inventoryRetrievalService;
+
   @Override
   public void execute(final @NonNull DelegateExecution execution) {
-    final String productId = execution.getVariable("productId").toString();
-    log.info("Checking stock for product {}", productId);
+    final Long productId = Long.valueOf(execution.getVariable("productId").toString());
+    final Long requestedQuantity =
+        Long.valueOf(execution.getVariable("requestedQuantity").toString());
+    log.debug(
+        "Checking stock for product {} with requested quantity {}", productId, requestedQuantity);
+    final InventoryDTO foundInventory =
+        inventoryRetrievalService.findInventoryByProductId(productId);
+    final boolean inStock = foundInventory.getStockQuantity() >= requestedQuantity;
 
-    final boolean inStock = true;
-    execution.setVariable("stockStatus", "in stock");
+    final String stockStatus = inStock ? AVAILABLE : INSUFFICIENT;
+    execution.setVariable("stockStatus", stockStatus);
     execution.setVariable("inStock", inStock);
 
-    // TODO: Implement stock checking logic
+    log.debug(
+        "Checked stock for product {} with requested quantity {} is {}",
+        productId,
+        requestedQuantity,
+        stockStatus);
   }
 }
