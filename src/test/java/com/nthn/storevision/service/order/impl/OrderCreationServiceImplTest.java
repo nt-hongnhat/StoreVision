@@ -6,7 +6,7 @@
  * File: OrderCreationServiceImplTest.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-15 21:51:59
+ * Last Modified: 2026-09-09 16:38:24
  */
 
 package com.nthn.storevision.service.order.impl;
@@ -19,14 +19,14 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.nthn.storevision.constant.voucher.DiscountType;
 import com.nthn.storevision.constant.order.OrderChannel;
 import com.nthn.storevision.constant.order.OrderStatus;
+import com.nthn.storevision.constant.voucher.DiscountType;
 import com.nthn.storevision.dto.order.OrderDTO;
 import com.nthn.storevision.dto.order_item.OrderItemDTO;
-import com.nthn.storevision.dto.voucher.VoucherDTO;
 import com.nthn.storevision.dto.request.OrderCreationRequest;
 import com.nthn.storevision.dto.request.OrderItemCreationRequest;
+import com.nthn.storevision.dto.voucher.VoucherDTO;
 import com.nthn.storevision.entity.CustomerEntity;
 import com.nthn.storevision.entity.OrderEntity;
 import com.nthn.storevision.entity.ProductEntity;
@@ -41,10 +41,10 @@ import com.nthn.storevision.service.voucher.VoucherValidationService;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -64,7 +64,7 @@ class OrderCreationServiceImplTest {
   @Mock private OrderItemCreationService orderItemCreationService;
   @Mock private ProductRetrievalService productRetrievalService;
   @Mock private OrderRepository repository;
-  private OrderCreationServiceImpl service;
+  @InjectMocks private OrderCreationServiceImpl service;
   @Mock private VoucherValidationService voucherValidationService;
 
   @Test
@@ -254,19 +254,6 @@ class OrderCreationServiceImplTest {
         InsufficientStockException.class, () -> service.createOrder(requestWithVoucher(null)));
 
     verify(repository, never()).save(any());
-  }
-
-  @BeforeEach
-  void setUp() {
-    service =
-        new OrderCreationServiceImpl(
-            mapper,
-            repository,
-            customerRetrievalService,
-            orderItemCreationService,
-            productRetrievalService,
-            voucherValidationService,
-            TAX_RATE);
   }
 
   private void stubSaveAndOrderItem(final OrderEntity savedOrder, final OrderDTO mappedOrder) {
