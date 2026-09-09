@@ -6,7 +6,7 @@
  * File: OrderProcessService.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-09-08 17:18:53
+ * Last Modified: 2026-09-09 16:02:27
  */
 
 package com.nthn.storevision.service.order;
@@ -36,9 +36,11 @@ public interface OrderProcessService {
   List<Task> getWarehouseTasks();
 
   /**
-   * Initiates the order processing workflow for a specified product.
+   * Starts the {@code orderProcessingSystem} Flowable process instance for an existing {@code
+   * PENDING} order, using the order ID as the process business key.
    *
-   * @param productId the unique identifier of the product to be processed; must not be null
+   * @param orderId the unique identifier of the order to be processed; must not be {@code null}
+   * @throws com.nthn.storevision.exception.EntityNotFoundException if the order does not exist
    */
-  void startOrderProcess(Long productId);
+  void startOrderProcess(Long orderId);
 }
