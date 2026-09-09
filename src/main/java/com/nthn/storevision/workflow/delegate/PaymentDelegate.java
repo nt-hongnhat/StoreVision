@@ -6,11 +6,15 @@
  * File: PaymentDelegate.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-09-08 17:51:43
+ * Last Modified: 2026-09-09 15:54:44
  */
 
 package com.nthn.storevision.workflow.delegate;
 
+import com.nthn.storevision.exception.InsufficientStockException;
+import com.nthn.storevision.exception.order.InvalidOrderStateException;
+import com.nthn.storevision.service.order.OrderUpdateService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.flowable.engine.delegate.BpmnError;
 import org.flowable.engine.delegate.DelegateExecution;
@@ -32,26 +36,26 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @Slf4j
+@RequiredArgsConstructor
 class PaymentDelegate implements JavaDelegate {
+  private final OrderUpdateService orderUpdateService;
+
   @Override
   public void execute(final @NonNull DelegateExecution execution) {
-    final Object orderId = execution.getVariable("orderId");
+    final Long orderId = (Long) execution.getVariable("orderId");
     log.info("Processing payment for order {}", orderId);
-    // TODO: Implement payment processing logic
 
-    final boolean isPaymentSuccessful = isPaymentProcessed();
+    confirmPaymentWithGateway(orderId);
 
-    if (isPaymentSuccessful) {
-      execution.setVariable("isPaymentSuccessful", true);
-      log.info("Payment successful for order {}", orderId);
-    } else {
-      log.error("Payment failed for order {}", orderId);
-      throw new BpmnError("PAYMENT_FAILED_ERROR", "Payment failed for order");
+    try {
+      orderUpdateService.complete(orderId);
+    } catch (final InsufficientStockException | InvalidOrderStateException businessError) {
+      throw new BpmnError("PAYMENT_CONFIRMATION_FAILED", businessError.getMessage());
     }
   }
 
-  private static boolean isPaymentProcessed() {
+  private static void confirmPaymentWithGateway(final Long orderId) {
+    log.debug("Confirming payment for order {}", orderId);
     // TODO: Implement payment processing logic
-    return false;
   }
 }
