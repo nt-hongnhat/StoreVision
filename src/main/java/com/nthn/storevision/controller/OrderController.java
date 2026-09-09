@@ -67,11 +67,13 @@ public interface OrderController {
   OrderDTO getOrderById(Long id);
 
   /**
-   * Initiates the order creation process for a specific product.
+   * Starts the order-processing workflow (stock check, packing, payment) for an existing
+   * {@code PENDING} order.
    *
-   * @param productId the ID of the product for which the order is to be started
+   * @param orderId the ID of the order for which the workflow is to be started; must not be
+   *     {@code null}
    */
-  void startOrder(Long productId);
+  void startOrder(Long orderId);
 
   /**
    * Updates an existing order.

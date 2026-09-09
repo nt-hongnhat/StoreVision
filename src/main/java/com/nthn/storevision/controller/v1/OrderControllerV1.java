@@ -178,19 +178,20 @@ public class OrderControllerV1 implements OrderController {
   /** {@inheritDoc} */
   @Operation(
       summary = "Start an order process",
-      description = "Starts an order process for the specified product")
+      description = "Starts the order-processing workflow for the specified pending order")
   @ApiResponse(responseCode = ResponseCode.OK, description = "Order process started successfully")
   @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED, description = "Unauthorized access")
   @ApiResponse(responseCode = ResponseCode.FORBIDDEN, description = "Forbidden access")
-  @ApiResponse(responseCode = ResponseCode.NOT_FOUND, description = "Product not found")
+  @ApiResponse(responseCode = ResponseCode.NOT_FOUND, description = "Order not found")
   @ResponseStatus(HttpStatus.ACCEPTED)
   @PreAuthorize("hasRole('USER')")
   @PostMapping("/start")
   @Override
-  public void startOrder(@RequestParam final Long productId) {
-    log.debug("Received request to start order process");
-    orderProcessService.startOrderProcess(productId);
-    log.debug("Order process started successfully");
+  public void startOrder(
+      @Parameter(description = ParameterDescription.ORDER_ID) @RequestParam final Long orderId) {
+    log.debug("Received request to start order process for order id={}", orderId);
+    orderProcessService.startOrderProcess(orderId);
+    log.debug("Order process started successfully for order id={}", orderId);
   }
 
   @Operation(summary = "Update an order by ID", description = OperationDescription.ORDER_UPDATE)
