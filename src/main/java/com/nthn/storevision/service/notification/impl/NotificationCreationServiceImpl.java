@@ -6,7 +6,7 @@
  * File: NotificationCreationServiceImpl.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-15 21:55:06
+ * Last Modified: 2026-09-09 13:49:30
  */
 
 package com.nthn.storevision.service.notification.impl;
@@ -14,8 +14,10 @@ package com.nthn.storevision.service.notification.impl;
 import com.nthn.storevision.constant.notification.NotificationType;
 import com.nthn.storevision.dto.inventory.InventoryDTO;
 import com.nthn.storevision.dto.notification.NotificationDTO;
+import com.nthn.storevision.dto.order.OrderDTO;
 import com.nthn.storevision.entity.NotificationEntity;
-import com.nthn.storevision.mapper.EntityMapperConfig; 
+import com.nthn.storevision.mapper.EntityMapperConfig;
+import com.nthn.storevision.model.Notification;
 import com.nthn.storevision.repository.NotificationRepository;
 import com.nthn.storevision.service.notification.NotificationCreationService;
 import lombok.RequiredArgsConstructor;
@@ -36,7 +38,8 @@ public class NotificationCreationServiceImpl implements NotificationCreationServ
   private static final String LOW_STOCK_MESSAGE_FORMAT =
       "Product '%s' (SKU %s) has %d unit(s) remaining, at or below the configured low-stock threshold (BR-I04).";
   private static final String LOW_STOCK_TITLE = "Low stock alert";
-  private final EntityMapperConfig<NotificationDTO, Long, NotificationEntity> notificationMapper; // Injected mapper
+  private final EntityMapperConfig<NotificationDTO, Long, NotificationEntity>
+      notificationMapper; // Injected mapper
   private final NotificationRepository notificationRepository;
   private final SseEmitterServiceImpl sseEmitterService;
 
@@ -64,7 +67,23 @@ public class NotificationCreationServiceImpl implements NotificationCreationServ
             .build();
 
     final NotificationEntity savedNotification = notificationRepository.save(notification);
-    
+
+    // Send the new notification via SSE
+    sseEmitterService.sendNotification(notificationMapper.toDTO(savedNotification));
+  }
+
+  @Override
+  public void sendOrderOutOfStockEmail(@NonNull final OrderDTO order, final NotificationType type) {
+    log.debug("Sending order out of stock email for order {}", order.getOrderId());
+    final Notification notification =
+        NotificationEntity.builder()
+            .type(type)
+            .title("Order out of stock")
+            .message("The order %s is out of stock.".formatted(order.getOrderId()))
+            .referenceId(order.getOrderId())
+            .read(false)
+            .build();
+    final NotificationEntity savedNotification = notificationRepository.save(notification);
     // Send the new notification via SSE
     sseEmitterService.sendNotification(notificationMapper.toDTO(savedNotification));
   }
