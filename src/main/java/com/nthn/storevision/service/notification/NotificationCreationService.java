@@ -6,12 +6,12 @@
  * File: NotificationCreationService.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-09-09 13:52:18
+ * Last Modified: 2026-09-09 16:21:55
  */
 
 package com.nthn.storevision.service.notification;
 
-import com.nthn.storevision.constant.notification.NotificationType;
+import com.nthn.storevision.constant.notification.OrderNotificationType;
 import com.nthn.storevision.dto.inventory.InventoryDTO;
 import com.nthn.storevision.dto.order.OrderDTO;
 import org.jspecify.annotations.NonNull;
@@ -30,11 +30,14 @@ public interface NotificationCreationService {
    */
   void sendLowStockAlert(@NonNull InventoryDTO product);
 
-    /**
-     * Sends an email to notify that the specified order is out of stock.
-     *
-     * @param order the order that cannot be fulfilled due to insufficient stock; must not be {@code null}
-     * @param type the type of notification to be sent, typically {@link NotificationType#LOW_STOCK_ALERT}; must not be {@code null}
-     */
-  void sendOrderOutOfStockEmail(@NonNull OrderDTO order, NotificationType type);
+  /**
+   * Creates an order-workflow notification for the given order (out-of-stock cancellation, payment
+   * success, or payment-failure cancellation).
+   *
+   * @param order the order the notification refers to; must not be {@code null}
+   * @param type the notification type; one of {@link OrderNotificationType#ORDER_OUT_OF_STOCK},
+   *     {@link OrderNotificationType#ORDER_COMPLETED}, or {@link
+   *     OrderNotificationType#ORDER_PAYMENT_FAILED}; must not be {@code null}
+   */
+  void sendOrderAlert(@NonNull OrderDTO order, @NonNull OrderNotificationType type);
 }

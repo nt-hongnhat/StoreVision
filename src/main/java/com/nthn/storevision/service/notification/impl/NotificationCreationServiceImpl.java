@@ -6,20 +6,21 @@
  * File: NotificationCreationServiceImpl.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-09-09 13:49:30
+ * Last Modified: 2026-09-09 16:41:05
  */
 
 package com.nthn.storevision.service.notification.impl;
 
-import com.nthn.storevision.constant.notification.NotificationType;
+import com.nthn.storevision.constant.notification.CommonNotificationType;
+import com.nthn.storevision.constant.notification.OrderNotificationType;
 import com.nthn.storevision.dto.inventory.InventoryDTO;
 import com.nthn.storevision.dto.notification.NotificationDTO;
 import com.nthn.storevision.dto.order.OrderDTO;
 import com.nthn.storevision.entity.NotificationEntity;
 import com.nthn.storevision.mapper.EntityMapperConfig;
-import com.nthn.storevision.model.Notification;
 import com.nthn.storevision.repository.NotificationRepository;
 import com.nthn.storevision.service.notification.NotificationCreationService;
+import com.nthn.storevision.service.notification.SseEmitterService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.NonNull;
@@ -35,13 +36,10 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class NotificationCreationServiceImpl implements NotificationCreationService {
 
-  private static final String LOW_STOCK_MESSAGE_FORMAT =
-      "Product '%s' (SKU %s) has %d unit(s) remaining, at or below the configured low-stock threshold (BR-I04).";
-  private static final String LOW_STOCK_TITLE = "Low stock alert";
   private final EntityMapperConfig<NotificationDTO, Long, NotificationEntity>
       notificationMapper; // Injected mapper
   private final NotificationRepository notificationRepository;
-  private final SseEmitterServiceImpl sseEmitterService;
+  private final SseEmitterService sseEmitterService;
 
   /** {@inheritDoc} */
   @Override
@@ -52,13 +50,14 @@ public class NotificationCreationServiceImpl implements NotificationCreationServ
         product.getProductId(),
         product.getStockQuantity());
 
+    final CommonNotificationType lowStockAlert = CommonNotificationType.LOW_STOCK_ALERT;
     final NotificationEntity notification =
         NotificationEntity.builder()
-            .type(NotificationType.LOW_STOCK_ALERT)
-            .title(LOW_STOCK_TITLE)
+            .type(lowStockAlert)
+            .title(lowStockAlert.getTitle())
             .message(
                 String.format(
-                    LOW_STOCK_MESSAGE_FORMAT,
+                    lowStockAlert.getMessageFormat(),
                     product.getProductName(),
                     product.getSku(),
                     product.getStockQuantity()))
@@ -72,18 +71,24 @@ public class NotificationCreationServiceImpl implements NotificationCreationServ
     sseEmitterService.sendNotification(notificationMapper.toDTO(savedNotification));
   }
 
+  /** {@inheritDoc} */
   @Override
-  public void sendOrderOutOfStockEmail(@NonNull final OrderDTO order, final NotificationType type) {
-    log.debug("Sending order out of stock email for order {}", order.getOrderId());
-    final Notification notification =
+  @Transactional
+  public void sendOrderAlert(
+      final @NonNull OrderDTO order, final @NonNull OrderNotificationType type) {
+    log.debug("Creating {} notification for order id={}", type, order.getId());
+
+    final NotificationEntity notification =
         NotificationEntity.builder()
             .type(type)
-            .title("Order out of stock")
-            .message("The order %s is out of stock.".formatted(order.getOrderId()))
-            .referenceId(order.getOrderId())
+            .title(type.getTitle())
+            .message(String.format(type.getMessageFormat(), order.getId()))
+            .referenceId(order.getId())
             .read(false)
             .build();
+
     final NotificationEntity savedNotification = notificationRepository.save(notification);
+
     // Send the new notification via SSE
     sseEmitterService.sendNotification(notificationMapper.toDTO(savedNotification));
   }
