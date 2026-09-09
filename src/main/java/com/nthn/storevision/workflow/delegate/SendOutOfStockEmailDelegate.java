@@ -6,14 +6,17 @@
  * File: SendOutOfStockEmailDelegate.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-09-08 17:19:35
+ * Last Modified: 2026-09-09 13:45:31
  */
 
 package com.nthn.storevision.workflow.delegate;
 
+import com.nthn.storevision.service.order.OrderUpdateService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.flowable.engine.delegate.DelegateExecution;
 import org.flowable.engine.delegate.JavaDelegate;
+import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Component;
 
 /**
@@ -30,10 +33,15 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @Slf4j
+@RequiredArgsConstructor
 class SendOutOfStockEmailDelegate implements JavaDelegate {
+  private final OrderUpdateService orderUpdateService;
+
   @Override
-  public void execute(final DelegateExecution execution) {
-    log.info("Sending out of stock email");
-    // TODO: Implement sending out of stock email
+  public void execute(final @NonNull DelegateExecution execution) {
+    final Long orderId = (Long) execution.getVariable("orderId");
+    log.debug("Sending out of stock email for order {}", orderId);
+    orderUpdateService.cancel(orderId);
+    log.debug("Sent out of stock email for order {}", orderId);
   }
 }
