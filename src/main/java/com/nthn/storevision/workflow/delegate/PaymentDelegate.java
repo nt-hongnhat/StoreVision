@@ -23,21 +23,22 @@ import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Component;
 
 /**
- * Delegate responsible for processing payment for an order.
+ * Delegate responsible for confirming payment for an order.
  *
  * <p>This class is part of a workflow and implements the {@link JavaDelegate} interface provided by
- * Flowable. It retrieves the order ID from the execution context and performs the necessary logic
- * for processing payments.
- *
- * <p>Behavior: - Logs the order ID for which the payment is being processed. - Represents a
- * placeholder for implementing the actual payment processing logic.
- *
- * <p>Note: The functionality to process payments is not currently implemented.
+ * Flowable. After the payment gateway confirms the charge, it calls {@link
+ * OrderUpdateService#complete(Long)}, which re-checks stock (BR-O01), deducts it, awards loyalty
+ * points, and increments voucher usage in one transaction. A business failure there (stock
+ * vanished, or the order is no longer {@code PENDING}) is raised as the {@code
+ * PAYMENT_FAILED_ERROR} BPMN error caught by the {@code errorPaymentFailed} boundary event attached
+ * to {@code taskPayment}, instead of crashing the process instance.
  */
 @Component
 @Slf4j
 @RequiredArgsConstructor
 class PaymentDelegate implements JavaDelegate {
+  private static final String PAYMENT_FAILED_ERROR_CODE = "PAYMENT_FAILED_ERROR";
+
   private final OrderUpdateService orderUpdateService;
 
   @Override
@@ -50,7 +51,7 @@ class PaymentDelegate implements JavaDelegate {
     try {
       orderUpdateService.complete(orderId);
     } catch (final InsufficientStockException | InvalidOrderStateException businessError) {
-      throw new BpmnError("PAYMENT_CONFIRMATION_FAILED", businessError.getMessage());
+      throw new BpmnError(PAYMENT_FAILED_ERROR_CODE, businessError.getMessage());
     }
   }
 
