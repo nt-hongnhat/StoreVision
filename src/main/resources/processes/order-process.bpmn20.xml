@@ -7,6 +7,9 @@
              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
              targetNamespace="http://www.flowable.org/processdef">
 
+    <!-- ĐỊNH NGHĨA LỖI NGHIỆP VỤ: THANH TOÁN THẤT BẠI (bắt bởi errorPaymentFailed) -->
+    <error id="PAYMENT_FAILED_ERROR" errorCode="PAYMENT_FAILED_ERROR" name="Payment confirmation failed"/>
+
     <!-- ID QUY TRÌNH KÍCH HOẠT TỪ SPRING BOOT -->
     <process id="orderProcessingSystem" name="Order Processing System" isExecutable="true">
 
