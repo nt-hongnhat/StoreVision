@@ -6,7 +6,7 @@
  * File: Order.java
  * Author: Nguyen Thi Hong Nhat
  * Contact: hongnhat1121@gmail.com
- * Last Modified: 2026-06-15 21:51:59
+ * Last Modified: 2026-09-10 13:13:37
  */
 
 package com.nthn.storevision.model;
@@ -15,6 +15,7 @@ import com.nthn.storevision.constant.order.OrderChannel;
 import com.nthn.storevision.constant.order.OrderStatus;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 /** Represents a customer order in the StoreVision domain. */
 public interface Order extends CustomAuditable<Long> {
@@ -52,8 +53,8 @@ public interface Order extends CustomAuditable<Long> {
   /**
    * Gets the discount amount granted by the applied voucher.
    *
-   * @return the discount amount as a non-negative {@link BigDecimal}; never {@code null}, zero
-   *     when no voucher was applied.
+   * @return the discount amount as a non-negative {@link BigDecimal}; never {@code null}, zero when
+   *     no voucher was applied.
    */
   BigDecimal getDiscountAmount();
 
@@ -94,6 +95,14 @@ public interface Order extends CustomAuditable<Long> {
    * @return the updated {@code Order} instance.
    */
   Order setOrderDate(LocalDateTime orderDate);
+
+  /**
+   * Gets the line items belonging to this order.
+   *
+   * @return the list of {@link OrderItem} instances for this order; never {@code null}, empty when
+   *     the order has no items.
+   */
+  List<? extends OrderItem> getOrderItems();
 
   /**
    * Gets the current lifecycle status of the order.

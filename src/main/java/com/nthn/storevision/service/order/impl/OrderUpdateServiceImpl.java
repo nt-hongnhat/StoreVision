@@ -15,7 +15,6 @@ import com.nthn.storevision.constant.message.OrderMessageCode;
 import com.nthn.storevision.constant.order.OrderStatus;
 import com.nthn.storevision.dto.order.OrderDTO;
 import com.nthn.storevision.entity.OrderEntity;
-import com.nthn.storevision.entity.OrderItemEntity;
 import com.nthn.storevision.exception.EntityNotFoundException;
 import com.nthn.storevision.exception.InsufficientStockException;
 import com.nthn.storevision.exception.order.InvalidOrderStateException;
@@ -119,7 +118,7 @@ public class OrderUpdateServiceImpl
   private OrderDTO completeInternal(final @NonNull Long orderId) {
     log.debug("Completing order id: {}", orderId);
     final OrderEntity order = findPendingOrderOrThrow(orderId);
-    final List<OrderItemEntity> items = order.getOrderItems();
+    final List<? extends OrderItem> items = order.getOrderItems();
 
     verifyStockAvailability(items);
 
@@ -140,7 +139,7 @@ public class OrderUpdateServiceImpl
       voucherUpdateService.incrementUsage(order.getVoucher().getId());
     }
 
-    log.info("Order completed: id={}, totalAmount={}", orderId, order.getTotalAmount());
+    log.info("Order completed: id={}", orderId);
     return getMapper().toDTO(order);
   }
 
